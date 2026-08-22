@@ -2,6 +2,20 @@
 
 All notable changes to GO OS are documented here.
 
+## v0.2.1 — 2026-08-22
+
+### Fixed
+- Added `description` to the YAML frontmatter of all nine `SKILL.md` files so Agent Skills runtimes can discover and trigger them before loading the skill body.
+- Reworked descriptions around three trigger layers: explicit intent, problem intent, and latent structural signals.
+- Added negative trigger boundaries to reduce false positives, including Go-language/OS-engineering ambiguity.
+
+### Added
+- `tests/trigger-evals-v0.2.1.yaml` with should-trigger, should-not-trigger, cross-skill confusion, anti-trigger, and GO-OS-is-unnecessary cases.
+
+### Changed
+- `go-os-core` now acts explicitly as a semantic gateway: it routes by the organizational object that must change rather than by keywords alone.
+- Specialist skills now expose symptom-based discovery language in frontmatter.
+
 ## v0.2.0 — 2026-08-22
 
 ### Added
