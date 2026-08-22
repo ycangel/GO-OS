@@ -2,9 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://go-os.org/schemas/authority-grant.schema.json",
   "title": "GO OS AuthorityGrant",
-  "version": "0.2.0",
+  "version": "0.2.2",
   "type": "object",
-  "required": ["id", "grantor", "grantee", "accountable_human", "scope", "allowed_actions", "limits", "escalation", "revocation"],
+  "required": ["id", "grantor", "grantee", "accountable_human", "scope", "allowed_actions", "limits", "escalation", "revocation", "self_expansion_allowed"],
   "properties": {
     "id": {"type": "string"},
     "grantor": {"type": "string"},
@@ -22,7 +22,7 @@
     "valid_from": {"type": ["string", "null"], "format": "date-time"},
     "expires_at": {"type": ["string", "null"], "format": "date-time"},
     "revocation": {"type": "object", "required": ["revocable"], "properties": {"revocable": {"type": "boolean"}, "revoked_by": {"type": "array", "items": {"type": "string"}}, "conditions": {"type": "array", "items": {"type": "string"}}}},
-    "self_expansion_allowed": {"const": false}
+    "self_expansion_allowed": {"const": false, "description": "Agents may not autonomously expand their own authority."}
   },
   "additionalProperties": true
 }
