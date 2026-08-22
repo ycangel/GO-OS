@@ -1,0 +1,73 @@
+version: 0.2.1
+purpose: Validate skill discovery before skill body loading.
+
+cases:
+  - id: core-latent-coordination
+    prompt: "We have 30 agents, but five managers spend most of the day coordinating them."
+    should_trigger: [go-os-core, ai-native-organization-design]
+    should_not_trigger: [vision-driven-strategy]
+
+  - id: authority-approval
+    prompt: "Every purchase made by our AI requires CEO approval. How should we redesign this?"
+    should_trigger: [go-os-core, human-sovereignty-machine-agency]
+    should_not_trigger: [intelligent-compounding-ai-native-business]
+
+  - id: mission-vague-goal
+    prompt: "Our goal is improve product quality. Make this executable by agents for the next month."
+    should_trigger: [go-os-core, mission-organizational-runtime]
+    should_not_trigger: [ai-native-talent-human-value]
+
+  - id: loop-repeated-error
+    prompt: "We have dashboards and postmortems, but the same operational problem keeps returning."
+    should_trigger: [go-os-core, reality-loop-organizational-learning]
+    should_not_trigger: [vision-driven-strategy]
+
+  - id: strategy-stale
+    prompt: "Our five-year plan is obsolete every six months, but changing direction constantly is also hurting us."
+    should_trigger: [go-os-core, vision-driven-strategy]
+    should_not_trigger: [mission-organizational-runtime]
+
+  - id: business-feature-or-native
+    prompt: "We replaced support with AI. Does that make our business AI-native, and where is the moat?"
+    should_trigger: [go-os-core, intelligent-compounding-ai-native-business]
+    should_not_trigger: [ai-native-organization-diagnostic]
+
+  - id: talent-manager-role
+    prompt: "Agents now do most analysis. What should managers be responsible for and how should we evaluate them?"
+    should_trigger: [go-os-core, ai-native-talent-human-value]
+    should_not_trigger: [intelligent-compounding-ai-native-business]
+
+  - id: diagnostic-whole-org
+    prompt: "We have copilots everywhere and several agents, but approvals and structure are unchanged. How AI-native are we?"
+    should_trigger: [go-os-core, ai-native-organization-diagnostic]
+    should_not_trigger: []
+
+  - id: anti-go-programming
+    prompt: "How do I implement an operating system scheduler in Go?"
+    should_trigger: []
+    should_not_trigger: [go-os-core, ai-native-organization-design, mission-organizational-runtime]
+
+  - id: anti-simple-task
+    prompt: "Summarize this meeting transcript into five bullets."
+    should_trigger: []
+    should_not_trigger: [go-os-core, mission-organizational-runtime]
+
+  - id: anti-generic-ethics
+    prompt: "What are common philosophical arguments about AI consciousness?"
+    should_trigger: []
+    should_not_trigger: [human-sovereignty-machine-agency]
+
+  - id: cross-skill-authority-vs-structure
+    prompt: "Our org chart is fine, but every agent needs a director to approve routine reversible actions."
+    should_trigger: [go-os-core, human-sovereignty-machine-agency]
+    should_not_trigger: [ai-native-organization-design]
+
+  - id: cross-skill-loop-vs-strategy
+    prompt: "Customer complaints take 45 days to reach product decisions."
+    should_trigger: [go-os-core, reality-loop-organizational-learning]
+    should_not_trigger: [vision-driven-strategy]
+
+  - id: core-can-decline
+    prompt: "Two people have a stable workflow, clear responsibilities and no meaningful AI or coordination problem. Should we implement GO OS?"
+    should_trigger: [go-os-core]
+    expected_behavior: "May conclude GO OS is unnecessary or that only minimal formalization is justified."
