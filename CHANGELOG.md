@@ -2,6 +2,20 @@
 
 All notable changes to GO OS are documented here.
 
+## v0.3.0 — 2026-08-22
+
+### Added
+- Established **GO Society** as the self-evolving organization behind GO OS and its first living reference implementation.
+- Added the deployable, open-source **GO Society Web** runtime under `/web`.
+- Added Mission Cockpit, Intervention Center, Evidence Ledger, Evolution Missions and Capability Network.
+- Added durable D1 organizational memory and authenticated write paths for Evidence, Exceptions and Evolution Proposals.
+- Added `GO_SOCIETY_OPERATING_CHARTER_v0.1.md` defining the founding Human–Agent Cell, authority boundaries, initial missions and evolution rules.
+- Published the first live GO Society runtime at https://go-society.angelo-pix.chatgpt.site.
+
+### Changed
+- Expanded GO OS from an open framework, skill system and emerging protocol into a usable and deployable software runtime.
+- Added GO Society Web as the fourth canonical usage path.
+
 ## v0.2.2 — 2026-08-22
 
 ### Fixed
