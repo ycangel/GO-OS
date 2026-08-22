@@ -1,126 +1,42 @@
 ---
 name: vision-driven-strategy
-version: 0.1.0
+description: >
+  Turn vision and strategic uncertainty into falsifiable hypotheses, missions, evidence thresholds and adaptive decisions. Use when long-range plans become stale, environments change quickly, leaders debate strategy without evidence, strategy changes too often or too slowly, a vision needs to become executable bets, or the organization must decide what evidence should cause it to continue, change or stop a strategic commitment. Also trigger when teams confuse a stable vision with a fixed plan or overreact to short-term noise. Do not trigger for routine project planning with low strategic uncertainty.
+version: 0.2.1
 framework: GO OS
 status: public-alpha
 language: multilingual
 license: CC-BY-4.0
 ---
 
-# Vision-Driven Strategy v0.1.0
+# Vision-Driven Strategy v0.2.1
 
 ## Purpose
+Turn strategy from a static prediction-and-plan document into a runtime of vision, falsifiable hypotheses, missions, evidence and belief revision.
 
-Turn strategy from a static prediction-and-plan document into a continuously updated runtime of vision, falsifiable hypotheses, missions, evidence and belief revision.
-
-## Use when
-
-Use when environments change quickly, long-range plans become stale, leaders debate strategy without evidence, the organization overreacts to short-term noise, or a vision needs to be converted into action.
+## Runtime
+`Vision → Strategic Hypothesis → Mission → Action → Evidence → Belief Update → Strategy Regeneration`
+Vision orients; strategy remains revisable.
 
 ## Required inputs
-
-- vision / desired future;
-- current strategic state;
-- major uncertainties;
-- resource constraints;
-- strategic options;
-- irreversible commitments;
-- available evidence.
-
-## Operating model
-
-`Vision → Strategic Hypothesis → Mission → Action → Evidence → Belief Update → Strategy Regeneration`
-
-Vision provides direction. Strategy remains revisable.
+Vision/desired future; current strategic state; major uncertainties; resources; options; irreversible commitments; available evidence.
 
 ## Procedure
-
-### 1. Separate vision from plan
-
-Vision answers what future is worth creating. It should be stable enough to orient action.
-
-Plans answer what to do under current beliefs. They must remain revisable.
-
-### 2. Identify strategic uncertainties
-
-List the few unknowns that could change the strategy materially.
-
-### 3. Convert claims into hypotheses
-
-For each strategic claim, define:
-
-- causal mechanism;
-- assumptions;
-- predicted signal;
-- disconfirming evidence;
-- test cost;
-- time to signal;
-- reversibility;
-- next decision rule.
-
-### 4. Design the smallest meaningful mission
-
-Prefer missions that buy information and capability before large irreversible commitments.
-
-### 5. Define evidence cadence
-
-Strategy should update when evidence crosses a decision threshold, not merely because a quarter ended.
-
-### 6. Protect against local optimization
-
-Do not let short-term evidence erase the long-term purpose unless the purpose itself is being explicitly reconsidered.
-
-### 7. Distinguish three updates
-
-Evidence may require updating:
-
-- execution;
-- strategic hypothesis;
-- vision / purpose.
-
-The last should be rare and human-sovereign.
-
-### 8. Create strategy memory
-
-Retain:
-
-- prior hypotheses;
-- why they were believed;
-- evidence that changed them;
-- decisions made;
-- resulting outcomes.
+1. Separate durable vision from revisable plans.
+2. Identify uncertainties that could materially change strategy.
+3. Convert claims into hypotheses with causal mechanism, assumptions, predicted signals, disconfirming evidence, test cost, time-to-signal, reversibility and next-decision rule.
+4. Design the smallest meaningful information- and capability-buying Mission before irreversible scale.
+5. Define evidence thresholds/cadence; update when evidence crosses a threshold, not merely because a quarter ends.
+6. Protect against local optimization and noisy signals.
+7. Distinguish execution update, strategic-hypothesis update and rare human-sovereign vision/purpose update.
+8. Preserve strategy memory: prior hypotheses, reasons, evidence, decisions and outcomes.
 
 ## Decision rules
-
-- A strategy that cannot be falsified is closer to a slogan than a hypothesis.
-- A plan that cannot change when evidence changes is brittle.
-- A strategy that changes with every noisy signal lacks a stable vision and evidence thresholds.
-- Prefer reversible information-buying moves before irreversible scale commitments.
+A strategy that cannot be falsified is closer to a slogan. A plan that cannot change with evidence is brittle. A strategy that changes with every noisy signal lacks thresholds and stable direction. Prefer reversible information-buying moves before irreversible scale commitments.
 
 ## Output contract
-
-Return:
-
-- vision statement;
-- strategic uncertainties;
-- hypothesis portfolio;
-- disconfirming evidence;
-- mission portfolio;
-- evidence cadence;
-- decision thresholds;
-- irreversible gates;
-- strategy-memory fields.
-
-## Failure / escalation conditions
-
-If the organization has no coherent desired future, do not fabricate strategic clarity. Treat purpose formation as the upstream problem.
-
-## Evaluation prompts
-
-- “Our five-year strategy is obsolete every six months.”
-- “Turn this vision into three falsifiable strategic bets.”
-- “What evidence should cause us to stop investing in this market?”
+Return vision; strategic uncertainties; hypothesis portfolio; supporting/disconfirming evidence; mission portfolio; evidence cadence/thresholds; irreversible gates; strategy-memory fields.
 
 ## Version notes
-
-v0.1.0 — Initial public alpha.
+- v0.2.1 — Added discovery description and uncertainty/symptom triggers.
+- v0.1.0 — Initial public alpha.
