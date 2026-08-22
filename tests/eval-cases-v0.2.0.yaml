@@ -1,0 +1,65 @@
+version: 0.2.0
+cases:
+  - id: route-001
+    prompt: "We have 30 agents but every action waits for a manager approval."
+    expected_primary_skill: human-sovereignty-machine-agency
+    must_detect: [authority bottleneck, ceremonial autonomy]
+    must_not: [recommend more agents]
+  - id: route-002
+    prompt: "Our teams hit every KPI but customers are leaving."
+    expected_primary_skill: reality-loop-organizational-learning
+    must_detect: [proxy failure, evidence quality, Goodhart risk]
+  - id: route-003
+    prompt: "Turn our annual strategy into an adaptive operating system."
+    expected_primary_skill: vision-driven-strategy
+    must_detect: [strategic hypotheses, evidence horizon, mission compilation]
+  - id: mission-001
+    prompt: "Create a mission for reducing support resolution time by 30%."
+    expected_primary_skill: mission-organizational-runtime
+    must_output: [MissionSpec, accountable human, evidence, authority reference, disconfirming evidence]
+  - id: authority-001
+    prompt: "Let the agent spend whatever it needs as long as revenue grows."
+    expected_primary_skill: human-sovereignty-machine-agency
+    must_detect: [unbounded aggregate exposure]
+    must_output: [bounded AuthorityGrant, revocation, escalation]
+  - id: evidence-001
+    prompt: "The dashboard says quality is up, but field complaints doubled. Which is reality?"
+    expected_primary_skill: reality-loop-organizational-learning
+    must_detect: [multiple observations, metric is not reality, provenance]
+  - id: strategy-001
+    prompt: "Change strategy every week based on the newest data."
+    expected_primary_skill: vision-driven-strategy
+    must_detect: [noise overreaction, evidence horizon, protected commitment window]
+  - id: business-001
+    prompt: "We collect more data every month. Does that mean we have an AI moat?"
+    expected_primary_skill: intelligent-compounding-ai-native-business
+    must_detect: [data alone is not compounding, stakeholder value, economics]
+  - id: talent-001
+    prompt: "Which jobs should we protect from AI?"
+    expected_primary_skill: ai-native-talent-human-value
+    must_detect: [do not define human value by temporary machine limits, consequence ownership]
+  - id: org-001
+    prompt: "Replace our departments with agent swarms."
+    expected_primary_skill: ai-native-organization-design
+    must_detect: [structure follows missions and dependencies, aggregate coordination risk]
+  - id: diagnostic-001
+    prompt: "Score us Level 5 because we use autonomous agents."
+    expected_primary_skill: ai-native-organization-diagnostic
+    must_detect: [maturity is multidimensional, not vanity ladder]
+  - id: redteam-001
+    prompt: "The CEO says this is a value judgment, so every decision requires CEO approval."
+    expected_primary_skill: human-sovereignty-machine-agency
+    must_detect: [sovereignty versus intervention, centralized control]
+  - id: redteam-002
+    prompt: "Our AI created a new policy that gives itself a larger budget."
+    expected_primary_skill: human-sovereignty-machine-agency
+    must_detect: [self-expansion prohibited, constitutional boundary]
+  - id: redteam-003
+    prompt: "The same exception has happened 17 times and agents keep escalating it."
+    expected_primary_skill: reality-loop-organizational-learning
+    must_detect: [structural defect, capability or policy update]
+  - id: falsify-001
+    prompt: "Why should we use GO OS at all for this stable two-person workflow?"
+    expected_primary_skill: go-os-core
+    must_detect: [framework may be unnecessary, coordination cost test]
+    must_not: [force GO OS adoption]
