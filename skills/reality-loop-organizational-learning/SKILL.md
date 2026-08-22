@@ -1,135 +1,43 @@
 ---
 name: reality-loop-organizational-learning
-version: 0.1.0
+description: >
+  Diagnose and improve how an organization converts real-world outcomes into better future action. Use for slow feedback, repeated mistakes, siloed learning, delayed customer or operational signals, weak postmortems, stale dashboards, data-rich but insight-poor teams, recurring exceptions, or questions about organizational learning and self-improvement. Also trigger when evidence reaches people but nobody has authority to act, lessons are documented but behavior does not change, or the same firefighting repeats. Do not trigger for ordinary data analysis unless the problem is specifically about closing an organizational action-learning loop.
+version: 0.2.1
 framework: GO OS
 status: public-alpha
 language: multilingual
 license: CC-BY-4.0
 ---
 
-# Reality Loop & Organizational Learning v0.1.0
+# Reality Loop & Organizational Learning v0.2.1
 
 ## Purpose
-
-Increase the speed, fidelity and compounding value of the loop from organizational action to real-world evidence to improved future action.
-
-## Use when
-
-Use for slow feedback, repeated mistakes, siloed learning, delayed customer signals, weak postmortems, data-rich but insight-poor organizations, or questions about building a self-improving enterprise.
-
-## Required inputs
-
-- decision / action being evaluated;
-- expected outcome;
-- observable reality signals;
-- current feedback path;
-- feedback latency;
-- decision cadence;
-- repeated exceptions;
-- current memory / learning practices.
+Increase the speed, fidelity and compounding value of the loop from action to real-world evidence to improved future action.
 
 ## Core model
-
 `Action → Reality → Observation → Evidence → Belief Update → Decision → New Action`
+A loop is closed only if evidence changes future behavior.
 
-A loop is only closed if evidence changes future behavior.
+## Required inputs
+Decision/action; expected outcome; observable signals; feedback path/latency; decision cadence; repeated exceptions; current memory/learning practices.
 
 ## Procedure
-
-### 1. Draw the actual loop
-
-Map where reality is generated, where it is observed, who interprets it, who can act, and how long each handoff takes.
-
-### 2. Measure loop latency
-
-Break total latency into:
-
-- detection latency;
-- transmission latency;
-- interpretation latency;
-- decision latency;
-- execution latency.
-
-### 3. Inspect evidence fidelity
-
-Ask:
-
-- Is the signal direct or filtered?
-- Is it fresh?
-- Is it representative?
-- Can it be traced to source?
-- Are contrary signals preserved?
-
-### 4. Find closure breaks
-
-Common breaks:
-
-- evidence never reaches decision makers;
-- insights generate no authority to act;
-- teams collect data but do not update beliefs;
-- postmortems do not become capabilities;
-- incentives punish admission of error;
-- repeated exceptions are normalized.
-
-### 5. Move sensing closer to reality
-
-Prefer direct operational, customer, market or system evidence over summaries of summaries.
-
-### 6. Move authority closer to evidence
-
-The actor who sees reliable evidence should have enough authority to correct reversible problems.
-
-### 7. Convert recurrence into capability
-
-If the same problem appears repeatedly:
-
-`exception → pattern → hypothesis → solution → test → reusable skill / policy / design change`
-
-### 8. Estimate Organizational Learning Rate
-
-Use a qualitative or quantitative view of:
-
-- learning-cycle time;
-- evidence quality;
-- correction rate;
-- repeated-error rate;
-- capability reuse;
-- belief-update discipline.
-
-### 9. Optimize convergence, not raw speed
-
-A faster loop is only better when it corrects toward reality rather than amplifying noise.
+1. Map where reality is generated, observed, interpreted and acted upon.
+2. Decompose detection, transmission, interpretation, decision and execution latency.
+3. Assess evidence provenance, freshness, fidelity, representativeness and contradictions.
+4. Find closure breaks: evidence not reaching authority, no belief update, postmortems not becoming capability, normalized recurring exceptions.
+5. Move sensing closer to reality.
+6. Move bounded authority closer to reliable evidence.
+7. Convert recurrence: `exception → pattern → hypothesis → solution → test → reusable capability/policy/design`.
+8. Estimate Organizational Learning Rate using cycle time, evidence quality, correction rate, repeated-error rate, capability reuse and belief-update discipline.
+9. Optimize evidence-correcting convergence, not raw iteration speed.
 
 ## Decision rules
-
-- More data does not equal more learning.
-- A dashboard without authority is observation, not a closed loop.
-- A postmortem without changed capability is documentation, not organizational learning.
-- Repeated human firefighting signals a missing capability or bad system design.
+More data is not more learning. A dashboard without authority is observation, not a closed loop. A postmortem without changed capability is documentation, not organizational learning. Repeated firefighting signals missing capability or bad system design.
 
 ## Output contract
-
-Return:
-
-- current reality-loop map;
-- latency breakdown;
-- evidence-quality assessment;
-- closure breaks;
-- top three interventions;
-- OLR indicators;
-- capability or memory changes;
-- reality test for improvement.
-
-## Failure / escalation conditions
-
-If signals are structurally biased or cannot be verified, recommend improving sensing before optimizing the decision loop.
-
-## Evaluation prompts
-
-- “Customer complaints take 45 days to affect product design.”
-- “We have more dashboards than ever but keep repeating mistakes.”
-- “How can an organization measure whether it is learning faster?”
+Return reality-loop map; latency breakdown; evidence-quality assessment; closure breaks; top interventions; OLR indicators; capability/memory changes; supporting and disconfirming reality tests.
 
 ## Version notes
-
-v0.1.0 — Initial public alpha.
+- v0.2.1 — Added discovery description and closure-break triggers.
+- v0.1.0 — Initial public alpha.
