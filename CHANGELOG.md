@@ -1,17 +1,33 @@
 # Changelog
 
-All notable changes to GO OS will be documented here.
+All notable changes to GO OS are documented here.
 
-## [0.1.0] - 2026-08-22
+## v0.2.0 — 2026-08-22
 
 ### Added
-- Initial GO OS open framework.
-- Core ontology: Mission, Authority, State, Evidence, Exception, Capability, Organizational Memory.
-- Core principles: Human Sovereignty, Machine Agency, Reality as Final Arbiter.
-- Mother routing skill: `go-os-core`.
-- Eight capability skills for organization design, human-machine authority, organizational runtime, reality loops, strategy, intelligent compounding, talent and diagnostic use cases.
-- Initial architecture, glossary, skill specification and evaluation prompts.
-- Bilingual repository introduction.
+- Red-team review with 18 theoretical failure modes and 10 resulting design constraints.
+- Machine-readable JSON Schemas for `MissionSpec`, `AuthorityGrant`, `EvidenceSpec`, and `ExceptionSpec`.
+- YAML execution example.
+- Cross-skill routing and common input/output contracts.
+- Per-skill v0.2 contracts for all eight specialist skills.
+- Adversarial, routing, falsification, authority, evidence, strategy, business, talent and diagnostic eval cases.
 
-### Status
-Public alpha. Interfaces and ontology may evolve before v1.0.0.
+### Changed
+- `go-os-core` upgraded to v0.2.0.
+- Human Sovereignty now requires effective control, not ceremonial accountability.
+- Machine Agency is explicitly bounded, revocable, observable and non-self-expanding.
+- Reality is distinguished from evidence and metrics.
+- Organizational Learning Rate is defined as evidence-correcting convergence rather than iteration frequency.
+- Formalization now scales with consequence and reversibility.
+- GO OS interventions must include disconfirming evidence and may conclude that GO OS is unnecessary for a domain.
+
+## v0.1.0 — 2026-08-22
+
+Initial public alpha.
+
+- Open Framework
+- Core principles and architecture
+- Mother Skill + eight specialist Skills
+- Initial evaluation prompts
+- Bilingual README
+- Public contribution and licensing structure
