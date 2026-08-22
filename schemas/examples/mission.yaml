@@ -1,0 +1,49 @@
+mission:
+  id: mission-example-001
+  version: 0.2.0
+  status: active
+  purpose: Improve a customer outcome without exceeding delegated risk.
+  current_state: Baseline outcome and uncertainty recorded.
+  desired_state: Target outcome achieved and verified.
+  accountable_human: role:mission-owner
+  authority_ref: authority-example-001
+  evidence:
+    - evidence:target-outcome
+    - evidence:no-guardrail-breach
+  constraints:
+    - Preserve legal, safety, privacy, and budget boundaries.
+  assumptions:
+    - The intervention can materially affect the target outcome.
+  unknowns:
+    - Which intervention has the highest causal effect.
+  reversibility: reversible
+  risk_class: medium
+  recompile_when:
+    - Evidence contradicts a core assumption.
+    - Authority is insufficient.
+    - The desired state is reached or becomes irrelevant.
+
+authority_grant:
+  id: authority-example-001
+  grantor: role:business-owner
+  grantee: agent:mission-runtime
+  accountable_human: role:mission-owner
+  scope: Execute bounded experiments for mission-example-001.
+  allowed_actions:
+    - Select among approved interventions.
+    - Execute reversible experiments.
+  prohibited_actions:
+    - Expand own authority.
+    - Make irreversible commitments.
+  limits:
+    aggregate_budget: 1000
+    concurrent_experiments: 3
+  reversibility_ceiling: reversible_only
+  evidence_obligations:
+    - Record outcome, cost, exceptions, and uncertainty.
+  escalation:
+    - Escalate when aggregate budget or approved operating envelope would be exceeded.
+  revocation:
+    revocable: true
+    revoked_by: [role:business-owner, role:mission-owner]
+  self_expansion_allowed: false
