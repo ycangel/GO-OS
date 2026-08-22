@@ -1,145 +1,45 @@
 ---
 name: human-sovereignty-machine-agency
-version: 0.1.0
+description: >
+  Design boundaries between human sovereignty and machine agency. Use for agent permissions, approval bottlenecks, delegated decisions, spending or resource authority, human-in-the-loop/on-the-loop design, irreversible actions, accountability, escalation, AI governance, or questions about what AI should be allowed to do. Also trigger when every AI action still needs a manager, nobody clearly owns consequences, agents are either over-controlled or dangerously unconstrained, or a team confuses accountability with manual approval. Do not trigger for general AI ethics discussion with no concrete organizational decision-rights or consequence-ownership problem.
+version: 0.2.1
 framework: GO OS
 status: public-alpha
 language: multilingual
 license: CC-BY-4.0
 ---
 
-# Human Sovereignty & Machine Agency v0.1.0
+# Human Sovereignty & Machine Agency v0.2.1
 
 ## Purpose
-
-Design a principled boundary between human sovereignty and machine agency. The goal is neither human micromanagement nor uncontrolled automation, but responsible autonomous action.
-
-## Use when
-
-Use for approval policies, autonomous agents, delegated decisions, AI governance, human-in-the-loop design, irreversible actions, resource commitments, or disputes over “what AI should be allowed to do.”
+Design a principled boundary between human sovereignty and machine agency: neither human micromanagement nor uncontrolled automation, but responsible autonomous action.
 
 ## Required inputs
-
-- action or decision class;
-- consequence owner;
-- reversibility;
-- downside magnitude;
-- evidence quality;
-- machine capability;
-- monitoring quality;
-- legal / safety constraints;
-- resource limits.
+Action/decision class; consequence owner; reversibility; downside magnitude; evidence quality; demonstrated machine capability; monitoring quality; legal/safety constraints; resource and aggregate exposure limits.
 
 ## Operating model
+**Human Sovereignty:** purpose, values, ultimate accountability, major/exceptional resource commitments, irreversible consequences, value conflicts, constitutional rules.
 
-### Human Sovereignty covers
-
-- purpose;
-- values;
-- ultimate accountability;
-- major or exceptional resource commitments;
-- irreversible consequences;
-- value conflicts;
-- constitutional rules.
-
-### Machine Agency covers, within authority
-
-- planning;
-- routine decisions;
-- execution;
-- coordination;
-- monitoring;
-- verification;
-- retry and optimization;
-- proposing changes.
+**Machine Agency within authority:** planning, routine decisions, execution, coordination, monitoring, verification, retry/optimization and proposing changes.
 
 ## Procedure
-
-### 1. Classify the action
-
-Determine whether it is:
-
-- reversible / recoverable;
-- costly but reversible;
-- hard to reverse;
-- irreversible.
-
-### 2. Quantify downside
-
-Assess financial, operational, legal, safety, reputational and strategic downside.
-
-### 3. Assess evidence
-
-Is the agent acting on fresh, reliable, sufficiently complete evidence?
-
-### 4. Assess capability
-
-Use demonstrated performance, not assumed intelligence.
-
-### 5. Define authority envelope
-
-Specify:
-
-- allowed decisions;
-- resource ceiling;
-- time horizon;
-- forbidden actions;
-- monitoring;
-- escalation triggers;
-- expiration / review.
-
-### 6. Choose human involvement mode
-
-Use one of four modes:
-
-**H0 — Human constitutional ownership**  
-Human defines purpose / rules but does not review normal execution.
-
-**H1 — Human on exception**  
-Agent acts autonomously; human is called only on predefined exceptions.
-
-**H2 — Human before irreversible action**  
-Agent prepares and recommends; human authorizes the irreversible step.
-
-**H3 — Human-led judgment**  
-Human leads because the decision is dominated by value conflict, legitimacy, novel ambiguity or unbounded downside.
-
-### 7. Add evidence and auditability
-
-Every high-impact autonomous decision should leave enough evidence to reconstruct what happened and why.
+1. Classify reversibility: reversible, costly-but-reversible, hard-to-reverse, irreversible.
+2. Assess financial, operational, legal, safety, reputational and strategic downside.
+3. Assess evidence freshness, reliability and completeness.
+4. Assess demonstrated capability, not assumed intelligence.
+5. Define an `AuthorityGrant`: allowed/prohibited actions, resource ceiling, aggregate exposure, time horizon, monitoring, escalation, expiry and revocation.
+6. Choose human involvement: **H0 constitutional ownership**, **H1 on exception**, **H2 before irreversible action**, **H3 human-led judgment**.
+7. Require sufficient independent/auditable evidence for material autonomous decisions.
 
 ## Decision rules
-
-Increase machine agency when capability, observability and reversibility rise.
-
-Increase human involvement when irreversibility, value conflict, uncertainty or unbounded downside rise.
-
-Do not use “AI made the decision” as an accountability model.
-
-Do not require human approval merely because an action is performed by AI.
+Increase machine agency as capability, observability and reversibility rise. Increase human involvement as irreversibility, value conflict, uncertainty or unbounded downside rise. Never use “AI made the decision” as accountability. Do not require approval merely because AI performs the action. Agents may not expand their own authority.
 
 ## Output contract
+Return action class; consequence owner; H0–H3 mode; authority envelope; aggregate limits; escalation/revocation conditions; audit evidence; review cadence; unresolved sovereignty questions.
 
-Return:
-
-- action class;
-- consequence owner;
-- recommended human mode H0–H3;
-- authority envelope;
-- escalation conditions;
-- audit evidence;
-- review cadence;
-- unresolved sovereignty questions.
-
-## Failure / escalation conditions
-
-If no legitimate consequence owner can be identified, do not recommend autonomous delegation of material decisions.
-
-## Evaluation prompts
-
-- “Can an AI agent hire a contractor without approval?”
-- “Design spending authority for an autonomous procurement agent.”
-- “When should a CEO still personally decide if AI is more accurate?”
+## Failure / escalation
+If no legitimate consequence owner exists, do not recommend autonomous delegation of material decisions.
 
 ## Version notes
-
-v0.1.0 — Initial public alpha.
+- v0.2.1 — Added discovery description and latent trigger semantics.
+- v0.1.0 — Initial public alpha.
