@@ -2,6 +2,23 @@
 
 All notable changes to GO OS are documented here.
 
+## v0.2.2 — 2026-08-22
+
+### Fixed
+- Synchronized bilingual READMEs with the current repository structure and version.
+- Added a clear organization-shift narrative and positioned GO OS as a framework for recursive self-evolving organizations.
+- Added a concise Kurt Gödel introduction, organizational-metaphor disclaimer and Wikipedia reference.
+- Added practical How to Use paths for Skills, framework adoption and machine-readable protocol use.
+- Fixed `AuthorityGrant`: `self_expansion_allowed` is now required and constrained to `false`, closing the schema-level loophole around self-expanding authority.
+- Marked legacy Principles and Skill Specification files as superseded instead of allowing competing normative sources.
+
+### Added
+- Canonical `GO_OS_CONSTITUTION_v0.2.2.md` as the single source of truth for the twelve constitutional principles.
+- `SKILL_SPEC_v0.2.2.md` defining description-based discovery, concise runtime instructions, `CONTRACT.md`, routing and trigger/behavior evaluation requirements.
+
+### Governance
+- Normative principles now have an explicit canonical source rather than being independently duplicated across documents.
+
 ## v0.2.1 — 2026-08-22
 
 ### Fixed
@@ -34,6 +51,11 @@ All notable changes to GO OS are documented here.
 - Organizational Learning Rate is defined as evidence-correcting convergence rather than iteration frequency.
 - Formalization now scales with consequence and reversibility.
 - GO OS interventions must include disconfirming evidence and may conclude that GO OS is unnecessary for a domain.
+
+## v0.1.1 — 2026-08-22
+
+### Added
+- Red-team self-review attacking GO OS across theoretical, governance, evidence, power, multi-agent and falsifiability failure modes.
 
 ## v0.1.0 — 2026-08-22
 
