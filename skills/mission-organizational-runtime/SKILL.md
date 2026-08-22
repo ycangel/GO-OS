@@ -1,127 +1,43 @@
 ---
 name: mission-organizational-runtime
-version: 0.1.0
+description: >
+  Compile intent, goals or strategy into durable, autonomous and evidence-verifiable Missions. Use when goals are vague, work is expressed as task lists or OKRs without executable state transitions, agents lose context on long-horizon work, projects stall on coordination, actors repeatedly seek permission, or the user wants to turn intent into autonomous organizational execution. Also trigger when success criteria, authority, exception conditions or durable state are missing. Do not trigger for a simple one-off task that has clear instructions, low consequence and no need for organizational runtime semantics.
+version: 0.2.1
 framework: GO OS
 status: public-alpha
 language: multilingual
 license: CC-BY-4.0
 ---
 
-# Mission & Organizational Runtime v0.1.0
+# Mission & Organizational Runtime v0.2.1
 
 ## Purpose
-
 Compile intent into a durable Mission that humans and agents can execute autonomously and verify against reality.
 
-## Use when
-
-Use when goals are vague, teams rely on task assignment, agents need long-horizon work, projects stall on coordination, or users want to turn strategy into executable organizational behavior.
-
 ## Required inputs
+Purpose; desired outcome; current state; constraints; resources; actors/tools; horizon; risk tolerance.
 
-- purpose;
-- desired outcome;
-- current state;
-- constraints;
-- available resources;
-- actors / tools;
-- time horizon;
-- risk tolerance.
-
-## Mission schema
-
-A valid Mission should define:
-
-1. purpose;
-2. desired state;
-3. current state;
-4. success evidence;
-5. constraints;
-6. authority;
-7. resources;
-8. risk envelope;
-9. owner of consequence;
-10. horizon;
-11. known assumptions;
-12. mandatory exception triggers.
+## Mission model
+A valid Mission defines purpose, desired state, current state, success evidence, constraints, authority, resources, risk envelope, accountable human, horizon, assumptions and mandatory exception/recompile triggers. Prefer schema-compatible `MissionSpec` plus linked `AuthorityGrant`.
 
 ## Procedure
-
-### 1. Replace activity wording with state wording
-
-Weak: “conduct 20 customer interviews.”  
-Stronger: “reduce uncertainty about the top three causes of customer churn enough to select one intervention.”
-
-### 2. Define current state
-
-Separate facts, inferences, assumptions and unknowns.
-
-### 3. Define desired state
-
-Make it observable and outcome-based.
-
-### 4. Define evidence of success
-
-Ask: what would reality have to show for us to say the mission succeeded?
-
-### 5. Define authority
-
-Grant enough action space to achieve the mission without repeated permission seeking.
-
-### 6. Define constraints and forbidden moves
-
-Constraints include law, safety, budget, brand, timing, privacy and strategic commitments.
-
-### 7. Define exception triggers
-
-State exactly when the runtime must pause, escalate or recompile the mission.
-
-### 8. Allocate actors dynamically
-
-Choose people, agents, tools or hybrids by capability rather than organizational title.
-
-### 9. Run durable state
-
-A long mission must preserve state, evidence and decisions across sessions and actor changes.
-
-### 10. Close and learn
-
-Mission closure requires:
-
-- evidence review;
-- unresolved exceptions;
-- learning captured;
-- capability updates;
-- next mission recommendation.
+1. Replace activity wording with observable state-transition wording.
+2. Separate current-state facts, inferences, assumptions and unknowns.
+3. Define observable desired state.
+4. Define supporting and disconfirming evidence.
+5. Grant enough bounded authority to avoid routine permission seeking.
+6. Define constraints and forbidden moves.
+7. Define pause, escalate and recompile triggers.
+8. Allocate people, agents and tools by capability rather than title.
+9. Preserve durable state, evidence and decisions across sessions/actor changes.
+10. Close with evidence review, unresolved exceptions, learning, capability updates and next-mission recommendation.
 
 ## Decision rules
-
-- If success cannot be evidenced, the mission is underspecified.
-- If the actor must seek permission for routine decisions, authority is underspecified.
-- If methods are fixed despite changing reality, the object is a workflow, not a Mission.
-- If a mission has no consequence owner, accountability is incomplete.
+If success cannot be evidenced, the Mission is underspecified. If routine decisions require permission, authority is underspecified. If methods cannot change with reality, it is a workflow rather than a Mission. If no consequence owner exists, accountability is incomplete.
 
 ## Output contract
-
-Provide a `MissionSpec` with all twelve fields, plus:
-
-- likely execution plan;
-- actor allocation;
-- evidence stream;
-- exception table;
-- completion logic;
-- learning capture.
-
-## Failure / escalation conditions
-
-Do not manufacture success criteria when the user’s purpose is genuinely ambiguous. Surface the ambiguity.
-
-## Evaluation prompts
-
-- “Turn ‘improve product quality’ into a GO OS mission.”
-- “Our agent gets lost after three days. Redesign the mission runtime.”
-- “Convert this OKR into a mission with authority and evidence.”
+Provide schema-compatible MissionSpec, linked authority requirements, likely execution plan, actor allocation, evidence stream, exception table, completion logic and learning capture.
 
 ## Version notes
-
-v0.1.0 — Initial public alpha.
+- v0.2.1 — Added discovery description and runtime symptom triggers.
+- v0.1.0 — Initial public alpha.
