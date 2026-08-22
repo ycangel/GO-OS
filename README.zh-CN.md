@@ -1,6 +1,6 @@
 # GO OS — Godel Organization Operating System
 
-**版本：** v0.2.2  
+**版本：** v0.3.0  
 **状态：** Public Alpha
 
 ## 组织正在发生什么变化
@@ -23,6 +23,20 @@ GO OS 不是“传统项目管理软件 + Agent”，也与 Go 编程语言或�
 即：
 
 `目的 → 使命 → 权限 → 行动 → 现实 → 证据 → 学习 → 适应`
+
+
+## GO Society：让 GO OS 先运行自己
+
+**GO Society 是 GO OS 背后的自我进化组织，也是 GO OS 的第一个活体样本。**
+
+> **A self-evolving organization for self-evolving organizations.**  
+> **一个推动组织自我进化、并首先进化自身的组织。**
+
+GO Society 使用 GO OS 运行自己的 Mission、约束 Authority、记录 Evidence、暴露 Exception，并向自己提出 Evolution Mission。它的每一次真实运行，都会成为支持或反驳 GO OS 的证据。
+
+- **在线运行版本：**[打开 GO Society Web](https://go-society.angelo-pix.chatgpt.site)
+- **开源 Web 软件：**[`/web`](web)
+- **组织运行章程：**[`docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md`](docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md)
 
 ## 为什么叫 GO？
 
@@ -78,6 +92,10 @@ GO OS 的权威宪法原则以 [`docs/GO_OS_CONSTITUTION_v0.2.2.md`](docs/GO_OS_
 
 使用 `/schemas` 下的 JSON Schema 表达 `MissionSpec`、`AuthorityGrant`、`EvidenceSpec` 和 `ExceptionSpec`，这是走向 GO Runtime 的第一组可执行接口。
 
+### 4. 运行 GO Society Web
+
+部署 [`/web`](web) 下的应用，在可用界面中运行 Mission、Evidence、Exception、Capability 与 Evolution Mission，并形成持久化的组织记忆。
+
 ## 仓库结构
 
 ```text
@@ -107,6 +125,7 @@ GO OS 的权威宪法原则以 [`docs/GO_OS_CONSTITUTION_v0.2.2.md`](docs/GO_OS_
 ├── skills/
 │   ├── go-os-core/
 │   └── ... eight specialist skills
+├── web/                # GO Society 可部署 Web Runtime
 └── tests/
     ├── eval-cases-v0.2.0.yaml
     ├── trigger-evals-v0.2.1.yaml
@@ -121,7 +140,7 @@ GO OS 的权威宪法原则以 [`docs/GO_OS_CONSTITUTION_v0.2.2.md`](docs/GO_OS_
 - `MINOR`：增加新能力、新对象或重大框架扩展。
 - `PATCH`：澄清、测试、案例、一致性修复及非破坏性改进。
 
-当前版本：**v0.2.2**。
+当前版本：**v0.3.0**。
 
 ## 作者
 
@@ -134,5 +153,5 @@ AI Collaborator
 
 ---
 
-**GO — Build organizations that can evolve themselves.**  
-**GO —— 构建能够自我进化的组织。**
+**GO — Reinvent Organizations.**  
+**GO —— 重新发明组织。**

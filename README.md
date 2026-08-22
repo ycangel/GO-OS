@@ -1,6 +1,6 @@
 # GO OS — Godel Organization Operating System
 
-**Version:** v0.2.2  
+**Version:** v0.3.0  
 **Status:** Public Alpha
 
 ## The organizational shift
@@ -18,6 +18,19 @@ GO OS is not a project-management tool with agents attached, and it is not relat
 The core operating loop is:
 
 `Purpose → Mission → Authority → Action → Reality → Evidence → Learning → Adaptation`
+
+
+## GO Society: GO OS running itself
+
+**GO Society is the organization behind GO OS—and its first living reference implementation.**
+
+> **A self-evolving organization for self-evolving organizations.**
+
+GO Society uses GO OS to run its own missions, constrain authority, record evidence, surface exceptions and propose changes to itself. Its operating history is evidence for—or against—the GO OS thesis.
+
+- **Live runtime:** [Open GO Society Web](https://go-society.angelo-pix.chatgpt.site)
+- **Open-source application:** [`/web`](web)
+- **Operating charter:** [`docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md`](docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md)
 
 ## Why “GO”?
 
@@ -73,11 +86,15 @@ Read the Constitution, Framework, architecture and glossary under `/docs`, then 
 
 Use the JSON Schemas under `/schemas` to represent `MissionSpec`, `AuthorityGrant`, `EvidenceSpec` and `ExceptionSpec`.
 
+### 4. Run GO Society Web
+
+Deploy the application under [`/web`](web) to operate Missions, Evidence, Exceptions, Capabilities and Evolution Missions through a working interface with durable organizational memory.
+
 ## Versioning
 
 GO OS uses Semantic Versioning.
 
-Current version: **v0.2.2**.
+Current version: **v0.3.0**.
 
 ## Authors
 
