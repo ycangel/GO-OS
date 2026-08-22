@@ -1,151 +1,42 @@
 ---
 name: ai-native-organization-design
-version: 0.1.0
+description: >
+  Redesign organizations for AI-native operation. Use for org redesign, operating-model transformation, management-layer overload, cross-functional friction, approval congestion, coordination tax, role or department redesign, agent adoption without structural change, or questions about what an AI-native company should look like. Also trigger when managers mostly route information, meetings exist to synchronize status, teams add agents but retain the same hierarchy and handoffs, or AI raises individual productivity without changing decision rights and organizational structure. Do not trigger merely to redraw an org chart or for isolated personal productivity automation.
+version: 0.2.1
 framework: GO OS
 status: public-alpha
 language: multilingual
 license: CC-BY-4.0
 ---
 
-# AI-Native Organization Design v0.1.0
+# AI-Native Organization Design v0.2.1
 
 ## Purpose
-
-Redesign an organization from department / role / workflow dependence toward a mission-driven system of explicit authority, machine agency, reality loops and reusable capabilities.
-
-## Use when
-
-Use for org redesign, operating-model transformation, management-layer overload, cross-functional friction, approval congestion, agent adoption without structural change, or questions about what an AI-native company should look like.
-
-## Do not use when
-
-Do not use merely to redraw an org chart without changing decision rights, feedback loops or mission semantics.
+Redesign an organization from department/role/workflow dependence toward a mission-driven system of explicit authority, machine agency, reality loops and reusable capabilities.
 
 ## Required inputs
+Strategic purpose; recurring missions; current structure/handoffs; decision bottlenecks; systems/tools; AI/agent capabilities; risk/regulatory boundaries; recurring exceptions.
 
-- strategic purpose;
-- major recurring missions;
-- current structure and handoffs;
-- decision bottlenecks;
-- major systems/tools;
-- existing AI/agent capabilities;
-- risk and regulatory boundaries;
-- recurring exceptions.
-
-## Operating principles
-
-- Structure follows recurring missions and reality loops.
-- Human coordination is a cost center unless it creates judgment, accountability or relationship value.
-- A role is not sacred; a capability may be supplied by a person, agent, service or hybrid.
-- Approval should be replaced by boundaries wherever possible.
-- Stable functions may remain, but they should serve missions rather than become ends in themselves.
+## Principles
+Structure follows recurring missions and reality loops. Human coordination is a cost unless it creates judgment, accountability or relationship value. Capabilities may be supplied by people, agents, services or hybrids. Replace approval with boundaries where possible. Stable functions may remain, but should serve missions.
 
 ## Procedure
-
-### 1. Map recurring missions
-
-Identify 5–15 outcome classes the organization must repeatedly achieve.
-
-For each, capture desired state, evidence, cadence and consequence owner.
-
-### 2. Map the current coordination tax
-
-Find:
-
-- handoffs;
-- repeated meetings;
-- manual status collection;
-- duplicated analysis;
-- approval queues;
-- work waiting for a person to route it;
-- knowledge trapped in individuals.
-
-### 3. Separate sovereignty from execution
-
-For each mission, mark:
-
-- human purpose ownership;
-- human consequence ownership;
-- machine-executable work;
-- mandatory human gates.
-
-### 4. Design authority envelopes
-
-Replace case-by-case approvals with bounded authority for humans and agents.
-
-### 5. Design the mission runtime
-
-Define:
-
-- mission trigger;
-- initial state;
-- actor allocation;
-- tools;
-- evidence stream;
-- exception rules;
-- completion criteria;
-- memory update.
-
-### 6. Redesign roles as capability portfolios
-
-Describe people by the missions, judgment domains and capabilities they own—not by a list of static tasks.
-
-### 7. Remove unnecessary layers
-
-A layer is suspect when its main function is forwarding information, assigning tasks already derivable from mission state, checking routine work, or translating between systems that machines can integrate.
-
-### 8. Preserve necessary human institutions
-
-Keep human structures that provide:
-
-- accountability;
-- deep domain judgment;
-- trust and relationship stewardship;
-- value arbitration;
-- frontier creation;
-- safety and legal responsibility.
-
-### 9. Define transition sequence
-
-Do not reorganize everything at once. Start with a high-frequency mission that has:
-
-- measurable outcomes;
-- bounded risk;
-- abundant evidence;
-- significant coordination cost;
-- enough repeatability to learn.
+1. Map 5–15 recurring outcome classes with desired state, evidence, cadence and consequence owner.
+2. Map coordination tax: handoffs, meetings, manual status, duplicated analysis, approval queues, human routing and trapped knowledge.
+3. Separate human sovereignty from machine-executable work.
+4. Design bounded authority envelopes.
+5. Define mission triggers, state, actor allocation, tools, evidence, exceptions, completion and memory updates.
+6. Redesign roles as mission/judgment/capability portfolios.
+7. Challenge layers whose main purpose is routing, assigning derivable work or routine checking.
+8. Preserve institutions that provide accountability, deep judgment, trust, value arbitration, frontier creation, safety or legal responsibility.
+9. Migrate through a bounded, high-frequency mission with measurable outcomes and abundant evidence.
 
 ## Decision rules
-
-- If the redesign changes boxes but not authority, it is not AI-native redesign.
-- If agents are added but humans still route every step, machine agency is cosmetic.
-- If a function has no recurring mission, evidence or capability contribution, challenge its existence.
-- If automation removes a human check, replace it with evidence and exception monitoring, not blind trust.
+Changing boxes without authority is not AI-native redesign. Adding agents while humans route every step is cosmetic agency. Removing a human check requires evidence and exception monitoring, not blind trust.
 
 ## Output contract
-
-Produce:
-
-- current-state organizational diagnosis;
-- recurring mission map;
-- coordination-tax map;
-- target authority model;
-- target human / agent capability map;
-- mission-runtime design;
-- first migration wedge;
-- evidence and risk gates;
-- structural changes to defer until evidence is stronger.
-
-## Failure / escalation conditions
-
-Do not recommend removing accountable human roles where law, safety or irreversible consequences require responsible ownership.
-
-## Evaluation prompts
-
-- “We use AI everywhere but still have nine approval layers.”
-- “Redesign a 200-person company without starting from departments.”
-- “Which management activities should disappear first in an agentic organization?”
+Return current-state diagnosis; recurring mission map; coordination-tax map; target authority and human/agent capability model; mission-runtime design; first migration wedge; evidence/risk gates; changes to defer.
 
 ## Version notes
-
-v0.1.0 — Initial public alpha.
+- v0.2.1 — Added discovery description and symptom-based triggering.
+- v0.1.0 — Initial public alpha.
