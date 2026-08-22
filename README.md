@@ -7,7 +7,9 @@
 
 As machine intelligence becomes abundant, the enterprise is moving beyond the industrial model of fixed hierarchy, static roles, workflows and human coordination. The emerging organization is a **recursive self-evolving system**: humans define purpose, responsibility and value boundaries; machines and agents gain broad agency to act; reality produces evidence; and the organization continuously updates its missions, capabilities, rules and structure.
 
-**GO OS is an open framework, skill system and emerging runtime protocol for this new organizational paradigm.** Its goal is to help organizations become capable of recursively sensing reality, acting with responsible autonomy, learning from evidence and rewriting themselves without losing human sovereignty.
+**GO OS is an open framework, skill system and emerging runtime protocol for this new organizational paradigm.** Its vision is **Reinvent Organizations**. Its mission is **Enable organizations to evolve themselves**.
+
+GO OS helps organizations recursively sense reality, act with responsible autonomy, learn from evidence and rewrite themselves without losing human sovereignty.
 
 GO OS is not a project-management tool with agents attached, and it is not related to the Go programming language or operating-system engineering. It treats the organization itself as a continuously running intelligence system.
 
@@ -61,58 +63,19 @@ This repository ships one semantic gateway and eight specialist skills:
 
 ### 1. Use GO OS as an Agent Skill system
 
-Install or copy `skills/go-os-core/SKILL.md` plus any specialist skills into an Agent Skills-compatible environment. Start with `go-os-core`: its `description` is designed to detect explicit requests, real-world problem signals and latent structural symptoms, then route to the right specialist skill.
+Install or copy `skills/go-os-core/SKILL.md` plus any specialist skills into an Agent Skills-compatible environment.
 
 ### 2. Use GO OS as an organizational design framework
 
-Read the Constitution, Open Framework, architecture and glossary under `/docs`, then apply the runtime loop to a real recurring mission. Start with one bounded, evidence-rich problem rather than redesigning the entire company at once.
+Read the Constitution, Framework, architecture and glossary under `/docs`, then apply the runtime loop to a real recurring mission.
 
 ### 3. Use GO OS as a machine-readable protocol
 
-Use the JSON Schemas under `/schemas` to represent `MissionSpec`, `AuthorityGrant`, `EvidenceSpec` and `ExceptionSpec`. These are the first executable interfaces toward a GO Runtime.
-
-## Repository structure
-
-```text
-.
-├── README.md
-├── README.zh-CN.md
-├── AUTHORS.md
-├── CHANGELOG.md
-├── CONTRIBUTING.md
-├── VERSION
-├── docs/
-│   ├── GO_OS_CONSTITUTION_v0.2.2.md
-│   ├── GO_OS_OPEN_FRAMEWORK_v0.1.0.md
-│   ├── PRINCIPLES_v0.1.0.md
-│   ├── ARCHITECTURE_v0.1.0.md
-│   ├── GLOSSARY_v0.1.0.md
-│   ├── SKILL_SPEC_v0.2.2.md
-│   ├── SKILL_ROUTING_AND_CONTRACTS_v0.2.0.md
-│   ├── RED_TEAM_REVIEW_v0.1.1.md
-│   └── ROADMAP.md
-├── schemas/
-│   ├── mission-spec.schema.json
-│   ├── authority-grant.schema.json
-│   ├── evidence-spec.schema.json
-│   ├── exception-spec.schema.json
-│   └── examples/
-├── skills/
-│   ├── go-os-core/
-│   └── ... eight specialist skills
-└── tests/
-    ├── eval-cases-v0.2.0.yaml
-    ├── trigger-evals-v0.2.1.yaml
-    └── evaluation-prompts.md
-```
+Use the JSON Schemas under `/schemas` to represent `MissionSpec`, `AuthorityGrant`, `EvidenceSpec` and `ExceptionSpec`.
 
 ## Versioning
 
-GO OS uses Semantic Versioning:
-
-- `MAJOR`: changes to core ontology or incompatible skill behavior.
-- `MINOR`: new capabilities, objects or substantial framework extensions.
-- `PATCH`: clarification, testing, examples, consistency fixes and non-breaking improvements.
+GO OS uses Semantic Versioning.
 
 Current version: **v0.2.2**.
 
@@ -129,8 +92,10 @@ See [AUTHORS.md](AUTHORS.md).
 
 ## License
 
-Software and machine-executable support files are released under the Apache License 2.0. Documentation and skill text are released under CC BY 4.0. See `LICENSE` and `LICENSE-CONTENT.md`.
+Software and machine-executable support files are released under the Apache License 2.0. Documentation and skill text are released under CC BY 4.0.
 
 ---
 
-**GO — Build organizations that can evolve themselves.**
+**GO — Reinvent Organizations.**
+
+**GO — 重新发明组织。**
