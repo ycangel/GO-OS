@@ -1,150 +1,128 @@
 ---
 name: go-os-core
-version: 0.1.0
+version: 0.2.0
 framework: GO OS
 status: public-alpha
 language: multilingual
 license: CC-BY-4.0
 ---
 
-# GO OS Core v0.1.0
+# GO OS Core v0.2.0
 
 ## Purpose
 
-Use GO OS as the primary operating model for AI-native organization problems. Diagnose the problem at the correct layer, preserve human sovereignty, maximize responsible machine agency, and route to the most relevant GO OS capability skill.
+Use GO OS as an operating model for AI-native organization problems. Diagnose the correct layer, preserve effective Human Sovereignty, expand bounded Machine Agency, make organizational action falsifiable, and route to the relevant specialist skill.
 
-## Use when
+GO OS itself is a hypothesis. Do not force it onto a domain where its structure adds more coordination cost than learning or outcome value.
 
-Use this skill when the user is asking about:
+## Trigger
 
-- AI-native organization design;
-- enterprise operating models;
-- human–AI division of responsibility;
-- agent autonomy and approval design;
-- mission-oriented management;
-- organizational learning and feedback loops;
-- strategy under high uncertainty;
-- AI-native business models;
-- talent and human value in an AI-rich environment;
-- AI-native maturity or transformation.
+Use when the problem concerns AI-native organization design, human–machine authority, agent autonomy, mission-oriented execution, organizational learning, adaptive strategy, AI-native business compounding, human roles, or organization-wide AI-native maturity.
 
-## Do not use when
+Do not use for narrow technical questions without a meaningful organization, agency, strategy, learning, or business-design dimension.
 
-Do not force GO OS onto a narrow technical question that does not involve organizational design, agency, strategy, learning or business architecture.
+## Input contract
 
-## Required inputs
+Collect or infer without inventing:
 
-Collect or infer, without inventing:
-
-- desired outcome or purpose;
+- purpose / desired outcome;
 - current state;
-- relevant actors;
-- current decision rights;
-- evidence available;
-- major constraints;
-- material risks;
-- whether decisions are reversible.
+- relevant actors and accountable human;
+- current decision and resource rights;
+- available evidence and its quality;
+- constraints, material risks and reversibility;
+- assumptions and material unknowns.
 
-If information is missing, make assumptions explicit and keep recommendations provisional.
+Separate facts, inferences, assumptions and unknowns. Ask only when missing information would materially change the decision.
 
-## Core principles
+## Constitutional principles
 
-1. Human Sovereignty.
-2. Machine Agency.
-3. Reality as Final Arbiter.
-4. Mission over Task.
-5. Explicit Authority.
-6. Evidence before opinion.
-7. Exceptions are first-class information.
-8. Learning should compound.
-9. Human attention moves toward ambiguity and consequence ownership.
-10. The organization must be able to rewrite itself.
+1. **Human Sovereignty** — humans own purpose, value arbitration, legitimate authority, major resource commitments and responsibility for irreversible consequences.
+2. **Effective control** — sovereignty is invalid if the accountable human lacks observability, comprehension or intervention rights.
+3. **Machine Agency** — machines plan and act autonomously inside explicit, bounded, revocable authority.
+4. **No self-expansion** — an agent cannot autonomously expand its own authority or remove constitutional human control.
+5. **Reality as Final Arbiter** — models and metrics are representations; evidence must remain challengeable.
+6. **Mission over Task** — optimize desired state transitions, not activity volume.
+7. **Progressive formalization** — governance rigor scales with consequence and irreversibility.
+8. **Exceptions are first-class** — recurrence must trigger structural learning, not endless escalation.
+9. **Learning means convergence** — iteration speed without evidence-correcting convergence is thrashing.
+10. **Self-revision is bounded** — operational rules may evolve faster than constitutional rules.
+11. **Aggregate exposure matters** — multi-agent systems are governed at system level, not only per action.
+12. **GO OS is falsifiable** — every intervention states evidence that would show it is wrong.
 
-## Routing procedure
-
-### Step 1 — Identify the real object
-
-Ask: is the user actually dealing with a task problem, or with a deeper problem of mission, authority, state, evidence, exception, capability or memory?
-
-### Step 2 — Classify the problem
-
-Route primarily to one of the following:
-
-- organization structure → `ai-native-organization-design`
-- human / machine authority → `human-sovereignty-machine-agency`
-- turning intent into execution → `mission-organizational-runtime`
-- slow feedback / repeated mistakes → `reality-loop-organizational-learning`
-- strategy under uncertainty → `vision-driven-strategy`
-- business model / moat / compounding → `intelligent-compounding-ai-native-business`
-- people / roles / performance → `ai-native-talent-human-value`
-- whole-organization assessment → `ai-native-organization-diagnostic`
-
-Use more than one skill only when the problem genuinely crosses layers.
-
-### Step 3 — Reframe in GO OS terms
-
-Translate the situation into:
+## Core runtime
 
 `Purpose → Mission → Authority → Action → Reality → Evidence → Learning → Adaptation`
 
-### Step 4 — Protect sovereignty
+### Core machine-readable objects
 
-Identify:
+- `MissionSpec` — desired state transition, purpose, accountable human, evidence, constraints and recompile conditions.
+- `AuthorityGrant` — grantor, grantee, allowed/prohibited actions, resource and aggregate limits, evidence obligations, expiry/revocation and escalation.
+- `EvidenceSpec` — observation, provenance, freshness, fidelity, confidence, contradictions and decision impact.
+- `ExceptionSpec` — out-of-envelope condition, severity, authority status, containment, disposition, recurrence and learning target.
 
-- who owns the consequence;
-- which value judgments cannot be delegated;
-- what resource commitments exceed delegated limits;
-- what actions are irreversible.
+Schemas live in `/schemas`.
 
-### Step 5 — Expand machine agency
+## Routing
 
-Identify where humans are acting as unnecessary routers, coordinators, transcribers, checkers or approvers. Move these activities to machines when capability and risk permit.
+Choose one primary skill by the object that must change:
 
-### Step 6 — Define evidence
+- structure / coordination / operating model → `ai-native-organization-design`
+- decision rights / autonomy / approval / consequence ownership → `human-sovereignty-machine-agency`
+- intent → autonomous verifiable execution → `mission-organizational-runtime`
+- feedback latency / evidence quality / repeated mistakes → `reality-loop-organizational-learning`
+- strategic uncertainty / hypothesis portfolio / adaptation → `vision-driven-strategy`
+- moat / economics / self-reinforcing value loops → `intelligent-compounding-ai-native-business`
+- human roles / development / evaluation → `ai-native-talent-human-value`
+- whole-organization maturity / transformation priorities → `ai-native-organization-diagnostic`
 
-Specify what reality would have to show for the recommendation to be judged successful or wrong.
+See `/docs/SKILL_ROUTING_AND_CONTRACTS_v0.2.0.md` for cross-skill contracts.
 
-### Step 7 — Close the loop
+## Procedure
 
-End with how the system will learn from execution and how the next mission, policy or capability should change.
+1. **Orient** — distinguish facts, inferences, assumptions and unknowns.
+2. **Find the real object** — Mission, Authority, State, Evidence, Exception, Capability or Organizational Memory.
+3. **Test whether GO OS is useful** — do not add formalism where it creates no meaningful value.
+4. **Protect sovereignty** — identify consequence owner, constitutional boundary, reversibility and effective-control requirements.
+5. **Expand agency** — remove unnecessary human routing inside a verified operating envelope.
+6. **Bound exposure** — define per-action and aggregate limits, especially across multiple agents.
+7. **Define reality tests** — specify supporting and disconfirming evidence; never equate a single metric with reality.
+8. **Handle exceptions** — contain immediate risk; convert recurrence into structural learning.
+9. **Update memory/capability** — version, evaluate, supersede or retire what the organization learned.
+10. **Recompile** — change the next mission, authority, capability, policy, structure or strategy when evidence warrants it.
 
-## Decision rules
+## Progressive formalization
 
-- If the organization is optimizing task throughput without clarifying desired state, reframe as a Mission problem.
-- If every agent action requires human approval, inspect Authority before blaming model capability.
-- If the same exception recurs, treat it as a capability or policy problem, not an isolated incident.
-- If strategy is debated without disconfirming evidence, convert it into a falsifiable hypothesis.
-- If AI improves efficiency but creates no reinforcing learning loop, do not call the business AI-native solely because it uses AI.
-- If a recommendation increases autonomy without clarifying accountability, it is incomplete.
+- Low consequence + reversible: minimal structure and safe inferred defaults.
+- Medium consequence: explicit `MissionSpec` + `AuthorityGrant`.
+- High/critical or irreversible: explicit `MissionSpec` + `AuthorityGrant` + `EvidenceSpec` + `ExceptionSpec` and human ratification.
 
 ## Output contract
 
-Default output:
+1. **GO OS diagnosis** — primary failing layer/object.
+2. **Target state** — intended organizational state transition.
+3. **Human sovereignty boundary** — accountable human and non-delegable decisions.
+4. **Machine agency design** — autonomy, limits, revocation and escalation.
+5. **Runtime objects** — affected Mission / Authority / State / Evidence / Exception / Capability / Memory; emit schema-compatible drafts when execution is requested.
+6. **Reality test** — evidence supporting the design.
+7. **Disconfirming evidence** — what would show the design is wrong.
+8. **Next loop** — how execution updates future behavior.
 
-1. **GO OS diagnosis** — what layer is actually failing.
-2. **Target state** — the intended organizational state.
-3. **Human sovereignty boundary** — what remains human-owned.
-4. **Machine agency design** — what can become autonomous.
-5. **Core objects** — Mission / Authority / State / Evidence / Exception / Capability / Memory affected.
-6. **Reality test** — evidence that would confirm or falsify the design.
-7. **Next loop** — how learning changes future execution.
+## Evaluation
 
-## Failure / escalation conditions
+Pass only if the response:
 
-Escalate uncertainty instead of pretending confidence when:
+- identifies the correct primary layer;
+- does not confuse sovereignty with approval volume;
+- does not confuse metrics with reality;
+- bounds aggregate autonomy;
+- includes disconfirming evidence;
+- does not optimize maturity level for its own sake;
+- can say “GO OS is unnecessary here.”
 
-- legal or safety consequences are material and facts are missing;
-- authority ownership is disputed;
-- evidence is contradictory;
-- the action is irreversible and downside is not bounded;
-- the desired purpose itself is unclear.
-
-## Evaluation prompts
-
-- “We have twenty agents but managers still coordinate everything. What is wrong?”
-- “Should our AI approve refunds automatically?”
-- “Our strategy keeps changing. How do we avoid chaos without reverting to annual planning?”
+Adversarial cases: `/tests/eval-cases-v0.2.0.yaml`.
 
 ## Version notes
 
-v0.1.0 — Initial public alpha.
+- v0.2.0 — Red-team hardened; explicit contracts, falsifiability, progressive formalization, schema interface and cross-skill routing.
+- v0.1.0 — Initial public alpha.
