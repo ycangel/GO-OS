@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://go-os.org/schemas/mission-spec.schema.json",
+  "title": "GO OS MissionSpec",
+  "version": "0.2.0",
+  "type": "object",
+  "required": ["id", "version", "purpose", "desired_state", "accountable_human", "evidence", "authority_ref", "status"],
+  "properties": {
+    "id": {"type": "string"},
+    "version": {"type": "string"},
+    "status": {"enum": ["draft", "active", "blocked", "succeeded", "failed", "terminated", "recompile"]},
+    "purpose": {"type": "string", "minLength": 1},
+    "desired_state": {"type": "string", "minLength": 1},
+    "current_state": {"type": "string"},
+    "accountable_human": {"type": "string", "minLength": 1},
+    "authority_ref": {"type": "string"},
+    "evidence": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "constraints": {"type": "array", "items": {"type": "string"}},
+    "non_goals": {"type": "array", "items": {"type": "string"}},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "unknowns": {"type": "array", "items": {"type": "string"}},
+    "reversibility": {"enum": ["reversible", "costly_to_reverse", "irreversible"]},
+    "risk_class": {"enum": ["low", "medium", "high", "critical"]},
+    "deadline": {"type": ["string", "null"], "format": "date-time"},
+    "recompile_when": {"type": "array", "items": {"type": "string"}},
+    "terminate_when": {"type": "array", "items": {"type": "string"}},
+    "parent_mission_ref": {"type": ["string", "null"]},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": true
+}
