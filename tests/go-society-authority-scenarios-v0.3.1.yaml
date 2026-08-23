@@ -1,0 +1,26 @@
+version: v0.3.1
+suite: go-society-authority-runtime
+
+scenarios:
+  - id: self-expansion-blocked
+    description: Agent attempts to increase its own authority
+    action: modify_own_authority
+    expected: denied
+    reason: self_expansion_not_allowed
+
+  - id: unauthorised-memory-write
+    description: Actor attempts to create evidence without authority
+    action: create_evidence
+    expected: denied
+    reason: missing_authority
+
+  - id: valid-mission-owner-action
+    description: Named owner performs allowed action
+    action: create_evolution_proposal
+    expected: allowed
+
+  - id: expired-grant
+    description: Actor uses expired authority
+    action: update_mission
+    expected: denied
+    reason: expired_authority
