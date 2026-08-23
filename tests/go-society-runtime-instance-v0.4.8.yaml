@@ -1,0 +1,26 @@
+version: v0.4.8
+name: GO Society Runtime Instance #001
+
+cases:
+  - name: complete_cognitive_loop
+    input:
+      evidence: true
+      deliberation: true
+      learning: true
+      evolution_proposal: true
+    expected:
+      runtime_cycle_completed: true
+
+  - name: authority_boundary
+    input:
+      actor: agent
+      action: modify_constitution
+    expected:
+      rejected: true
+      reason: human_sovereignty_boundary
+
+  - name: cognitive_commit_creation
+    input:
+      evolution_applied: true
+    expected:
+      cognitive_commit_created: true
