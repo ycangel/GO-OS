@@ -1,0 +1,33 @@
+version: 0.3.1
+name: evidence-enforcement
+
+scenarios:
+  - id: missing-provenance
+    input:
+      observation: "Customer prefers this product"
+      source: "agent-memory"
+      provenance: ""
+    expected:
+      result: rejected
+      reason: provenance-required
+
+  - id: contradictory-evidence
+    input:
+      observation: "Premium product conversion increased"
+      source: "sales-data"
+      provenance: "verified-system"
+      confidence: 80
+      contradicts:
+        - "Customers only choose lowest price"
+    expected:
+      result: accepted-with-review
+      learning_signal: true
+
+  - id: high-confidence-evidence
+    input:
+      observation: "Operational metric improved after experiment"
+      source: "production-system"
+      provenance: "verified-system"
+      confidence: 90
+    expected:
+      result: accepted
