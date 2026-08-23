@@ -8,9 +8,14 @@ export default async function Home() {
 
   return (
     <RuntimeDashboard
-      actor={
+      viewer={
         user
-          ? { displayName: user.displayName, email: user.email }
+          ? {
+              displayName: user.displayName,
+              role: "reader",
+              canWrite: false,
+              canInvite: false,
+            }
           : null
       }
     />
