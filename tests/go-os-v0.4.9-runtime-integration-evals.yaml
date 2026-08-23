@@ -1,0 +1,29 @@
+version: 0.4.9
+name: GO OS Runtime Integration Evaluation
+
+cases:
+  - name: complete_cognitive_loop
+    input:
+      evidence: true
+      cognitive_event: true
+      deliberation: true
+      learning_record: true
+      evolution_proposal: true
+    expected:
+      runtime_cycle_completed: true
+
+  - name: authority_boundary
+    input:
+      actor: agent
+      action: modify_constitution
+    expected:
+      rejected: true
+      reason: human_sovereignty_boundary
+
+  - name: cognitive_repository_traceability
+    input:
+      cognitive_commit: true
+    expected:
+      evidence_refs: true
+      decision_owner: true
+      evolution_history: true
