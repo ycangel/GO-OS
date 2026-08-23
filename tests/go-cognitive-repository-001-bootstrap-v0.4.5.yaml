@@ -1,0 +1,17 @@
+version: v0.4.5
+name: GO Cognitive Repository #001 Bootstrap Evaluation
+
+cases:
+  - name: repository_has_identity
+    expected:
+      identity: true
+
+  - name: evolution_history_is_traceable
+    expected:
+      cognitive_commits_required: true
+      decisions_traceable: true
+
+  - name: self_application
+    scenario: GO OS records its own evolution
+    expected:
+      self_operating_loop: true
