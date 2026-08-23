@@ -1,0 +1,25 @@
+version: 0.3.4
+suite: headless-core-runtime
+
+cases:
+  - id: interface-independence
+    input:
+      interface: chatgpt
+      action: create_cognitive_event
+    expected:
+      core_runtime_receives_event: true
+
+  - id: vendor-portability
+    input:
+      interface: deepseek
+      action: continue_deliberation
+    expected:
+      organizational_context_preserved: true
+
+  - id: interface-not-authority
+    input:
+      interface: external_ai
+      action: modify_constitution
+    expected:
+      rejected: true
+      reason: authority_boundary
