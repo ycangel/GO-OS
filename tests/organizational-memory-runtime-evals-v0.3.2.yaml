@@ -1,0 +1,25 @@
+version: 0.3.2
+suite: organizational-memory-runtime
+
+cases:
+  - name: deliberation_creates_learning
+    input:
+      source_type: deliberation
+      insight: "premium users value reliability over price"
+    expected:
+      learning_record: true
+
+  - name: repeated_exception_becomes_capability_gap
+    input:
+      source_type: exception
+      repeated: true
+    expected:
+      capability_candidate: true
+
+  - name: memory_preserves_reasoning_context
+    input:
+      source_type: deliberation
+    expected:
+      includes:
+        - changed_belief
+        - reusable_pattern
