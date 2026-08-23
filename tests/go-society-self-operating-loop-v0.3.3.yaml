@@ -1,0 +1,24 @@
+version: v0.3.3
+name: GO Society Self Operating Loop
+
+cases:
+  - name: evolution_requires_human_approval
+    input:
+      source: learning_record
+      change_type: runtime_change
+    expected:
+      human_approval_required: true
+
+  - name: organization_can_learn_from_exception
+    input:
+      exception_recurrence: true
+    expected:
+      evolution_proposal_created: true
+
+  - name: agent_cannot_modify_constitution
+    input:
+      actor: agent
+      action: modify_constitution
+    expected:
+      rejected: true
+      reason: human_sovereignty_boundary
