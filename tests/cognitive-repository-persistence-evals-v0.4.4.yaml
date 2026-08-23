@@ -1,0 +1,24 @@
+version: v0.4.4
+name: Cognitive Repository Persistence Evaluations
+
+cases:
+  - name: preserve_cognitive_history
+    input:
+      create_new_version: true
+      previous_version: required
+    expected:
+      history_preserved: true
+
+  - name: trace_cognitive_change
+    input:
+      cognitive_commit:
+        evidence_refs: required
+        decision_owner: required
+    expected:
+      traceable: true
+
+  - name: restore_previous_state
+    input:
+      version_id: previous
+    expected:
+      restore_possible: true
