@@ -1,0 +1,24 @@
+version: v0.4.3
+name: cognitive-repository-api-runtime-evals
+
+cases:
+  - name: create cognitive commit requires context
+    input:
+      commit_without_evidence: true
+    expected:
+      rejected: true
+
+  - name: compare cognitive versions
+    input:
+      version_a: true
+      version_b: true
+    expected:
+      cognitive_diff_created: true
+
+  - name: merge cognitive branches requires review
+    input:
+      branch_a: true
+      branch_b: true
+      irreversible_change: true
+    expected:
+      human_review_required: true
