@@ -1,0 +1,25 @@
+version: v0.3.3
+
+cases:
+  - name: agent_cannot_modify_constitution
+    input:
+      change_type: constitution_update
+      actor: agent
+    expected:
+      status: rejected
+      reason: human_sovereignty_boundary
+
+  - name: learning_creates_evolution_candidate
+    input:
+      source: learning_record
+      repeated_exception: true
+    expected:
+      evolution_candidate: true
+
+  - name: approved_reversible_change
+    input:
+      reversibility: reversible
+      authority: granted
+      human_approval: true
+    expected:
+      status: approved
