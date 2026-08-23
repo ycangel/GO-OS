@@ -1,0 +1,21 @@
+version: v0.4.7
+name: GO Cognitive Repository Genesis Evaluation
+
+cases:
+  - name: repository_identity_exists
+    checks:
+      - identity
+      - purpose
+    expected: pass
+
+  - name: cognitive_commit_traceability
+    checks:
+      - trigger
+      - evidence
+      - decision_owner
+      - learning_outcome
+    expected: pass
+
+  - name: self_application
+    description: GO OS records its own evolution using GO OS principles
+    expected: pass
