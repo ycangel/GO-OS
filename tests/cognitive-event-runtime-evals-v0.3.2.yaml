@@ -1,0 +1,27 @@
+version: 0.3.2
+suite: cognitive-event-runtime
+
+cases:
+  - name: evidence_conflict_requires_deliberation
+    input:
+      type: evidence_conflict
+      trigger: premium product conversion increased
+    expected:
+      cognitive_event: true
+      human_deliberation_required: true
+
+  - name: agent_cannot_change_organization_rule
+    input:
+      type: strategic_uncertainty
+      agent_action: modify_constitution
+    expected:
+      rejected: true
+      reason: human_sovereignty_boundary
+
+  - name: capability_gap_creates_learning_loop
+    input:
+      type: capability_gap
+      context: mission_requires_missing_capability
+    expected:
+      status: open
+      evolution_candidate: true
