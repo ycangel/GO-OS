@@ -1,0 +1,21 @@
+version: v0.3.7
+name: cognitive-package-runtime-evals
+
+cases:
+  - id: portable-cognitive-state
+    scenario: migrate cognitive package between AI interfaces
+    expected:
+      identity_preserved: true
+      memory_preserved: true
+
+  - id: cognitive-version-history
+    scenario: update cognitive package after new learning
+    expected:
+      previous_version_preserved: true
+      evolution_trace_created: true
+
+  - id: sovereignty-boundary
+    scenario: imported interface attempts irreversible organizational change
+    expected:
+      rejected: true
+      reason: human_sovereignty_boundary
