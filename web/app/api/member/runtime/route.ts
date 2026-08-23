@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, isNotNull } from "drizzle-orm";
+import { and, desc, eq, inArray, isNotNull, or } from "drizzle-orm";
 import { getDb } from "../../../../db";
 import {
   capabilities,
@@ -31,7 +31,10 @@ export async function GET() {
     const membershipRows = identity.member.isOwner
       ? []
       : await db
-          .select({ missionId: missionMemberships.missionId })
+          .select({
+            missionId: missionMemberships.missionId,
+            canReview: missionMemberships.canReview,
+          })
           .from(missionMemberships)
           .where(
             and(
@@ -40,8 +43,34 @@ export async function GET() {
             ),
           );
     const missionIds = membershipRows.map((row) => row.missionId);
+    const reviewMissionIds = membershipRows
+      .filter((row) => row.canReview)
+      .map((row) => row.missionId);
 
-    const missionRows = await db.select().from(missions).orderBy(missions.id);
+    const missionProjection = {
+      id: missions.id,
+      slug: missions.slug,
+      title: missions.title,
+      purpose: missions.purpose,
+      status: missions.status,
+      authoritySummary: missions.authoritySummary,
+      successSignal: missions.successSignal,
+      nextDecision: missions.nextDecision,
+      confidence: missions.confidence,
+      updatedAt: missions.updatedAt,
+    };
+    const missionRows = identity.member.isOwner
+      ? await db
+          .select({ ...missionProjection, owner: missions.owner })
+          .from(missions)
+          .orderBy(missions.id)
+      : missionIds.length
+        ? await db
+            .select({ ...missionProjection, owner: missions.publicOwnerLabel })
+            .from(missions)
+            .where(inArray(missions.id, missionIds))
+            .orderBy(missions.id)
+        : [];
     const caseRows = await db
       .select({
         id: publicCases.id,
@@ -93,7 +122,15 @@ export async function GET() {
             .where(
               identity.member.isOwner
                 ? undefined
-                : inArray(exceptions.missionId, missionIds),
+                : and(
+                    inArray(exceptions.missionId, missionIds),
+                    reviewMissionIds.length
+                      ? or(
+                          eq(exceptions.createdBy, `member:${identity.member.id}`),
+                          inArray(exceptions.missionId, reviewMissionIds),
+                        )
+                      : eq(exceptions.createdBy, `member:${identity.member.id}`),
+                  ),
             )
             .orderBy(desc(exceptions.createdAt), desc(exceptions.id))
             .limit(30)
@@ -112,9 +149,7 @@ export async function GET() {
       .from(capabilities)
       .orderBy(desc(capabilities.evidenceCount), capabilities.name);
 
-    const fieldRows =
-      identity.member.isOwner || missionIds.length
-        ? await db
+    const fieldRows = await db
             .select({
               id: fieldRecords.id,
               missionId: fieldRecords.missionId,
@@ -133,11 +168,18 @@ export async function GET() {
             .where(
               identity.member.isOwner
                 ? undefined
-                : inArray(fieldRecords.missionId, missionIds),
+                : and(
+                    inArray(fieldRecords.missionId, missionIds),
+                    reviewMissionIds.length
+                      ? or(
+                          eq(fieldRecords.createdByMemberId, identity.member.id),
+                          inArray(fieldRecords.missionId, reviewMissionIds),
+                        )
+                      : eq(fieldRecords.createdByMemberId, identity.member.id),
+                  ),
             )
             .orderBy(desc(fieldRecords.createdAt), desc(fieldRecords.id))
-            .limit(100)
-        : [];
+            .limit(100);
 
     const teamRows = await db
       .select({

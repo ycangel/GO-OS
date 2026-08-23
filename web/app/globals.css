@@ -52,6 +52,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .source-icon { display: grid; place-items: center; width: 31px; height: 31px; background: var(--ink); color: var(--acid); font: 700 10px ui-monospace, monospace; }
 .source-card strong { display: block; font-size: 11px; }
 .source-card a { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; text-decoration: none; }
+.source-card small { display: block; margin-top: 9px; color: #8d8f86; font-size: 8px; line-height: 1.45; }
 .privacy-link { display: flex; gap: 10px; align-items: flex-start; }
 .privacy-link strong { display: block; font-size: 11px; }
 .privacy-link a { display: block; margin-top: 6px; color: var(--blue); font-size: 10px; text-decoration: none; }

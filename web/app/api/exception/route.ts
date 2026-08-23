@@ -20,14 +20,6 @@ export async function POST(request: Request) {
     return Response.json({ error: "Only approved members can raise exceptions." }, { status: 403 });
   }
 
-  const authority = await requireOrganizationalMutation(
-    `member:${identity.member.id}`,
-    "create_exception",
-  );
-  if (!authority.allowed) {
-    return Response.json({ error: authority.reason }, { status: 403 });
-  }
-
   try {
     const payload = (await request.json()) as Record<string, unknown>;
     const missionId = Number(payload.missionId);
@@ -42,6 +34,15 @@ export async function POST(request: Request) {
     }
     if (!(await canRecordMission(identity.member, missionId))) {
       return Response.json({ error: "This member cannot write to that mission." }, { status: 403 });
+    }
+
+    const authority = await requireOrganizationalMutation(
+      `member:${identity.member.id}`,
+      "create_exception",
+      `mission:${missionId}`,
+    );
+    if (!authority.allowed) {
+      return Response.json({ error: authority.reason }, { status: 403 });
     }
 
     const db = getDb();

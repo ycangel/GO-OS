@@ -1,5 +1,6 @@
 import { getDb } from "../../../db";
 import { fieldRecords } from "../../../db/schema";
+import { requireOrganizationalMutation } from "../../../runtime/api-constitutional-guard";
 import {
   canRecordMission,
   getRuntimeIdentity,
@@ -67,6 +68,15 @@ export async function POST(request: Request) {
         { error: "This member is not authorized to record for that mission." },
         { status: 403 },
       );
+    }
+
+    const authority = await requireOrganizationalMutation(
+      `member:${identity.member.id}`,
+      "create_evidence",
+      `mission:${missionId}`,
+    );
+    if (!authority.allowed) {
+      return Response.json({ error: authority.reason }, { status: 403 });
     }
 
     if (

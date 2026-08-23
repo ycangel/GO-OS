@@ -1,0 +1,2 @@
+DROP INDEX `authority_grants_grantee_active_unique`;--> statement-breakpoint
+CREATE UNIQUE INDEX `authority_grants_grantee_active_unique` ON `authority_grants` (`grantee`) WHERE "authority_grants"."revoked_at" IS NULL;

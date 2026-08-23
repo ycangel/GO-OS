@@ -255,7 +255,7 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
           <span className="brand-mark">GO<span>/</span></span>
           <span>
             <strong>GO Society</strong>
-            <small>Living on GO OS</small>
+            <small>Reference instance · v0.5</small>
           </span>
         </a>
 
@@ -316,10 +316,17 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
           <section className="rail-block source-card">
             <span className="source-icon">&lt;/&gt;</span>
             <div>
-              <strong>Open source runtime</strong>
+              <strong>Open-source project</strong>
               <a href="https://github.com/ycangel/GO-OS" target="_blank" rel="noreferrer">
                 ycangel/GO-OS ↗
               </a>
+              <a href="https://github.com/ycangel/GO-OS/blob/main/docs/INDEX.md" target="_blank" rel="noreferrer">
+                v0.5 docs ↗
+              </a>
+              <a href="https://github.com/ycangel/GO-OS/blob/main/docs/EVALUATION_AND_RED_TEAM_v0.5.0.md" target="_blank" rel="noreferrer">
+                Evaluation &amp; red team ↗
+              </a>
+              <small>Foundation Release / 奠基版本 is a software milestone, not a legal entity.</small>
             </div>
           </section>
         </aside>
@@ -330,9 +337,11 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
               <p className="eyebrow">Sovereign brief · 001</p>
               <h1>A self-evolving organization<br />for self-evolving organizations.</h1>
               <p className="brief-copy">
-                GO Society is the organization behind GO OS—and its first living reference
-                implementation. Public evidence here is a deliberately separate,
-                de-identified artifact derived from private reality traces.
+                GO Society is GO OS&apos;s first self-application reference instance. This
+                alpha surface persists selected runtime objects; CognitiveEvent,
+                Deliberation, Learning and CognitiveVersion remain incomplete as one
+                durable end-to-end loop. Public evidence here is a deliberately separate,
+                human-approved artifact derived from private records.
               </p>
             </div>
             <div className="brief-state">
@@ -562,8 +571,9 @@ function EvidenceView({ evidence, loading, isMember, onCompose }: { evidence: Pu
     <section className="panel full-panel">
       <PanelHeader eyebrow="Published evidence ledger" title="De-identified, consent-scoped, human-approved" action={isMember ? "Private intake" : undefined} onAction={onCompose} />
       <div className="ledger-notice">
-        This API contains no raw interview notes, personal names, company names, contact
-        details, recordings or private quotations.
+        The public <code>/api/runtime</code> payload contains no raw interview notes,
+        personal names, company names, contact details, recordings or private quotations.
+        The authenticated member API has a separate private-data boundary.
       </div>
       {loading ? <Skeleton rows={4} /> : evidence.length ? <div className="ledger">
         {evidence.map((item) => (

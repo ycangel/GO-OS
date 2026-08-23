@@ -1,0 +1,29 @@
+release: 0.5.0
+release_name_en: Foundation Release
+release_name_zh: 奠基版本
+legal_entity_implied: false
+status: normative-inventory
+behavioral_vectors_artifact_status: declared
+behavioral_vectors_execution_status: not_executed
+
+version_policy:
+  repository_release: 0.5.0
+  preserve_historical_fixture_versions: true
+  historical_fixture_status: reference
+  v0_5_expectation_status: normative-expectation
+
+canonical_entries:
+  release_gate: go-os-v0.5.0-release-gate-evals.yaml
+  red_team: go-os-v0.5.0-red-team-evals.yaml
+  static_structure_check: validate_repository.rb
+  json_schema_check: validate_json_schemas.py
+
+historical_suite_patterns:
+  - tests/*v0.2*.yaml
+  - tests/*v0.3*.yaml
+  - tests/*v0.4*.yaml
+
+limitations:
+  - YAML vectors require a model or runtime harness to produce behavioral results.
+  - No pass status may be inferred from a fixture filename or expected block.
+  - Static checks do not establish production readiness or organizational outcomes.

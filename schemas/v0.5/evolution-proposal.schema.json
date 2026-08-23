@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://go-os.org/schemas/v0.5/evolution-proposal.schema.json",
+  "title": "GO OS EvolutionProposal",
+  "description": "Normative v0.5 contract for a candidate organizational change. Creation of a proposal is not approval or application of the change.",
+  "version": "0.5.0",
+  "x-go-os-status": "normative",
+  "type": "object",
+  "required": [
+    "id",
+    "source_learning_ref",
+    "target",
+    "change_type",
+    "current_state",
+    "proposed_state",
+    "rationale",
+    "evidence_refs",
+    "disconfirming_conditions",
+    "risk_class",
+    "reversibility",
+    "authority_ref",
+    "accountable_human",
+    "is_candidate",
+    "approval_status",
+    "created_at"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "source_learning_ref": {"type": "string", "minLength": 1},
+    "target": {"type": "string", "minLength": 1},
+    "change_type": {"enum": ["mission", "authority", "policy", "capability", "architecture", "strategy", "memory", "constitution"]},
+    "current_state": {"type": "string", "minLength": 1},
+    "proposed_state": {"type": "string", "minLength": 1},
+    "rationale": {"type": "string", "minLength": 1},
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "counter_evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "disconfirming_conditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "risk_class": {"enum": ["low", "medium", "high", "critical"]},
+    "reversibility": {"enum": ["reversible", "partially_reversible", "irreversible"]},
+    "authority_ref": {"type": "string", "minLength": 1},
+    "accountable_human": {"type": "string", "minLength": 1},
+    "is_candidate": {"const": true},
+    "approval_status": {"enum": ["pending_human_review", "approved", "rejected", "withdrawn"]},
+    "decision_owner": {"type": ["string", "null"]},
+    "decision_owner_type": {"type": ["string", "null"]},
+    "decision_rationale": {"type": ["string", "null"]},
+    "decided_at": {"type": ["string", "null"], "format": "date-time"},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"approval_status": {"enum": ["approved", "rejected"]}}, "required": ["approval_status"]},
+      "then": {
+        "required": ["decision_owner", "decision_owner_type", "decision_rationale", "decided_at"],
+        "properties": {
+          "decision_owner": {"type": "string", "minLength": 1},
+          "decision_owner_type": {"const": "human"},
+          "decision_rationale": {"type": "string", "minLength": 1},
+          "decided_at": {"type": "string", "format": "date-time"}
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

@@ -3,6 +3,10 @@
 > **Vision: Reinvent Organizations.**  
 > **Mission: Enable organizations to evolve themselves.**
 
+**Current release:** `v0.5.0` — **Foundation Release**
+
+[中文](README.zh-CN.md) · [Documentation](docs/INDEX.md) · [Quick Start](docs/QUICK_START.md) · [Release Notes](docs/RELEASE_NOTES_v0.5.0.md)
+
 **GO OS (Godel Organization Operating System)** is an open organizational intelligence operating system for building **self-evolving organizations**.
 
 AI is making intelligence abundant. The next transformation is not simply putting copilots into old workflows. It is changing the organization itself: how it senses reality, forms beliefs, allocates authority, acts, learns, remembers, and safely rewrites its own structure.
@@ -14,6 +18,8 @@ GO OS asks one foundational question:
 Its answer is not “add more agents.” It is to build an organizational runtime in which humans retain sovereignty over purpose, responsibility, values and irreversible consequences; machines gain meaningful agency within explicit authority; reality continuously produces evidence; and learning can change the organization itself.
 
 **Human Sovereignty × Machine Agency × Reality as Final Arbiter**
+
+“Foundation Release” is a software release-stage name: it means an architectural baseline on which later releases can build. It does **not** assert the existence of a “GO Foundation” or any registered foundation or other legal entity.
 
 ---
 
@@ -67,6 +73,21 @@ A task says what someone should do next. A self-evolving organization needs to k
 - What part of the organization should change?
 
 GO OS turns those questions into runtime objects and executable boundaries.
+
+---
+
+## Canonical v0.5 documentation
+
+[`docs/INDEX.md`](docs/INDEX.md) is the canonical documentation entry point for v0.5. Earlier versioned documents remain in the repository as design history; they are authoritative for the current release only when the index explicitly identifies them as canonical.
+
+| Start with | Use it for |
+|---|---|
+| [Quick Start](docs/QUICK_START.md) | Run a small, bounded GO OS loop and inspect the reference assets. |
+| [Architecture Overview](docs/ARCHITECTURE_OVERVIEW.md) | Understand the layers, core objects, enforcement boundaries and current implementation coverage. |
+| [Whitepaper editorial scaffold](docs/WHITEPAPER.md) | Review the planned argument, evidence obligations and research agenda; this is not yet a published whitepaper. |
+| [Release Notes](docs/RELEASE_NOTES_v0.5.0.md) | See what the v0.5.0 baseline includes and what it does not claim. |
+| [Migration & Deprecation](docs/MIGRATION_AND_DEPRECATION_v0.5.0.md) | Update references from earlier documents, terms and interfaces. |
+| [Evaluation & Red Team](docs/EVALUATION_AND_RED_TEAM_v0.5.0.md) | Reproduce evaluations, report counterexamples and prepare adversarial review. |
 
 ---
 
@@ -137,7 +158,7 @@ This is the core of GO OS: not workflow automation, but **recursive organization
 
 ## Core runtime objects
 
-The v0.5 foundation architecture centers on eight runtime objects:
+The v0.5 reference architecture centers on eight runtime objects:
 
 | Object | What it represents |
 |---|---|
@@ -252,11 +273,16 @@ That distinction matters. An organization capable of improving its ability to le
 
 ---
 
-## GO OS runs on GO OS
+## GO OS is designed to run on GO OS
 
-GO OS is intended to be self-applying.
+Self-application is an operating commitment and falsification strategy. In
+v0.5, the artifacts below are a self-application program and reference records;
+they are not evidence that the complete runtime loop has executed or produced
+longitudinal organizational outcomes.
 
-**GO Cognitive Repository #001** records the evolution of GO OS itself: its beliefs, architectural decisions, cognitive commits and open questions.
+**GO Cognitive Repository #001** is the reference record intended to preserve
+the evolution of GO OS itself: its beliefs, architectural decisions, cognitive
+commits and open questions.
 
 **GO Society Runtime Instance #001** is the first reference organizational instance designed to run the complete loop:
 
@@ -279,14 +305,23 @@ GO OS should therefore remain falsifiable. Its own operating history is evidence
 
 ## GO Society
 
-**GO Society is the organization behind GO OS and its first living reference implementation.**
+**GO Society is GO OS's first reference organizational instance and alpha
+self-application surface.** The name identifies a project community and
+reference instance; it does not by itself assert a separate legal entity.
 
 > **A self-evolving organization for self-evolving organizations.**
 
-GO Society is not intended to be a showcase detached from the protocol. It exists to operate missions, test authority boundaries, collect evidence, surface exceptions, conduct Human–AI reasoning and evolve the system that runs it.
+GO Society is not intended to be a showcase detached from the protocol. Its
+program is to operate bounded missions, test authority boundaries, collect
+evidence, surface exceptions, conduct Human–AI reasoning and propose changes to
+the system that runs it. Which parts are implemented or validated are reported
+separately in the [Web README](web/README.md) and release notes.
 
 - **Reference application:** [`/web`](web)
-- **Operating charter:** [`docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md`](docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md)
+- **Current ecosystem and governance boundary:**
+  [`docs/ECOSYSTEM_AND_GOVERNANCE_BOUNDARY.md`](docs/ECOSYSTEM_AND_GOVERNANCE_BOUNDARY.md)
+- **Historical founding charter:**
+  [`docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md`](docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md)
 
 ---
 
@@ -339,14 +374,21 @@ GO OS includes one semantic gateway and eight specialist Skills. They allow Agen
 
 GO OS is intended to be executable, not only philosophical.
 
-The repository includes machine-readable schemas for organizational objects such as:
+The canonical v0.5 schema set covers all eight frozen core objects:
 
-- `MissionSpec`
+- `Mission`
 - `AuthorityGrant`
-- `EvidenceSpec`
-- `ExceptionSpec`
+- `Evidence`
+- `CognitiveEvent`
+- `DeliberationSession`
+- `LearningRecord`
+- `EvolutionProposal`
+- `CognitiveVersion`
 
-See [`/schemas`](schemas).
+`Exception` and `CognitiveCommit` are supporting contracts. Earlier root-level
+schemas remain as v0.2 compatibility artifacts; new integrations should start
+with the [`v0.5 schema index`](schemas/README.md) and
+[`manifest`](schemas/v0.5/manifest.json).
 
 These contracts are the bridge between organizational principles and runtime enforcement.
 
@@ -354,7 +396,7 @@ These contracts are the bridge between organizational principles and runtime enf
 
 ## How to start
 
-There are four useful entry points.
+Begin with the canonical [Quick Start](docs/QUICK_START.md). There are four useful paths depending on the work you want to do.
 
 ### For leaders and organization designers
 
@@ -366,7 +408,7 @@ Install `skills/go-os-core/SKILL.md`, then add specialist Skills as needed. Use 
 
 ### For developers
 
-Explore [`/web`](web), the runtime specifications under [`/docs`](docs), machine-readable contracts under [`/schemas`](schemas), and evaluations under [`/tests`](tests).
+Use the [Architecture Overview](docs/ARCHITECTURE_OVERVIEW.md), then explore [`/web`](web), machine-readable contracts under [`/schemas`](schemas), and evaluations under [`/tests`](tests). The reference application implements selected runtime boundaries; it is not evidence that every v0.5 architectural object is production-complete.
 
 ### For researchers and contributors
 
@@ -391,9 +433,11 @@ It is an attempt to define an open operating model and runtime for organizations
 
 ---
 
-## Foundation release
+## v0.5.0 Foundation Release
 
 **v0.5.0** is the first GO OS Foundation Release.
+
+Here, **Foundation Release** means an **architectural baseline release**. It is not the name of a foundation, does not announce a “GO Foundation,” and does not imply that a foundation or other legal entity has been registered.
 
 It marks the transition from exploratory organizational theory toward a coherent reference architecture built around:
 
@@ -404,16 +448,25 @@ It marks the transition from exploratory organizational theory toward a coherent
 - cognitive version control;
 - self-application through GO Cognitive Repository #001 and GO Society.
 
-It is a foundation, not a declaration of completeness.
+It is an architectural baseline, not a declaration of completeness.
+
+| Release area | v0.5.0 status |
+|---|---|
+| Constitutional model, core ontology and reference architecture | Published as the v0.5 baseline. |
+| Schemas, Skills, evaluations and GO Society Web | Available as reference assets with uneven implementation depth. |
+| Cognitive portability, repository semantics and self-application | Specified and represented by reference artifacts; cross-system and long-running operational proof remains future validation work. |
+| Production readiness for autonomous organizational governance | Not claimed. Human approval, bounded authority and context-specific validation remain required. |
 
 The next stages focus on making the runtime increasingly executable, interoperable, testable and useful in real organizations.
+
+See the [Release Notes](docs/RELEASE_NOTES_v0.5.0.md) for the shipped baseline and the [Migration & Deprecation Notes](docs/MIGRATION_AND_DEPRECATION_v0.5.0.md) for compatibility boundaries.
 
 ---
 
 ## Roadmap
 
 ```text
-v0.5  Foundation Release
+v0.5.0  Foundation Release
       ↓
 v0.6  Runtime + SDK Beta
       ↓
@@ -421,6 +474,8 @@ v0.8  Multi-organization / Community Runtime
       ↓
 v1.0  Production Self-Evolving Organization Runtime
 ```
+
+Except for the published v0.5.0 baseline, these versions are directional plans—not shipped capabilities or delivery commitments.
 
 The long-term objective is simple to state and difficult to achieve:
 
@@ -435,6 +490,8 @@ GO OS is an open project. Contributions can include code, Skills, schemas, evalu
 The most valuable contribution is not necessarily more code. It may be a better falsification test, a clearer authority model, a real-world exception that breaks an assumption, or a more powerful way for organizations to learn.
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+For adversarial review priorities and evidence expectations, see [Evaluation & Red Team](docs/EVALUATION_AND_RED_TEAM_v0.5.0.md).
 
 ---
 

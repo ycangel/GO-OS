@@ -3,6 +3,10 @@
 > **愿景：重新发明组织。**  
 > **使命：让组织自我进化。**
 
+**当前版本：** `v0.5.0` — **Foundation Release（奠基版本）**
+
+[English](README.md) · [文档总入口](docs/INDEX.md) · [快速开始](docs/QUICK_START.md) · [发布说明](docs/RELEASE_NOTES_v0.5.0.md)
+
 **GO OS（Godel Organization Operating System / 哥德尔组织操作系统）** 是一个面向**自我进化组织**的开放组织智能操作系统。
 
 AI 正在让智能从稀缺资源变成越来越丰富的基础能力。下一场真正深刻的变化，不只是把 Copilot、Agent 和大模型塞进旧流程，而是改变**组织本身是什么**：组织如何感知现实、形成认知、分配权力、采取行动、从经验中学习、保留记忆，并安全地改写自己的结构。
@@ -15,6 +19,8 @@ GO OS 从一个根本问题出发：
 
 > **Human Sovereignty × Machine Agency × Reality as Final Arbiter**  
 > **人的主权 × 机器的行动权 × 现实拥有最终仲裁权**
+
+本文中的 **Foundation Release 统一译为“奠基版本”**，指后续版本可以在其上演进的软件与架构基线。它不表示存在名为 “GO Foundation / GO 基金会” 的组织，也不暗示已经注册基金会或其他法律实体。
 
 ---
 
@@ -68,6 +74,21 @@ Task 只回答“下一步做什么”。一个真正能够自我进化的组织
 - 组织的哪一部分应该改变？
 
 GO OS 尝试把这些问题编译成 Runtime Object、机器可读协议与可执行边界。
+
+---
+
+## v0.5 权威文档入口
+
+[`docs/INDEX.md`](docs/INDEX.md) 是 v0.5 文档的权威总入口。仓库保留早期版本文档作为设计历史；只有当该索引明确指定时，早期文档才继续作为当前版本的权威依据。
+
+| 从这里开始 | 用途 |
+|---|---|
+| [快速开始](docs/QUICK_START.md) | 运行一个小型、有边界的 GO OS 闭环，并检查 Reference Assets。 |
+| [架构概览](docs/ARCHITECTURE_OVERVIEW.md) | 理解架构层、核心对象、执行边界与当前实现覆盖度。 |
+| [白皮书编辑结构（未发布正文）](docs/WHITEPAPER.md) | 审阅拟议论证、证据义务与研究议程；这还不是已经发布的白皮书正文。 |
+| [v0.5.0 发布说明](docs/RELEASE_NOTES_v0.5.0.md) | 区分本次发布已经包含的基线与尚未声称完成的能力。 |
+| [迁移与弃用说明](docs/MIGRATION_AND_DEPRECATION_v0.5.0.md) | 更新来自早期文档、术语和接口的引用。 |
+| [评测与红队](docs/EVALUATION_AND_RED_TEAM_v0.5.0.md) | 复现评测、提交反例并准备对抗性评审。 |
 
 ---
 
@@ -140,7 +161,7 @@ GO OS 的核心因此不是流程自动化，而是：
 
 ## 八个核心 Runtime Objects
 
-v0.5 Foundation Architecture 冻结八个 Runtime 核心对象：
+v0.5 参考架构确立八个 Runtime 核心对象：
 
 | 对象 | 含义 |
 |---|---|
@@ -259,11 +280,14 @@ GO OS 引入 **Cognitive Repository / 认知仓库**，对组织智能进行版�
 
 ---
 
-## GO OS 运行 GO OS
+## GO OS 被设计为运行于 GO OS
 
-GO OS 必须首先能够应用于自身。
+自我应用是 GO OS 的运行承诺与可证伪策略。在 v0.5 中，以下内容是自我
+应用计划与参考记录，不是完整 Runtime Loop 已经运行、更不是已经产生长期
+组织结果的证据。
 
-**GO Cognitive Repository #001** 用于保存 GO OS 自己的认知演化：核心 Beliefs、架构 Decisions、Cognitive Commits 与 Open Questions。
+**GO Cognitive Repository #001** 是用于保存 GO OS 自身认知演化的参考
+记录：核心 Beliefs、架构 Decisions、Cognitive Commits 与 Open Questions。
 
 **GO Society Runtime Instance #001** 则是第一个按照完整 Runtime Loop 设计的组织实例：
 
@@ -290,15 +314,22 @@ Reality
 
 ## GO Society
 
-**GO Society 是 GO OS 背后的组织，也是第一个活体 Reference Implementation。**
+**GO Society 是 GO OS 的首个参考组织实例与 alpha 自我应用界面。**
+这个名称指项目共同体与参考实例，本身不表示已经存在一个独立法律实体。
 
 > **A self-evolving organization for self-evolving organizations.**  
 > **一个推动组织自我进化、并首先进化自身的组织。**
 
-GO Society 不是一个与协议脱节的展示站。它存在的意义，是运行真实 Mission、验证 Authority、收集 Evidence、暴露 Exception、进行 Human–AI Reasoning，并推动运行自身的 GO OS 持续进化。
+GO Society 不是一个与协议脱节的展示站。它的计划是运行有边界的 Mission、
+验证 Authority、收集 Evidence、暴露 Exception、进行 Human–AI Reasoning，
+并提出对运行自身的 GO OS 的修改建议。哪些部分已经实现或验证，以
+[Web README](web/README.md) 与发布说明中的状态为准。
 
 - **Reference Application：**[`/web`](web)
-- **Operating Charter：**[`docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md`](docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md)
+- **当前生态与治理边界：**
+  [`docs/ECOSYSTEM_AND_GOVERNANCE_BOUNDARY.md`](docs/ECOSYSTEM_AND_GOVERNANCE_BOUNDARY.md)
+- **历史创立 Charter：**
+  [`docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md`](docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md)
 
 ---
 
@@ -352,20 +383,26 @@ GO OS 当前包含 **1 个语义入口 + 8 个专业 Skills**，目标是让 Age
 
 GO OS 不只希望成为哲学框架，还必须能够执行。
 
-仓库已经包含一组机器可读 Schema：
+当前 v0.5 权威 Schema 集覆盖全部八个冻结核心对象：
 
-- `MissionSpec`
+- `Mission`
 - `AuthorityGrant`
-- `EvidenceSpec`
-- `ExceptionSpec`
+- `Evidence`
+- `CognitiveEvent`
+- `DeliberationSession`
+- `LearningRecord`
+- `EvolutionProposal`
+- `CognitiveVersion`
 
-见 [`/schemas`](schemas)。
+`Exception` 与 `CognitiveCommit` 是支撑性 Contract。根目录早期 Schema 继续作为 v0.2 兼容资产保留；新的集成应从 [v0.5 Schema 索引](schemas/README.md) 与 [Manifest](schemas/v0.5/manifest.json) 开始。
 
 这些 Contract 是组织原则进入 Runtime Enforcement 的桥梁。
 
 ---
 
 ## 如何开始
+
+建议先完成权威的[快速开始](docs/QUICK_START.md)，再根据你的工作选择下面的入口。
 
 ### 如果你是企业领导者或组织设计者
 
@@ -377,7 +414,7 @@ GO OS 不只希望成为哲学框架，还必须能够执行。
 
 ### 如果你是开发者
 
-阅读 [`/web`](web)、[`/docs`](docs)、[`/schemas`](schemas) 与 [`/tests`](tests)，从 Reference Runtime、协议和 Evaluation 入手。
+先阅读[架构概览](docs/ARCHITECTURE_OVERVIEW.md)，再进入 [`/web`](web)、[`/schemas`](schemas) 与 [`/tests`](tests)。Reference Application 已实现部分 Runtime Boundary，但这并不证明 v0.5 的每个架构对象都已经达到生产完成度。
 
 ### 如果你是研究者或贡献者
 
@@ -401,3 +438,91 @@ GO OS **不是**：
 它试图建立的是一个开放的组织运行模型和 Runtime，使组织能够持续感知、推理、行动、学习和进化，同时保留 Human Sovereignty。
 
 ---
+
+## v0.5.0 Foundation Release（奠基版本）
+
+**v0.5.0** 是 GO OS 第一个明确命名为 **Foundation Release（奠基版本）** 的发布。
+
+这里的“奠基版本”只表示**软件与架构基线版本**。它不是基金会名称，不是在宣布成立 “GO Foundation / GO 基金会”，也不表示已经注册基金会或其他法律实体。
+
+这次发布标志着 GO OS 从探索性的组织理论，收敛到一套围绕以下内容建立的参考架构：
+
+- 组织宪法边界；
+- 组织 Runtime Objects；
+- Human–AI Cognitive Loop；
+- Cognitive Portability；
+- 组织认知的版本控制；
+- 通过 GO Cognitive Repository #001 与 GO Society 开展自我应用。
+
+它是一个继续构建和验证的起点，不是“已经完成”的声明。
+
+| 发布范围 | v0.5.0 状态 |
+|---|---|
+| 宪法模型、核心 Ontology 与参考架构 | 已作为 v0.5 基线发布。 |
+| Schema、Skills、Evaluation 与 GO Society Web | 已提供参考资产，但各部分实现深度并不相同。 |
+| 认知可迁移、Cognitive Repository 语义与自我应用 | 已形成规格与参考材料；跨系统互操作和长期真实运行效果仍待验证。 |
+| 面向组织自主治理的生产就绪能力 | 不作此声明；仍需人的批准、有边界的授权和具体场景验证。 |
+
+下一阶段将继续提升 Runtime 的可执行性、互操作性、可测试性，以及在真实组织中的有效性。
+
+已发布内容与边界见[发布说明](docs/RELEASE_NOTES_v0.5.0.md)，兼容性变化见[迁移与弃用说明](docs/MIGRATION_AND_DEPRECATION_v0.5.0.md)。
+
+---
+
+## 路线图
+
+```text
+v0.5.0  Foundation Release（奠基版本）
+        ↓
+v0.6    Runtime + SDK Beta
+        ↓
+v0.8    Multi-organization / Community Runtime
+        ↓
+v1.0    Production Self-Evolving Organization Runtime
+```
+
+除 v0.5.0 已发布基线外，后续版本均为方向性计划，不构成已经实现或承诺交付的事实。
+
+长期目标可以用一句话表达，但实现并不容易：
+
+> **一个组织不仅应该改进自己做什么，还应该改进自己如何实现改进。**
+
+---
+
+## 参与贡献
+
+GO OS 是一个开放项目。贡献可以是代码、Skills、Schemas、Evaluation、组织实验、批评与新的 Reference Implementation。
+
+最有价值的贡献不一定是更多代码。它也可能是更强的证伪测试、更清晰的 Authority Model、能够击穿现有假设的真实 Exception，或一种让组织更有效学习的方法。
+
+见 [`CONTRIBUTING.md`](CONTRIBUTING.md)。红队优先事项与证据要求见[评测与红队](docs/EVALUATION_AND_RED_TEAM_v0.5.0.md)。
+
+---
+
+## 作者
+
+**Angelo Yu**
+
+Founder & CEO, PIX Moving
+
+angelo@pixmoving.com
+
+**灌木丛（Guanmucong）**
+
+AI Collaborator
+
+见 [`AUTHORS.md`](AUTHORS.md)。
+
+---
+
+## 许可证
+
+软件与机器可执行支持文件采用 Apache License 2.0；文档与 Skill 文本采用 CC BY 4.0。见 [`LICENSE`](LICENSE) 与 [`LICENSE-CONTENT.md`](LICENSE-CONTENT.md)。
+
+---
+
+# Reinvent Organizations.
+
+# 重新发明组织。
+
+**GO — Enable organizations to evolve themselves.**

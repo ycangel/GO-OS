@@ -1,14 +1,15 @@
-import { requireAuthority } from "./authority-guard";
+import {
+  requireOrganizationalMutation,
+  type RuntimeMutationAction,
+} from "./api-constitutional-guard";
 
-export type OrganizationalMutation =
-  | "create_evidence"
-  | "create_exception"
-  | "create_evolution_proposal"
-  | "update_mission";
+export type OrganizationalMutation = RuntimeMutationAction;
 
 export interface MutationRequest {
   actor: string;
   action: OrganizationalMutation;
+  target: string;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -18,8 +19,10 @@ export interface MutationRequest {
  * Authentication proves identity; this layer proves organizational authority.
  */
 export async function authorizeMutation(request: MutationRequest) {
-  return requireAuthority({
-    actor: request.actor,
-    action: request.action,
-  });
+  return requireOrganizationalMutation(
+    request.actor,
+    request.action,
+    request.target,
+    request.metadata,
+  );
 }

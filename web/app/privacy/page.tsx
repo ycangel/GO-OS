@@ -38,7 +38,7 @@ export default function PrivacyPage() {
 
       <article className="policy-document">
         <div className="policy-hero">
-          <p className="eyebrow">Policy · v0.1</p>
+          <p className="eyebrow">Policy v0.1 · GO OS v0.5.0</p>
           <h1>Private by default.<br />Public by accountable design.</h1>
           <p>
             默认私有；只有独立生成的脱敏版本，在完成授权范围确认、重识别风险检查和具名人类审批后，才可能公开。
@@ -57,6 +57,9 @@ export default function PrivacyPage() {
             <span>Consent + risk review</span><i>→</i><span>Named human approval</span><i>→</i>
             <span>Public evidence</span>
           </div>
+          <p>
+            当前代码只会自动拒绝部分明显的邮箱、电话和 URL；姓名、企业线索、组合后的重识别风险与发布决定仍必须由有权限的人工复核。这份政策是规范门槛，不是“已完全自动实现”的声明。
+          </p>
         </section>
 
         <div className="policy-grid">
@@ -103,7 +106,7 @@ export default function PrivacyPage() {
 
         <footer>
           <strong>Human sovereignty includes privacy sovereignty.</strong>
-          <span>GO Society · Living on GO OS</span>
+          <span>GO Society · v0.5 alpha reference instance</span>
         </footer>
       </article>
     </main>

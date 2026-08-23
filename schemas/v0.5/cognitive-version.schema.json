@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://go-os.org/schemas/v0.5/cognitive-version.schema.json",
+  "title": "GO OS CognitiveVersion",
+  "description": "Normative v0.5 contract for a versioned snapshot of organizational understanding. It preserves state and provenance without asserting that every belief is true.",
+  "version": "0.5.0",
+  "x-go-os-status": "normative",
+  "type": "object",
+  "required": [
+    "id",
+    "version",
+    "status",
+    "previous_version_ref",
+    "beliefs",
+    "assumptions",
+    "decisions",
+    "reasoning_patterns",
+    "open_questions",
+    "evidence_refs",
+    "learning_record_refs",
+    "commit_ref",
+    "created_at"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "status": {"enum": ["candidate", "ratified", "superseded"]},
+    "previous_version_ref": {"type": ["string", "null"]},
+    "beliefs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["statement", "validation_status"],
+        "properties": {
+          "statement": {"type": "string", "minLength": 1},
+          "validation_status": {"enum": ["unverified", "supported", "disputed", "refuted"]},
+          "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "assumptions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["summary", "decision_owner"],
+        "properties": {
+          "summary": {"type": "string", "minLength": 1},
+          "decision_owner": {"type": "string", "minLength": 1},
+          "evidence_refs": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "reasoning_patterns": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "open_questions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "learning_record_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "commit_ref": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": true
+}

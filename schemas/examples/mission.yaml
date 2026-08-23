@@ -1,3 +1,5 @@
+# Legacy v0.2.0 compatibility example; not a v0.5 contract.
+# For v0.5, use cognitive-loop-v0.5.0.yaml and schemas/v0.5/.
 mission:
   id: mission-example-001
   version: 0.2.0
@@ -45,5 +47,5 @@ authority_grant:
     - Escalate when aggregate budget or approved operating envelope would be exceeded.
   revocation:
     revocable: true
-    revoked_by: [role:business-owner, role:mission-owner]
+    revoked_by: ["role:business-owner", "role:mission-owner"]
   self_expansion_allowed: false

@@ -25,6 +25,7 @@ export async function POST(request: Request) {
   const authority = await requireOrganizationalMutation(
     `member:${identity.member.id}`,
     "create_evolution_proposal",
+    "organization:go-society",
   );
   if (!authority.allowed) {
     return Response.json({ error: authority.reason }, { status: 403 });

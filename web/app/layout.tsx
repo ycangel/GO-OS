@@ -3,26 +3,26 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://go-society.angelo-pix.chatgpt.site"),
-  title: "GO Society — The first living organization on GO OS",
+  title: "GO Society — GO OS v0.5 alpha reference instance",
   description:
-    "A self-evolving organization for self-evolving organizations. GO Society is the living reference implementation of GO OS.",
+    "The alpha self-application reference surface for GO OS v0.5, with selected mission, authority, evidence, privacy and evolution boundaries.",
   openGraph: {
     title: "GO Society",
-    description: "A self-evolving organization for self-evolving organizations.",
+    description: "The alpha self-application reference surface for GO OS v0.5.",
     type: "website",
     images: [
       {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "GO Society — A self-evolving organization for self-evolving organizations.",
+        alt: "GO Society — GO OS v0.5 alpha reference instance.",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
     title: "GO Society",
-    description: "A self-evolving organization for self-evolving organizations.",
+    description: "The alpha self-application reference surface for GO OS v0.5.",
     images: ["/og.png"],
   },
   icons: {

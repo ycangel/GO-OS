@@ -1,0 +1,94 @@
+release: 0.5.0
+release_name_en: Foundation Release
+release_name_zh: 奠基版本
+legal_entity_implied: false
+status: normative-inventory
+runtime_conformance: not-asserted
+
+version_policy:
+  repository_release: 0.5.0
+  component_versions_are_independent: true
+  compatibility_meaning: Terminology and contracts reviewed against GO OS 0.5.x.
+  compatibility_does_not_mean: Production deployment, runtime execution, or evaluation pass.
+
+skills:
+  - name: go-os-core
+    role: semantic-gateway
+    path: go-os-core/SKILL.md
+    version: 0.5.0
+    contract_path: null
+    contract_version: null
+    status: public-alpha
+    go_os_compatibility: 0.5.x
+
+  - name: ai-native-organization-design
+    role: specialist
+    path: ai-native-organization-design/SKILL.md
+    version: 0.2.1
+    contract_path: ai-native-organization-design/CONTRACT.md
+    contract_version: 0.2.0
+    status: public-alpha
+    go_os_compatibility: 0.5.x
+
+  - name: human-sovereignty-machine-agency
+    role: specialist
+    path: human-sovereignty-machine-agency/SKILL.md
+    version: 0.2.1
+    contract_path: human-sovereignty-machine-agency/CONTRACT.md
+    contract_version: 0.2.0
+    status: public-alpha
+    go_os_compatibility: 0.5.x
+
+  - name: mission-organizational-runtime
+    role: specialist
+    path: mission-organizational-runtime/SKILL.md
+    version: 0.2.1
+    contract_path: mission-organizational-runtime/CONTRACT.md
+    contract_version: 0.2.0
+    status: public-alpha
+    go_os_compatibility: 0.5.x
+
+  - name: reality-loop-organizational-learning
+    role: specialist
+    path: reality-loop-organizational-learning/SKILL.md
+    version: 0.2.1
+    contract_path: reality-loop-organizational-learning/CONTRACT.md
+    contract_version: 0.2.0
+    status: public-alpha
+    go_os_compatibility: 0.5.x
+
+  - name: vision-driven-strategy
+    role: specialist
+    path: vision-driven-strategy/SKILL.md
+    version: 0.2.1
+    contract_path: vision-driven-strategy/CONTRACT.md
+    contract_version: 0.2.0
+    status: public-alpha
+    go_os_compatibility: 0.5.x
+
+  - name: intelligent-compounding-ai-native-business
+    role: specialist
+    path: intelligent-compounding-ai-native-business/SKILL.md
+    version: 0.2.1
+    contract_path: intelligent-compounding-ai-native-business/CONTRACT.md
+    contract_version: 0.2.0
+    status: public-alpha
+    go_os_compatibility: 0.5.x
+
+  - name: ai-native-talent-human-value
+    role: specialist
+    path: ai-native-talent-human-value/SKILL.md
+    version: 0.2.1
+    contract_path: ai-native-talent-human-value/CONTRACT.md
+    contract_version: 0.2.0
+    status: public-alpha
+    go_os_compatibility: 0.5.x
+
+  - name: ai-native-organization-diagnostic
+    role: specialist
+    path: ai-native-organization-diagnostic/SKILL.md
+    version: 0.2.1
+    contract_path: ai-native-organization-diagnostic/CONTRACT.md
+    contract_version: 0.2.0
+    status: public-alpha
+    go_os_compatibility: 0.5.x

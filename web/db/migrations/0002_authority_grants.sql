@@ -1,5 +1,6 @@
--- GO OS v0.3.1 Authority Runtime
--- Constitutional persistence layer
+-- Historical v0.3.1 authority-persistence prototype.
+-- The active Sites/Drizzle migration chain lives in web/drizzle/. For the
+-- canonical v0.5 table and seed grants, see 0002_talented_silk_fever.sql.
 
 CREATE TABLE IF NOT EXISTS authority_grants (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -67,20 +67,24 @@ export async function getRuntimeIdentity(): Promise<RuntimeIdentity> {
     if (!record || !["invited", "active"].includes(record.status)) {
       return { user, member: null };
     }
-    if (record.expiresAt && new Date(record.expiresAt).valueOf() < Date.now()) {
-      return { user, member: null };
+    if (record.expiresAt) {
+      const expiresAt = Date.parse(record.expiresAt);
+      if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+        return { user, member: null };
+      }
     }
 
-    if (record.status === "invited") {
-      await db
-        .update(members)
-        .set({
-          status: "active",
-          joinedAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        })
-        .where(eq(members.id, record.id));
-    }
+    const [membership] = await db
+      .select({ id: missionMemberships.id })
+      .from(missionMemberships)
+      .where(
+        and(
+          eq(missionMemberships.memberId, record.id),
+          eq(missionMemberships.status, "active"),
+        ),
+      )
+      .limit(1);
+    if (!membership) return { user, member: null };
 
     return {
       user,
@@ -90,7 +94,7 @@ export async function getRuntimeIdentity(): Promise<RuntimeIdentity> {
         publicAlias: record.publicAlias,
         namePublic: record.namePublic,
         role: record.role,
-        status: "active",
+        status: record.status,
         isOwner: record.role === "owner",
       },
     };

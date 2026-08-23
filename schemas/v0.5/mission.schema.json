@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://go-os.org/schemas/v0.5/mission.schema.json",
+  "title": "GO OS Mission",
+  "description": "Normative v0.5 contract for an observable, accountable, and bounded organizational state transition. MissionSpec is retained as a legacy alias.",
+  "version": "0.5.0",
+  "x-go-os-status": "normative",
+  "type": "object",
+  "required": [
+    "id",
+    "version",
+    "status",
+    "purpose",
+    "current_state",
+    "desired_state",
+    "accountable_human",
+    "authority_ref",
+    "success_evidence_refs",
+    "disconfirming_evidence_refs",
+    "constraints",
+    "assumptions",
+    "reversibility",
+    "risk_class",
+    "recompile_when",
+    "terminate_when",
+    "created_at"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "status": {
+      "enum": ["draft", "active", "blocked", "succeeded", "failed", "terminated", "recompile"]
+    },
+    "purpose": {"type": "string", "minLength": 1},
+    "current_state": {"type": "string", "minLength": 1},
+    "desired_state": {"type": "string", "minLength": 1},
+    "accountable_human": {"type": "string", "minLength": 1},
+    "authority_ref": {"type": "string", "minLength": 1},
+    "success_evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "disconfirming_evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "constraints": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "non_goals": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "assumptions": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "unknowns": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "reversibility": {"enum": ["reversible", "costly_to_reverse", "irreversible"]},
+    "risk_class": {"enum": ["low", "medium", "high", "critical"]},
+    "deadline": {"type": ["string", "null"], "format": "date-time"},
+    "recompile_when": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "terminate_when": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "parent_mission_ref": {"type": ["string", "null"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": ["string", "null"], "format": "date-time"}
+  },
+  "additionalProperties": true
+}

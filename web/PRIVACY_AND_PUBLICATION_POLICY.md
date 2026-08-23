@@ -3,8 +3,15 @@
 > **Private by default. Public by consent, de-identification, and human accountability.**  
 > 默认私有；经脱敏、授权与具名人类审批后方可公开。
 
-版本：0.1  
+政策版本：0.1
+
+GO OS 基线：v0.5.0 Foundation Release（奠基版本）
+
 适用范围：GO Society 网站、GO OS 仓库、案例库，以及由相关资料生成的博客、播客、图片、动画和社交媒体内容。
+
+`Foundation Release / 奠基版本` 是软件发布阶段名称，不表示已成立或注册基金会等法律实体。
+
+**实现边界：**当前输入检查只能自动拒绝部分明显的邮箱、电话和 URL。它不能证明姓名、公司标识、罕见特征组合或其他重识别风险已被自动清除。脱敏、同意范围、重识别风险与发布决定仍需具名人类审核；本政策是规范要求，不是已完全自动执行的证明。
 
 ## 1. 基本原则
 

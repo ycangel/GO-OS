@@ -1,0 +1,138 @@
+version: 0.5.0
+name: GO OS v0.5.0 Release Gate Evaluations
+artifact_status: declared
+expectation_status: normative-expectation
+execution_status: not_executed
+harness: external-required
+
+cases:
+  - id: v050-core-object-inventory
+    target: schema-manifest
+    input:
+      manifest: schemas/v0.5/manifest.json
+    expected:
+      frozen_core_objects:
+        - Mission
+        - AuthorityGrant
+        - Evidence
+        - CognitiveEvent
+        - DeliberationSession
+        - LearningRecord
+        - EvolutionProposal
+        - CognitiveVersion
+      supporting_objects: [Exception, CognitiveCommit]
+      runtime_conformance_inferred: false
+
+  - id: v050-authority-self-expansion
+    target: authority-runtime
+    input:
+      actor: agent:mission-runtime
+      action: custom:expand_own_authority
+    expected:
+      status: rejected
+      reason: self_expansion_not_allowed
+
+  - id: v050-authority-action-vocabulary
+    target: authority-contract
+    input:
+      canonical_action: create_evidence
+      historical_alias: record_evidence
+    expected:
+      canonical_action_accepted: true
+      historical_alias_is_canonical: false
+      compatibility_mapping_required: true
+
+  - id: v050-evidence-provenance
+    target: evidence-contract
+    input:
+      claim_type: reported_claim
+      observation: A stakeholder reported an improvement.
+      provenance: ""
+    expected:
+      schema_valid: false
+      reason: provenance_required
+
+  - id: v050-cognitive-event-human-review
+    target: cognitive-runtime
+    input:
+      type: evidence_conflict
+      human_review_required: false
+    expected:
+      schema_valid: false
+      reason: evidence_conflict_requires_human_review
+
+  - id: v050-deliberation-accountability
+    target: deliberation-runtime
+    input:
+      status: resolved
+      decision_owner: null
+    expected:
+      schema_valid: false
+      reason: resolved_decision_requires_named_owner
+
+  - id: v050-learning-is-not-automatic-policy
+    target: organizational-memory
+    input:
+      learning_record:
+        validation_status: candidate
+      requested_action: update_policy
+    expected:
+      policy_changed: false
+      evolution_proposal_required: true
+      authorized_decision_required: true
+
+  - id: v050-evolution-candidate-boundary
+    target: evolution-runtime
+    input:
+      is_candidate: false
+      approval_status: pending_human_review
+    expected:
+      schema_valid: false
+      reason: evolution_proposal_is_candidate
+
+  - id: v050-cognitive-commit-traceability
+    target: cognitive-repository
+    input:
+      evidence_refs: []
+      deliberation_refs: []
+      decision_owner: role:organization-owner
+    expected:
+      schema_valid: false
+      reason: evidence_and_deliberation_required
+
+  - id: v050-interface-does-not-create-authority
+    target: headless-core
+    input:
+      authenticated_interface: external-ai
+      authority_grant: null
+      action: update_mission
+    expected:
+      status: rejected
+      reason: authentication_is_not_authority
+
+  - id: v050-schema-field-naming-adapter
+    target: schema-adapter
+    input:
+      canonical_field: accountable_human
+      runtime_field: accountableHuman
+    expected:
+      direct_equivalence_inferred: false
+      explicit_adapter_required: true
+      adapter_test_required: true
+
+  - id: v050-history-preservation
+    target: repository-version-policy
+    input:
+      historical_fixture: tests/go-os-v0.4.9-runtime-integration-evals.yaml
+      repository_release: 0.5.0
+    expected:
+      historical_fixture_version_rewritten: false
+      historical_fixture_status: reference
+
+  - id: v050-label-semantics-zh
+    target: release-language
+    input:
+      english_label: Foundation Release
+    expected:
+      chinese_label: 奠基版本
+      legal_foundation_entity_implied: false

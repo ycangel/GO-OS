@@ -1,5 +1,10 @@
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import type {
+  AuthorityAction,
+  AuthorityLimits,
+  AuthorityResourceRights,
+} from "./authority-grants";
 
 export const missions = sqliteTable("missions", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -168,3 +173,56 @@ export const capabilities = sqliteTable("capabilities", {
   evidenceCount: integer("evidence_count").notNull().default(0),
   lastLearnedAt: text("last_learned_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const authorityGrants = sqliteTable(
+  "authority_grants",
+  {
+    id: text("id").primaryKey(),
+    grantor: text("grantor").notNull(),
+    grantee: text("grantee").notNull(),
+    accountableHuman: text("accountable_human").notNull(),
+    scope: text("scope").notNull(),
+    allowedActions: text("allowed_actions", { mode: "json" })
+      .$type<AuthorityAction[]>()
+      .notNull(),
+    prohibitedActions: text("prohibited_actions", { mode: "json" })
+      .$type<AuthorityAction[]>()
+      .notNull(),
+    resourceRights: text("resource_rights", { mode: "json" })
+      .$type<AuthorityResourceRights>()
+      .notNull(),
+    limits: text("limits", { mode: "json" })
+      .$type<AuthorityLimits>()
+      .notNull(),
+    reversibilityCeiling: text("reversibility_ceiling")
+      .$type<
+        | "reversible_only"
+        | "costly_to_reverse_allowed"
+        | "irreversible_allowed"
+      >()
+      .notNull(),
+    evidenceObligations: text("evidence_obligations", { mode: "json" })
+      .$type<string[]>()
+      .notNull(),
+    escalation: text("escalation", { mode: "json" })
+      .$type<string[]>()
+      .notNull(),
+    conflictRules: text("conflict_rules", { mode: "json" })
+      .$type<string[]>()
+      .notNull(),
+    validFrom: text("valid_from"),
+    expiresAt: text("expires_at"),
+    revokedAt: text("revoked_at"),
+    selfExpansionAllowed: integer("self_expansion_allowed", {
+      mode: "boolean",
+    })
+      .notNull()
+      .default(false),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    uniqueIndex("authority_grants_grantee_active_unique").on(
+      table.grantee,
+    ).where(sql`${table.revokedAt} IS NULL`),
+  ],
+);

@@ -1,61 +1,93 @@
 # GO OS Roadmap
 
-## v0.1.x — Foundation — Complete
+**Current repository release:** v0.5.0 Foundation Release / 奠基版本
 
-- [x] Stabilize initial ontology and language.
-- [x] Establish the 1 + 8 skill architecture.
-- [x] Publish initial evaluation prompts.
-- [x] Add public contribution and licensing structure.
-- [x] Run first red-team self-review.
+This roadmap describes direction and evidence gates. Future version numbers are
+targets, not shipped capabilities, dates or delivery commitments.
 
-## v0.2.x — Executable Organization Contracts — Current
+## v0.5.0 — Foundation Release / 奠基版本
 
-- [x] JSON/YAML schemas for Mission, Authority, Evidence and Exception.
-- [x] Authority and escalation patterns.
-- [x] Cross-skill routing and per-skill contracts.
-- [x] Trigger descriptions and trigger eval cases.
-- [x] Canonical Constitution and current Skill Specification.
-- [x] Fix schema-level no-self-expansion guarantee.
-- [ ] Add a concrete anonymized worked Mission example.
-- [ ] Add a concrete diagnostic sample report.
-- [ ] Add an eval runner / execution instructions.
-- [ ] Build the first Runtime reference implementation.
+Release purpose: turn the v0.1–v0.4 exploration into a coherent, navigable and
+falsifiable public baseline.
 
-## v0.3.x — Runtime Alpha
+- [x] Freeze the eight-object reference architecture.
+- [x] Preserve the historical design trail and establish a canonical docs index.
+- [x] Align bilingual READMEs, release records and contributor guidance.
+- [x] Publish Quick Start, Architecture Overview and whitepaper structure.
+- [x] Publish migration/deprecation and evaluation/red-team entry points.
+- [x] Align schemas, Skills and declared evaluation manifests to v0.5.
+- [x] Identify the GO Society Web implementation boundary and known gaps.
+- [x] Define the public-upstream, enterprise-offering and self-application
+  ecosystem boundary without implying a legal foundation.
 
-Primary goal: **run a real Mission through the complete GO lifecycle.**
+The release is an architectural and repository baseline. It does not claim a
+complete production runtime or proven organizational outcomes.
 
-`MissionSpec → AuthorityGrant → Action → EvidenceSpec → ExceptionSpec → Learning → Recompile`
+## v0.5.x — Hardening and falsification
 
-- [ ] Reference mission compiler.
-- [ ] Durable mission state.
-- [ ] Tool / agent execution adapter.
-- [ ] Evidence capture and validation.
-- [ ] Exception handling and human-on-exception flow.
-- [ ] Capability / memory update.
-- [ ] First anonymized real-world Mission case.
-- [ ] Use GO OS to help manage the GO OS repository itself.
+Exit conditions:
 
-## v0.4.x — Organizational Learning & Multi-Agent Runtime
+- [ ] Run and publish the independent v0.5 red-team synthesis.
+- [ ] Close all critical/high authority, privacy and claim-integrity findings.
+- [ ] Provide one common executable runner for declared evaluation fixtures.
+- [ ] Publish an eight-object coverage matrix for schema, validation,
+  persistence, API, UI, denial path and migration.
+- [ ] Execute a cognitive-package round trip across at least two interface/model
+  stacks and document semantic loss.
+- [ ] Add per-record public/private visibility gates for every public API table.
+- [ ] Demonstrate authority expiry, revocation, replay denial and rollback.
+- [ ] Publish at least one negative or null result from a bounded GO OS probe.
 
-- [ ] Skill promotion lifecycle.
-- [ ] Organizational memory reference design.
-- [ ] Exception mining.
-- [ ] Learning-rate metrics.
-- [ ] Agent capability registry.
-- [ ] Dynamic allocation.
-- [ ] Cross-agent evidence sharing.
-- [ ] Conflict and arbitration protocols.
-- [ ] Cost, latency and aggregate-risk-aware orchestration.
+## v0.6 — Runtime + SDK Beta target
 
-## v1.0.0 — Stable GO OS Core
+Entry requires the v0.5.x hardening gates above. Target capabilities:
 
-Target conditions:
+- a stable headless-core package boundary and SDK;
+- durable lifecycle support for all eight core objects;
+- versioned schema migration and compatibility tooling;
+- consistent identity, authority and mutation enforcement;
+- executable evaluation runner with machine-readable result records;
+- reference adapters for more than one AI interface;
+- a reproducible end-to-end mission walkthrough;
+- explicit production deployment and security guidance.
 
-- stable core ontology and Constitution;
-- tested skill and runtime contracts;
-- documented implementation patterns;
-- multiple anonymized/public case studies;
-- backward-compatibility policy;
-- contributor governance;
-- evidence that GO OS improves real organizational outcomes rather than only describing them.
+`Beta` will still not mean autonomous organizational governance is generally
+safe or that business impact is proven.
+
+## v0.8 — Multi-organization / community runtime target
+
+Entry evidence:
+
+- repeated bounded deployments in more than one organization and domain;
+- tested isolation between organizations and customer-private data;
+- conflict, dissent and arbitration semantics under multiple human/agent actors;
+- governed contribution and capability-promotion lifecycle;
+- cost, latency, aggregate-risk and human-review measurements;
+- portability and exit tests under realistic organizational state.
+
+## v1.0 — Stable GO OS core target
+
+Candidate release conditions:
+
+- stable Constitution, ontology and compatibility policy;
+- independently reviewed authority, privacy and security boundaries;
+- end-to-end tests for safe denial as well as successful action;
+- durable cognitive history, migration, backup, recovery and rollback;
+- multiple reproducible field cases with baselines and limitations;
+- evidence that GO OS improves at least one meaningful organizational outcome
+  over a simpler alternative;
+- published failures, counterexamples and unresolved dissent;
+- contributor governance, trademark and ecosystem boundaries;
+- no critical dependency on a single model, interface or commercial provider.
+
+## Research questions that can change the roadmap
+
+- Does formalizing cognition improve learning or mainly add ceremony?
+- Can Human Sovereignty remain effective rather than symbolic at machine speed?
+- Can evidence remain contestable when power controls measurement?
+- Which objects survive real use, and which should be removed or split?
+- Does cognitive portability work across vendors without losing critical meaning?
+- Where is GO OS unnecessary or inferior to a simpler operating practice?
+
+Roadmap changes should follow evidence and an explicit Evolution Proposal, not
+release-marketing pressure.

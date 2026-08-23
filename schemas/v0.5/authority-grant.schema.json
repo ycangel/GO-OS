@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://go-os.org/schemas/v0.5/authority-grant.schema.json",
+  "title": "GO OS AuthorityGrant",
+  "description": "Normative v0.5 contract for explicit, bounded, revocable, and auditable authority. It forbids autonomous self-expansion.",
+  "version": "0.5.0",
+  "x-go-os-status": "normative",
+  "type": "object",
+  "required": [
+    "id",
+    "grantor",
+    "grantee",
+    "grantee_type",
+    "accountable_human",
+    "scope",
+    "allowed_actions",
+    "prohibited_actions",
+    "limits",
+    "reversibility_ceiling",
+    "evidence_obligations",
+    "escalation",
+    "revocation",
+    "self_expansion_allowed"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "grantor": {"type": "string", "minLength": 1},
+    "grantee": {"type": "string", "minLength": 1},
+    "grantee_type": {"enum": ["human", "agent", "service"]},
+    "accountable_human": {"type": "string", "minLength": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "allowed_actions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/authorityAction"}
+    },
+    "prohibited_actions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/authorityAction"}
+    },
+    "resource_rights": {"type": "object", "additionalProperties": true},
+    "limits": {
+      "type": "object",
+      "description": "Per-action and aggregate exposure limits.",
+      "minProperties": 1,
+      "additionalProperties": true
+    },
+    "reversibility_ceiling": {
+      "enum": ["reversible_only", "costly_to_reverse_allowed", "irreversible_allowed"]
+    },
+    "evidence_obligations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "escalation": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "conflict_rules": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "valid_from": {"type": ["string", "null"], "format": "date-time"},
+    "expires_at": {"type": ["string", "null"], "format": "date-time"},
+    "revocation": {
+      "type": "object",
+      "required": ["revocable", "revoked_by", "conditions"],
+      "properties": {
+        "revocable": {"const": true},
+        "revoked_by": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "conditions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "additionalProperties": true
+    },
+    "self_expansion_allowed": {
+      "const": false,
+      "description": "An actor may not expand its own authority."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "allowed_actions": {
+            "contains": {"const": "approve_evolution_proposal"}
+          }
+        },
+        "required": ["allowed_actions"]
+      },
+      "then": {"properties": {"grantee_type": {"const": "human"}}}
+    }
+  ],
+  "$defs": {
+    "authorityAction": {
+      "description": "A canonical v0.5 action or a namespaced extension. Historical aliases are documented in the manifest but are not canonical values.",
+      "anyOf": [
+        {
+          "enum": [
+            "create_evidence",
+            "create_exception",
+            "create_cognitive_event",
+            "create_deliberation_session",
+            "create_learning_record",
+            "create_evolution_proposal",
+            "approve_evolution_proposal",
+            "apply_evolution_proposal",
+            "create_cognitive_commit",
+            "create_cognitive_version",
+            "update_mission",
+            "execute_action"
+          ]
+        },
+        {"type": "string", "pattern": "^custom:[a-z0-9][a-z0-9_:.\\-]*$"}
+      ]
+    }
+  },
+  "additionalProperties": true
+}

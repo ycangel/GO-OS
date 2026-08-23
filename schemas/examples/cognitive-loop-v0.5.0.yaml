@@ -1,0 +1,122 @@
+# Reference example only. This file does not assert runtime execution or conformance.
+release: 0.5.0
+status: reference
+
+mission:
+  id: mission-example-v050-001
+  version: 0.5.0
+  status: active
+  purpose: Improve a customer outcome without exceeding delegated risk.
+  current_state: Baseline outcome and uncertainty are recorded.
+  desired_state: Target outcome is achieved and independently verified.
+  accountable_human: role:mission-owner
+  authority_ref: authority-example-v050-001
+  success_evidence_refs: [evidence-example-v050-001]
+  disconfirming_evidence_refs: [evidence-example-v050-002]
+  constraints:
+    - Preserve legal, safety, privacy, and budget boundaries.
+  assumptions:
+    - The intervention can materially affect the target outcome.
+  reversibility: reversible
+  risk_class: medium
+  recompile_when:
+    - Evidence contradicts a core assumption.
+  terminate_when:
+    - The downside exceeds the delegated risk envelope.
+  created_at: 2026-08-23T00:00:00Z
+
+authority_grant:
+  id: authority-example-v050-001
+  grantor: role:business-owner
+  grantee: agent:mission-runtime
+  grantee_type: agent
+  accountable_human: role:mission-owner
+  scope: Execute bounded experiments for mission-example-v050-001.
+  allowed_actions: ["custom:execute_approved_reversible_experiment", create_evidence]
+  prohibited_actions: ["custom:expand_own_authority", "custom:make_irreversible_commitment"]
+  limits: {aggregate_budget: 1000, concurrent_experiments: 3}
+  reversibility_ceiling: reversible_only
+  evidence_obligations:
+    - Record outcome, cost, exceptions, and uncertainty.
+  escalation:
+    - Escalate before exceeding the operating envelope.
+  revocation:
+    revocable: true
+    revoked_by: ["role:business-owner", "role:mission-owner"]
+    conditions:
+      - Authority expires or a material guardrail is breached.
+  self_expansion_allowed: false
+
+evidence:
+  id: evidence-example-v050-001
+  claim_ref: claim:target-outcome-improved
+  claim_type: observed_fact
+  observation: The defined target outcome improved during the bounded experiment.
+  source: system:outcome-ledger
+  provenance: report:experiment-001
+  observed_at: 2026-08-23T01:00:00Z
+  confidence: 0.8
+  quality: {freshness: current, fidelity: direct, independence: partially_independent}
+  validation_status: unverified
+
+cognitive_event:
+  id: cognitive-event-example-v050-001
+  type: evidence_conflict
+  trigger: Outcome evidence conflicts with a baseline assumption.
+  context: {mission_ref: mission-example-v050-001}
+  evidence_refs: [evidence-example-v050-001]
+  questions:
+    - Which assumption should be updated?
+  expected_decision: Retain, revise, or reject the assumption.
+  accountable_human: role:mission-owner
+  human_review_required: true
+  status: open
+  created_at: 2026-08-23T01:05:00Z
+
+deliberation_session:
+  id: deliberation-example-v050-001
+  cognitive_event_ref: cognitive-event-example-v050-001
+  participants: {humans: ["role:mission-owner"], agents: ["agent:analysis"]}
+  hypotheses:
+    - The intervention caused the observed change.
+    - The change came from an external factor.
+  evidence_refs: [evidence-example-v050-001]
+  arguments:
+    - Causal attribution remains uncertain.
+  accountable_human: role:mission-owner
+  status: open
+  created_at: 2026-08-23T01:10:00Z
+
+learning_record:
+  id: learning-example-v050-001
+  source_type: deliberation
+  source_ref: deliberation-example-v050-001
+  learning_statement: The intervention is a plausible cause but needs independent replication.
+  claim_type: hypothesis
+  evidence_refs: [evidence-example-v050-001]
+  validation_status: candidate
+  accountable_human: role:mission-owner
+  created_by: agent:analysis
+  created_at: 2026-08-23T01:20:00Z
+
+evolution_proposal:
+  id: evolution-example-v050-001
+  source_learning_ref: learning-example-v050-001
+  target: policy:experiment-replication
+  change_type: policy
+  current_state: Independent replication is optional.
+  proposed_state: Require independent replication before causal claims become ratified learning.
+  rationale: The current evidence does not isolate external causes.
+  evidence_refs: [evidence-example-v050-001]
+  disconfirming_conditions:
+    - Independent replication shows no material effect.
+  risk_class: medium
+  reversibility: reversible
+  authority_ref: authority:policy-change
+  accountable_human: role:policy-owner
+  is_candidate: true
+  approval_status: pending_human_review
+  created_at: 2026-08-23T01:25:00Z
+
+# CognitiveCommit and CognitiveVersion would be created only after an authorized
+# decision. They are intentionally omitted while the proposal is pending.

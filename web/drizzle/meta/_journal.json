@@ -15,6 +15,20 @@
       "when": 1787455261385,
       "tag": "0001_supreme_doomsday",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1787479753994,
+      "tag": "0002_talented_silk_fever",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1787480313866,
+      "tag": "0003_low_daredevil",
+      "breakpoints": true
     }
   ]
 }

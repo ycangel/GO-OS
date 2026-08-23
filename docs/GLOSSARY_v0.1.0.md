@@ -1,5 +1,10 @@
 # GO OS Glossary v0.2.2
 
+> **Historical filename note:** this path retains its original
+> `GLOSSARY_v0.1.0.md` filename, while the document heading and content were
+> advanced to v0.2.2. The mismatch is preserved as provenance; use the v0.2.2
+> content label when citing this file.
+
 **Agency** — The practical freedom of an actor to decide and act within a defined boundary.
 
 **Aggregate Exposure** — The cumulative system-level risk created by multiple actions or agents, including total budget, concurrency, correlated commitments and conflict risk.

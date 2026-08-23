@@ -1,0 +1,97 @@
+{
+  "release": "0.5.0",
+  "release_name_en": "Foundation Release",
+  "release_name_zh": "奠基版本",
+  "legal_entity_implied": false,
+  "json_schema_draft": "https://json-schema.org/draft/2020-12/schema",
+  "field_naming": "snake_case",
+  "adapter_boundary": "Implementations using camelCase or other field conventions require an explicit tested adapter; equivalence is not inferred.",
+  "status_definitions": {
+    "normative": "Frozen v0.5 interoperability contract; runtime implementation is not asserted.",
+    "proposal": "Design candidate that may change and is not a frozen interface.",
+    "reference": "Example or evaluation vector; not production evidence."
+  },
+  "runtime_conformance": "not_asserted_by_manifest",
+  "authority_action_vocabulary": {
+    "status": "normative",
+    "runtime_coverage": "not_asserted_by_manifest",
+    "canonical_actions": [
+      "create_evidence",
+      "create_exception",
+      "create_cognitive_event",
+      "create_deliberation_session",
+      "create_learning_record",
+      "create_evolution_proposal",
+      "approve_evolution_proposal",
+      "apply_evolution_proposal",
+      "create_cognitive_commit",
+      "create_cognitive_version",
+      "update_mission",
+      "execute_action"
+    ],
+    "custom_action_prefix": "custom:",
+    "legacy_aliases": {
+      "record_evidence": "create_evidence",
+      "raise_exception": "create_exception",
+      "propose_evolution": "create_evolution_proposal",
+      "modify_mission": "update_mission"
+    }
+  },
+  "core_runtime_objects": [
+    {
+      "object": "Mission",
+      "schema": "mission.schema.json",
+      "status": "normative",
+      "legacy_alias": "MissionSpec"
+    },
+    {
+      "object": "AuthorityGrant",
+      "schema": "authority-grant.schema.json",
+      "status": "normative"
+    },
+    {
+      "object": "Evidence",
+      "schema": "evidence.schema.json",
+      "status": "normative",
+      "legacy_alias": "EvidenceSpec"
+    },
+    {
+      "object": "CognitiveEvent",
+      "schema": "cognitive-event.schema.json",
+      "status": "normative"
+    },
+    {
+      "object": "DeliberationSession",
+      "schema": "deliberation-session.schema.json",
+      "status": "normative"
+    },
+    {
+      "object": "LearningRecord",
+      "schema": "learning-record.schema.json",
+      "status": "normative"
+    },
+    {
+      "object": "EvolutionProposal",
+      "schema": "evolution-proposal.schema.json",
+      "status": "normative"
+    },
+    {
+      "object": "CognitiveVersion",
+      "schema": "cognitive-version.schema.json",
+      "status": "normative"
+    }
+  ],
+  "supporting_objects": [
+    {
+      "object": "Exception",
+      "schema": "exception.schema.json",
+      "status": "normative",
+      "legacy_alias": "ExceptionSpec"
+    },
+    {
+      "object": "CognitiveCommit",
+      "schema": "cognitive-commit.schema.json",
+      "status": "normative"
+    }
+  ]
+}

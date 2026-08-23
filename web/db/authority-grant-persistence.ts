@@ -1,4 +1,9 @@
-import type { AuthorityGrant } from "../runtime/authority-runtime";
+import {
+  canPerformAction,
+  parseAuthorityGrant,
+  type AuthorityAction,
+  type AuthorityGrant,
+} from "./authority-grants";
 
 /**
  * Persistence boundary for Constitutional Runtime authority grants.
@@ -8,7 +13,7 @@ import type { AuthorityGrant } from "../runtime/authority-runtime";
  * themselves to storage implementation details.
  */
 export interface AuthorityGrantRepository {
-  getActiveGrant(actorId: string, action: string): Promise<AuthorityGrant | null>;
+  getActiveGrant(actorId: string, action: AuthorityAction): Promise<unknown | null>;
   revokeGrant(grantId: string, reason: string): Promise<void>;
   saveGrant(grant: AuthorityGrant): Promise<void>;
 }
@@ -16,19 +21,34 @@ export interface AuthorityGrantRepository {
 export async function requireAuthority(
   repository: AuthorityGrantRepository,
   actorId: string,
-  action: string,
+  action: AuthorityAction,
+  target: string,
+  resourceRisk: "low" | "medium" | "high",
+  resourceExposure: number,
+  tool: string,
+  reversibility:
+    | "reversible_only"
+    | "costly_to_reverse_allowed"
+    | "irreversible_allowed",
 ): Promise<AuthorityGrant> {
-  const grant = await repository.getActiveGrant(actorId, action);
+  const candidate = await repository.getActiveGrant(actorId, action);
+  const grant = parseAuthorityGrant(candidate);
 
-  if (!grant) {
+  if (
+    !grant ||
+    !canPerformAction(grant, {
+      actor: actorId,
+      action,
+      target,
+      resourceRisk,
+      resourceExposure,
+      tool,
+      reversibility,
+      requestedBy: "authority-grant-repository",
+    })
+  ) {
     throw new Error(
       `Authority denied: actor ${actorId} has no valid grant for ${action}`,
-    );
-  }
-
-  if (!grant.selfExpansionAllowed && action === "modify_authority") {
-    throw new Error(
-      "Authority denied: actors cannot expand their own authority boundary",
     );
   }
 

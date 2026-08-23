@@ -1,6 +1,6 @@
 {
   "name": "go-society",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "private": true,
   "license": "Apache-2.0",
   "engines": {
@@ -11,7 +11,8 @@
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vite",
     "build": "bash scripts/build-verified.sh",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
-    "test": "npm run build && node --experimental-loader=./tests/cloudflare-loader.mjs --test tests/rendered-html.test.mjs",
+    "test": "npm run typecheck && npm run build && node --experimental-strip-types --experimental-loader=./tests/cloudflare-loader.mjs --test tests/*.test.mjs",
+    "typecheck": "tsc --noEmit --incremental false",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate"
   },
@@ -19,10 +20,12 @@
     "drizzle-orm": "0.45.2",
     "next": "16.2.6",
     "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react-dom": "19.2.6",
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",
+    "@cloudflare/workers-types": "4.20260515.1",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",

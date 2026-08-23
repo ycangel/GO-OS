@@ -2,18 +2,76 @@
 
 All notable changes to GO OS are documented here.
 
+## v0.5.0 — 2026-08-23
+
+### Release designation
+
+- Designated v0.5.0 as the first **Foundation Release**, translated consistently in Chinese as **“奠基版本”**.
+- Clarified that “Foundation Release” is a software release-stage name. It does not announce or imply a “GO Foundation,” a registered foundation or any other legal entity.
+
+### Added
+
+- Canonical v0.5 documentation entry point at `docs/INDEX.md`, while retaining earlier versioned documents as design history.
+- Quick Start, Architecture Overview and a Whitepaper front structure for the v0.5 baseline.
+- Dedicated v0.5.0 Release Notes and Migration & Deprecation Notes.
+- A unified Evaluation & Red-Team entry point for reproducible checks, counterexamples and the next adversarial review.
+
+### Changed
+
+- Advanced the repository version marker from `0.3.0` to `0.5.0`.
+- Aligned root documentation, schemas, Skills, tests and the web reference application around the v0.5 terminology, architecture and navigation model.
+- Defined eight core reference-runtime objects: Mission, AuthorityGrant, Evidence, CognitiveEvent, DeliberationSession, LearningRecord, EvolutionProposal and CognitiveVersion.
+- Distinguished published specifications and reference assets from capabilities that still require interoperability, longitudinal and production validation.
+- Updated contributor and authorship guidance for compatibility notes, red-team evidence, Human–AI collaboration and human responsibility.
+
+### Compatibility and scope
+
+- Historical documents remain available; their presence does not make them canonical for v0.5 unless `docs/INDEX.md` says so.
+- Existing versioned interfaces and examples are preserved where practical. See `docs/MIGRATION_AND_DEPRECATION_v0.5.0.md` before treating earlier terms or specifications as current.
+- This release establishes a coherent baseline. It does not claim production readiness for autonomous organizational governance.
+
+## v0.4.0–v0.4.9 — 2026-08-23
+
+### Added
+
+- Reference-runtime architecture and implementation roadmap.
+- Cognitive Repository runtime, Cognitive Commit protocol, branch and merge models, API model and persistence-layer specifications.
+- GO Cognitive Repository #001 specification, bootstrap model, genesis data, evolution history and first Cognitive Commit example.
+- GO Society Runtime Instance #001 specification and state model.
+- Evaluations covering the reference runtime, repository semantics, persistence, genesis data, runtime instance and integrated runtime chain.
+
+### Changed
+
+- Froze the v0.5 reference core at v0.4.9 and assembled the final runtime-integration release candidate.
+- Moved the project from isolated runtime components toward a single evidence-to-cognitive-commit loop.
+
+## v0.3.1–v0.3.9 — 2026-08-23
+
+### Added
+
+- Authority, evidence and exception runtime contracts, persistence boundaries and constitutional mutation guards.
+- Cognitive Event, Deliberation, Organizational Memory and Evolution runtime specifications and reference implementations.
+- Headless-core, Cognitive Interface Adapter and Cognitive Package specifications.
+- Cognitive portability, package import/export, state migration, cognitive versioning and the initial cognitive-Git model.
+- Adversarial and integration evaluations for each runtime stage.
+
+### Changed
+
+- Made Human Sovereignty enforceable at selected mutation boundaries rather than leaving it as a documentation principle alone.
+- Extended the reference loop from evidence collection through deliberation, learning, evolution proposals and organizational memory.
+
 ## v0.3.0 — 2026-08-22
 
 ### Added
-- Established **GO Society** as the self-evolving organization behind GO OS and its first living reference implementation.
-- Added the deployable, open-source **GO Society Web** runtime under `/web`.
+- Introduced **GO Society** as the intended first self-application reference instance for GO OS.
+- Added an early deployable, open-source **GO Society Web** alpha surface under `/web`.
 - Added Mission Cockpit, Intervention Center, Evidence Ledger, Evolution Missions and Capability Network.
 - Added durable D1 organizational memory and authenticated write paths for Evidence, Exceptions and Evolution Proposals.
 - Added `GO_SOCIETY_OPERATING_CHARTER_v0.1.md` defining the founding Human–Agent Cell, authority boundaries, initial missions and evolution rules.
 - Published the first live GO Society runtime at https://go-society.angelo-pix.chatgpt.site.
 
 ### Changed
-- Expanded GO OS from an open framework, skill system and emerging protocol into a usable and deployable software runtime.
+- Expanded GO OS from an open framework, Skill system and emerging protocol into a deployable reference-runtime surface; this did not establish complete-loop or production conformance.
 - Added GO Society Web as the fourth canonical usage path.
 
 ## v0.2.2 — 2026-08-22

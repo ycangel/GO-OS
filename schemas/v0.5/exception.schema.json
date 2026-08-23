@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://go-os.org/schemas/v0.5/exception.schema.json",
+  "title": "GO OS Exception",
+  "description": "Normative v0.5 supporting contract for an out-of-envelope condition or recurring structural signal. ExceptionSpec is retained as a legacy alias.",
+  "version": "0.5.0",
+  "x-go-os-status": "normative",
+  "x-go-os-role": "supporting-object",
+  "type": "object",
+  "required": [
+    "id",
+    "mission_ref",
+    "detected_at",
+    "condition",
+    "severity",
+    "authority_status",
+    "disposition",
+    "recurrence_count",
+    "structural_review_required"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "mission_ref": {"type": "string", "minLength": 1},
+    "detected_at": {"type": "string", "format": "date-time"},
+    "condition": {"type": "string", "minLength": 1},
+    "severity": {"enum": ["info", "low", "medium", "high", "critical"]},
+    "authority_status": {"enum": ["within_authority", "near_limit", "outside_authority", "unknown"]},
+    "evidence_refs": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "immediate_containment": {"type": "array", "items": {"type": "string"}},
+    "disposition": {"enum": ["continue", "retry", "adapt", "pause", "rollback", "escalate", "terminate", "recompile"]},
+    "escalate_to": {"type": ["string", "null"]},
+    "recurrence_key": {"type": ["string", "null"]},
+    "recurrence_count": {"type": "integer", "minimum": 1},
+    "structural_review_required": {"type": "boolean"},
+    "learning_target": {"enum": ["none", "mission", "authority", "policy", "capability", "architecture", "strategy", "memory"]},
+    "resolution": {"type": ["string", "null"]}
+  },
+  "additionalProperties": true
+}

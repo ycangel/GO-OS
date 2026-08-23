@@ -1,4 +1,7 @@
-import { requireAuthority, type AuthorityAction } from "./authority-guard";
+import {
+  requireOrganizationalMutation,
+  type RuntimeMutationAction,
+} from "./api-constitutional-guard";
 
 /**
  * Constitutional mutation boundary.
@@ -9,16 +12,16 @@ import { requireAuthority, type AuthorityAction } from "./authority-guard";
  */
 export async function authorizeOrganizationalMutation(input: {
   actor: string;
-  action: AuthorityAction;
+  action: RuntimeMutationAction;
   target: string;
   metadata?: Record<string, unknown>;
 }) {
-  return requireAuthority({
-    actor: input.actor,
-    action: input.action,
-    target: input.target,
-    metadata: input.metadata,
-  });
+  return requireOrganizationalMutation(
+    input.actor,
+    input.action,
+    input.target,
+    input.metadata,
+  );
 }
 
 export const mutationActions = {
@@ -26,4 +29,5 @@ export const mutationActions = {
   createException: "create_exception",
   createEvolutionProposal: "create_evolution_proposal",
   updateMission: "update_mission",
+  manageMembership: "custom:manage_membership",
 } as const;
