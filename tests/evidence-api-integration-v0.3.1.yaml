@@ -1,0 +1,30 @@
+version: 0.3.1
+name: evidence-api-integration
+
+cases:
+  - name: reject-evidence-without-provenance
+    input:
+      observation: "customer prefers this product"
+      source: "agent-memory"
+      provenance: ""
+    expected:
+      status: rejected
+      reason: provenance-required
+
+  - name: accept-evidence-with-conflict-review
+    input:
+      observation: "premium product conversion increased"
+      source: "sales-data"
+      provenance: "crm-report"
+      contradicts:
+        - "customers only choose lowest price"
+    expected:
+      status: accepted-with-review
+      learning_signal: true
+
+  - name: accept-high-confidence-evidence
+    input:
+      confidence: 90
+      provenance: "verified-source"
+    expected:
+      status: accepted
