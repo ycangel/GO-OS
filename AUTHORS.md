@@ -2,7 +2,7 @@
 
 ## Angelo Yu
 
-Founder & CEO, PIX Moving  
+Founder & CEO, PIX Moving  www.pixmoving.com
 Email: angelo@pixmoving.com
 
 Role in GO OS: originator, human steward, product and organizational design lead.
