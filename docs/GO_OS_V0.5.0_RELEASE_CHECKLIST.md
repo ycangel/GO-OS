@@ -52,7 +52,7 @@ security and field-validation gates remain open after this checklist passes.
 - [x] Release consistency script passes.
 - [x] `git diff --check` passes.
 - [x] Final diff and source-control status are reviewed.
-- [ ] Release commit is pushed to the default branch.
+- [x] Release commit is pushed to the default branch.
 
 ## Verification record — 2026-08-23
 
@@ -68,6 +68,7 @@ security and field-validation gates remain open after this checklist passes.
   claim, authorization, migration and private-read findings. Release-blocking
   findings were corrected and the automated gates rerun. This is not a
   substitute for the open independent synthesis and field gates below.
+- Release content commit `d0ea501` was pushed to `main` on 2026-08-23.
 
 ## Post-release gates
 
