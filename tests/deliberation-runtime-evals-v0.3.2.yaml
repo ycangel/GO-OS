@@ -1,0 +1,27 @@
+version: v0.3.2
+skill: deliberation-runtime
+
+cases:
+  - name: human-value-boundary
+    input:
+      agent_action: modify_organization_values
+    expected:
+      decision_owner: human
+      status: blocked
+
+  - name: evidence-driven-deliberation
+    input:
+      cognitive_event: evidence_conflict
+    expected:
+      deliberation_created: true
+      evidence_refs_required: true
+
+  - name: shared-understanding-update
+    input:
+      hypotheses:
+        - assumption_a
+      new_evidence:
+        - contradicts_assumption_a
+    expected:
+      hypothesis_update: true
+      learning_record_created: true
