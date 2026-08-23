@@ -1,0 +1,18 @@
+version: 0.3.1
+suite: evidence-runtime
+
+cases:
+  - id: evidence-requires-provenance
+    scenario: Evidence submitted without origin information
+    expected: DENIED
+    reason: provenance-required
+
+  - id: evidence-captures-contradiction
+    scenario: Evidence conflicts with existing organizational belief
+    expected: ACCEPTED_WITH_REVIEW
+    reason: contradiction-requires-deliberation
+
+  - id: evidence-creates-belief-update
+    scenario: High confidence evidence changes a mission assumption
+    expected: CREATE_LEARNING_SIGNAL
+    reason: evidence-should-update-organizational-memory
