@@ -1,0 +1,22 @@
+version: v0.3.6
+name: Cognitive Interface Adapter Evaluations
+
+cases:
+  - id: interface-portability
+    scenario: A cognitive session moves between AI interfaces
+    expected:
+      - organizational_context_preserved: true
+      - memory_preserved: true
+
+  - id: authority-boundary
+    scenario: External AI interface attempts organizational mutation
+    expected:
+      - rejected: true
+      - reason: authority_boundary
+
+  - id: cognitive-instance-export
+    scenario: Export a long-running reasoning context
+    expected:
+      - package_created: true
+      - decisions_included: true
+      - reasoning_patterns_included: true
