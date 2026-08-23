@@ -1,5 +1,6 @@
 import { getDb } from "../../../db";
 import { evolutionProposals } from "../../../db/schema";
+import { requireOrganizationalMutation } from "../../../runtime/api-constitutional-guard";
 import {
   getRuntimeIdentity,
   mutationCameFromSameOrigin,
@@ -19,6 +20,14 @@ export async function POST(request: Request) {
       { error: "Only the accountable owner can propose an organizational rewrite." },
       { status: 403 },
     );
+  }
+
+  const authority = await requireOrganizationalMutation(
+    `member:${identity.member.id}`,
+    "create_evolution_proposal",
+  );
+  if (!authority.allowed) {
+    return Response.json({ error: authority.reason }, { status: 403 });
   }
 
   try {
