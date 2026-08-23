@@ -1,0 +1,24 @@
+version: v0.4.2
+name: cognitive_repository_implementation
+
+evals:
+  - name: cognitive_commit_requires_context
+    input:
+      belief_change: true
+      evidence_refs: []
+    expected:
+      status: rejected
+      reason: missing_context
+
+  - name: cognitive_diff_generation
+    input:
+      previous_version: v1
+      new_version: v2
+    expected:
+      cognitive_diff_created: true
+
+  - name: branch_merge_requires_review
+    input:
+      merge_type: strategic_assumption
+    expected:
+      human_review_required: true
