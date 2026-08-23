@@ -1,0 +1,30 @@
+version: v0.3.1
+name: authority-enforcement-integration
+
+cases:
+  - id: self-expansion-blocked
+    description: Agent cannot modify its own authority grant
+    actor: agent:self
+    action: update_authority_grant
+    expected: denied
+    reason: self_expansion_not_allowed
+
+  - id: missing-grant-blocked
+    description: Authenticated actor without grant cannot mutate organization state
+    actor: human:unknown
+    action: create_evolution_proposal
+    expected: denied
+    reason: missing_authority
+
+  - id: valid-grant-accepted
+    description: Actor with explicit grant can perform allowed mutation
+    actor: human:owner
+    action: create_evidence
+    expected: allowed
+
+  - id: expired-grant-blocked
+    description: Expired authority cannot be used
+    actor: agent:expired
+    action: create_exception
+    expected: denied
+    reason: expired_authority
