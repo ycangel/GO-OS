@@ -497,8 +497,12 @@ For adversarial review priorities and evidence expectations, see [Evaluation & R
 
 ## Authors
 
-**Angelo Yu**  
-Founder & CEO, PIX Moving  
+**Angelo Yu**
+
+Founder & CEO, PIX Moving · Initiator and Maintainer of GO OS
+
+A practitioner of complex organizational management and an explorer of new organizational paradigms.
+
 angelo@pixmoving.com
 
 **灌木丛 (Guanmucong)**  

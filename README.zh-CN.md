@@ -503,7 +503,9 @@ GO OS 是一个开放项目。贡献可以是代码、Skills、Schemas、Evaluat
 
 **Angelo Yu**
 
-Founder & CEO, PIX Moving
+PIX Moving 创始人兼 CEO · GO OS 发起人与维护者
+
+复杂组织管理的长期实践者与组织新范式探索者
 
 angelo@pixmoving.com
 

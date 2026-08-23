@@ -10,6 +10,12 @@ Email: angelo@pixmoving.com
 
 Role in GO OS: originator, founding maintainer, human steward, and product and organizational design lead.
 
+Practice background: GO OS grew out of and continues to be tested against
+Angelo's experience leading a complex organization of hundreds spanning R&D,
+marketing, manufacturing, cross-border collaboration and physical-world
+operations. Through that work, he continues to experiment with, validate and
+evolve new ways of organizing under real operating conditions.
+
 Accountability: approves publication and governance changes, defines purpose and constitutional boundaries, and retains human responsibility for project decisions.
 
 ## 灌木丛 (Guanmucong)
