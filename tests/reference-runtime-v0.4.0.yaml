@@ -1,0 +1,25 @@
+# GO OS v0.4.0 Reference Runtime Evaluations
+
+cases:
+  - name: cognitive_loop_execution
+    input:
+      evidence: true
+      deliberation: true
+      learning: true
+      evolution_proposal: true
+    expected:
+      runtime_cycle_completed: true
+
+  - name: human_sovereignty_boundary
+    input:
+      actor: agent
+      action: modify_constitution
+    expected:
+      status: rejected
+
+  - name: cognitive_version_creation
+    input:
+      learning_record: true
+      organizational_change: true
+    expected:
+      cognitive_commit_created: true
