@@ -1,0 +1,24 @@
+version: v0.4.6
+name: cognitive_repository_data_model_evals
+
+cases:
+  - name: belief_requires_evidence
+    input:
+      belief: "customer prefers premium experience"
+      evidence_refs: []
+    expected:
+      rejected: true
+
+  - name: decision_requires_owner
+    input:
+      decision: "change strategic direction"
+      ownership: null
+    expected:
+      rejected: true
+
+  - name: cognitive_commit_preserves_history
+    input:
+      previous_state: true
+      new_state: true
+    expected:
+      traceable_evolution: true
