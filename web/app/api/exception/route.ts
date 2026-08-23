@@ -1,5 +1,6 @@
 import { getDb } from "../../../db";
 import { exceptions } from "../../../db/schema";
+import { requireOrganizationalMutation } from "../../../runtime/api-constitutional-guard";
 import {
   canRecordMission,
   getRuntimeIdentity,
@@ -19,6 +20,14 @@ export async function POST(request: Request) {
     return Response.json({ error: "Only approved members can raise exceptions." }, { status: 403 });
   }
 
+  const authority = await requireOrganizationalMutation(
+    `member:${identity.member.id}`,
+    "create_exception",
+  );
+  if (!authority.allowed) {
+    return Response.json({ error: authority.reason }, { status: 403 });
+  }
+
   try {
     const payload = (await request.json()) as Record<string, unknown>;
     const missionId = Number(payload.missionId);
@@ -28,14 +37,7 @@ export async function POST(request: Request) {
     const accountableOwner = String(payload.accountableOwner ?? "").trim().slice(0, 100);
     const severity = String(payload.severity ?? "medium").trim();
 
-    if (
-      !Number.isInteger(missionId) ||
-      !title ||
-      !context ||
-      !requiredDecision ||
-      !accountableOwner ||
-      !["critical", "high", "medium", "low"].includes(severity)
-    ) {
+    if (!Number.isInteger(missionId) || !title || !context || !requiredDecision || !accountableOwner || !["critical", "high", "medium", "low"].includes(severity)) {
       return Response.json({ error: "Complete the authority exception before escalation." }, { status: 400 });
     }
     if (!(await canRecordMission(identity.member, missionId))) {
