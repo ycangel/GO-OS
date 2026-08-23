@@ -1,0 +1,27 @@
+version: v0.3.9
+name: cognitive-git-model-evaluations
+
+cases:
+  - name: cognitive_commit_requires_reason
+    input:
+      belief_change: true
+      evidence_refs: []
+    expected:
+      rejected: true
+      reason: missing_evidence_context
+
+  - name: cognitive_diff_tracks_learning
+    input:
+      previous_belief: low_price_preference
+      new_belief: premium_value_preference
+    expected:
+      diff_created: true
+      learning_record_created: true
+
+  - name: cognitive_merge_requires_human_judgment
+    input:
+      competing_hypotheses:
+        - hypothesis_a
+        - hypothesis_b
+    expected:
+      human_review_required: true
