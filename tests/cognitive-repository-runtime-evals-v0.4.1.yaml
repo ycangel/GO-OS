@@ -1,0 +1,20 @@
+version: v0.4.1
+name: cognitive_repository_runtime_evals
+
+cases:
+  - id: cognitive_commit_requires_evidence
+    scenario: belief_change_without_evidence
+    expected:
+      status: rejected
+      reason: missing_evidence_context
+
+  - id: cognitive_diff_generation
+    scenario: compare_two_cognitive_versions
+    expected:
+      cognitive_diff_created: true
+
+  - id: cognitive_history_preserved
+    scenario: create_new_version_after_learning
+    expected:
+      previous_version_preserved: true
+      evolution_trace_created: true
