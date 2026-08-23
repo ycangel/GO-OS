@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 test("renders GO Society as the product surface", async () => {
@@ -29,4 +30,19 @@ test("renders GO Society as the product surface", async () => {
   const html = await response.text();
   assert.match(html, /GO Society/i);
   assert.match(html, /A self-evolving organization for self-evolving organizations/i);
+});
+
+test("public runtime is structurally separated from private field records", async () => {
+  const source = await readFile(
+    new URL("../app/api/runtime/route.ts", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(source, /publicCases/);
+  assert.match(source, /human_approved/);
+  assert.match(source, /reidentificationRisk, "low"/);
+  assert.match(source, /consentScope, "anonymous_publication"/);
+  assert.doesNotMatch(source, /fieldRecords/);
+  assert.doesNotMatch(source, /privateNotes/);
+  assert.doesNotMatch(source, /createdBy/);
 });
