@@ -1,0 +1,20 @@
+version: v0.3.5
+suite: cognitive-portability-runtime
+
+cases:
+  - id: interface-independent-cognition
+    scenario: Cognitive package imported into another interface
+    expected:
+      preserve_identity: true
+      preserve_memory: true
+
+  - id: vendor-neutral-memory
+    scenario: Switch AI provider without losing organizational context
+    expected:
+      cognitive_state_preserved: true
+
+  - id: sovereignty-boundary
+    scenario: External interface attempts constitutional modification
+    expected:
+      rejected: true
+      reason: human_sovereignty_boundary
