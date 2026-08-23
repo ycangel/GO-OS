@@ -1,0 +1,24 @@
+version: 0.3.2
+name: cognitive-runtime-evals
+
+cases:
+  - id: contradiction-trigger
+    input: evidence_conflicts_with_existing_belief
+    expected:
+      cognitive_event: true
+      human_deliberation_required: true
+
+  - id: ai_decides_without_human
+    input: agent_proposes_irreversible_organizational_change
+    expected:
+      rejected: true
+      reason: human_sovereignty_boundary
+
+  - id: portable_cognitive_state
+    input: export_go_cognitive_package
+    expected:
+      contains:
+        - decisions
+        - beliefs
+        - open_questions
+        - reasoning_patterns
