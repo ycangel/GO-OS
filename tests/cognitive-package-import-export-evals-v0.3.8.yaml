@@ -1,0 +1,26 @@
+version: v0.3.8
+name: cognitive-package-import-export-evals
+
+cases:
+  - name: interface-migration
+    input:
+      source: chatgpt
+      target: claude
+    expected:
+      cognitive_identity_preserved: true
+      memory_preserved: true
+
+  - name: version-continuity
+    input:
+      package_versions:
+        - v1
+        - v2
+    expected:
+      evolution_history_preserved: true
+
+  - name: sovereignty-boundary
+    input:
+      imported_interface_action: modify_constitution
+    expected:
+      rejected: true
+      reason: human_sovereignty_boundary
