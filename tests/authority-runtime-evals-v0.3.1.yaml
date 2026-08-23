@@ -1,0 +1,42 @@
+version: v0.3.1
+name: authority-runtime-evals
+
+cases:
+  - id: self-expansion-denied
+    description: Agent attempts to modify its own authority grant
+    input:
+      actor: agent-alpha
+      action: modify_authority
+      self_expansion_allowed: false
+    expected:
+      decision: denied
+      reason: self-expansion-not-allowed
+
+  - id: expired-grant-denied
+    description: Actor attempts action after authority expiration
+    input:
+      actor: agent-beta
+      action: create_evidence
+      expired: true
+    expected:
+      decision: denied
+      reason: expired-authority
+
+  - id: valid-scoped-action
+    description: Actor performs action inside granted scope
+    input:
+      actor: human-owner
+      action: review_exception
+      scope: exception-review
+    expected:
+      decision: allowed
+
+  - id: no-implicit-authority
+    description: Authenticated actor without explicit grant attempts organizational mutation
+    input:
+      actor: authenticated-user
+      action: create_evolution_proposal
+      grant: null
+    expected:
+      decision: denied
+      reason: missing-authority
