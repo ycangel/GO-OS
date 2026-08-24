@@ -1,7 +1,6 @@
-import { env } from "cloudflare:workers";
 import { and, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
-import { getDb } from "../db";
+import { getDb, getRuntimeVariable } from "../db";
 import {
   cognitiveHeads,
   cognitiveMcpDrafts,
@@ -27,15 +26,14 @@ import {
   canRecordMission,
   type RuntimeMember,
 } from "../app/member-auth";
+import {
+  authenticateBearerRequest,
+  OAuthResourceServerError,
+  publicOrigin,
+} from "./oauth-resource-server";
 
-const SITES_USER_ID_HEADER = "oai-authenticated-user-id";
 const DRAFT_TTL_MS = 24 * 60 * 60 * 1_000;
 const MAX_STAGED_BYTES = 128_000;
-
-type RuntimeEnv = {
-  GO_SOCIETY_PRINCIPAL_HMAC_SECRET?: string;
-  GO_SOCIETY_THREAD_HMAC_SECRET?: string;
-};
 
 export type McpBridgeRequestContext = {
   headers: Headers;
@@ -91,7 +89,10 @@ export async function getMcpCognitiveContext(
   rawInput: unknown,
   requestContext: McpBridgeRequestContext,
 ): Promise<Record<string, unknown>> {
-  const principal = await resolveMcpPrincipal(requestContext);
+  const principal = await resolveMcpPrincipal(
+    requestContext,
+    "go.context.read",
+  );
   const parsed = contextInputSchema.safeParse(rawInput ?? {});
   if (!parsed.success) {
     throw validationError(parsed.error.issues[0]?.message);
@@ -197,7 +198,10 @@ export async function stageMcpCheckpoint(
   rawInput: unknown,
   requestContext: McpBridgeRequestContext,
 ): Promise<Record<string, unknown>> {
-  const principal = await resolveMcpPrincipal(requestContext);
+  const principal = await resolveMcpPrincipal(
+    requestContext,
+    "go.checkpoint.write",
+  );
   const parsed = normalizeMcpStageInput(rawInput);
   const db = getDb();
   const mission = await resolveMission(db, parsed.missionId);
@@ -451,7 +455,10 @@ export async function requestMcpHumanReview(
   rawInput: unknown,
   requestContext: McpBridgeRequestContext,
 ): Promise<Record<string, unknown>> {
-  const principal = await resolveMcpPrincipal(requestContext);
+  const principal = await resolveMcpPrincipal(
+    requestContext,
+    "go.checkpoint.write",
+  );
   const parsed = reviewInputSchema.safeParse(rawInput);
   if (!parsed.success) throw validationError(parsed.error.issues[0]?.message);
 
@@ -510,11 +517,11 @@ export async function requestMcpHumanReview(
 
 export async function getWebMcpPrincipalLink(
   member: RuntimeMember,
-  stableSitesUserId: string,
+  stablePrincipalKey: string,
   requestUrl: string,
 ) {
   const principalHash = await principalHashFromStableUserId(
-    stableSitesUserId,
+    stablePrincipalKey,
     requestUrl,
   );
   const db = getDb();
@@ -535,11 +542,11 @@ export async function getWebMcpPrincipalLink(
 
 export async function linkWebMcpPrincipal(
   member: RuntimeMember,
-  stableSitesUserId: string,
+  stablePrincipalKey: string,
   requestUrl: string,
 ) {
   const principalHash = await principalHashFromStableUserId(
-    stableSitesUserId,
+    stablePrincipalKey,
     requestUrl,
   );
   const db = getDb();
@@ -557,7 +564,7 @@ export async function linkWebMcpPrincipal(
   if (existingForPrincipal && existingForPrincipal.memberId !== member.id) {
     throw new McpBridgeServiceError(
       "PRINCIPAL_ALREADY_LINKED",
-      "This Sites identity is already linked to another GO Society member.",
+      "This verified identity is already linked to another GO Society member.",
       409,
     );
   }
@@ -599,12 +606,12 @@ export async function linkWebMcpPrincipal(
 
 export async function revokeWebMcpPrincipal(
   member: RuntimeMember,
-  stableSitesUserId: string,
+  stablePrincipalKey: string,
   requestUrl: string,
 ) {
   const link = await getWebMcpPrincipalLink(
     member,
-    stableSitesUserId,
+    stablePrincipalKey,
     requestUrl,
   );
   if (!link) return false;
@@ -944,10 +951,30 @@ function normalizeMcpStageInput(rawInput: unknown): CheckpointRequest {
 
 async function resolveMcpPrincipal(
   context: McpBridgeRequestContext,
+  requiredScope: "go.context.read" | "go.checkpoint.write",
 ): Promise<ResolvedPrincipal> {
   validateRequestContext(context);
-  const principalHash = await principalHashFromHeaders(
-    context.headers,
+  let oauthPrincipal;
+  try {
+    oauthPrincipal = await authenticateBearerRequest(
+      context.headers,
+      context.requestUrl,
+      [requiredScope],
+    );
+  } catch (error) {
+    if (error instanceof OAuthResourceServerError) {
+      throw new McpBridgeServiceError(
+        error.code,
+        error.message,
+        error.status,
+        undefined,
+        error.wwwAuthenticate,
+      );
+    }
+    throw error;
+  }
+  const principalHash = await principalHashFromStableUserId(
+    oauthPrincipal.principalKey,
     context.requestUrl,
   );
   const db = getDb();
@@ -966,7 +993,7 @@ async function resolveMcpPrincipal(
   if (!row || !["invited", "active"].includes(row.member.status)) {
     throw new McpBridgeServiceError(
       "PRINCIPAL_NOT_LINKED",
-      "Link this ChatGPT identity from the private GO Society Web runtime before using the cognitive bridge.",
+      "Link this verified OAuth identity from the private GO Society Web runtime before using the cognitive bridge.",
       403,
     );
   }
@@ -997,49 +1024,38 @@ async function resolveMcpPrincipal(
   };
 }
 
-async function principalHashFromHeaders(headers: Headers, requestUrl: string) {
-  const stableUserId = headers.get(SITES_USER_ID_HEADER)?.trim();
-  if (!stableUserId || stableUserId.length > 512) {
-    throw new McpBridgeServiceError(
-      "SITES_IDENTITY_REQUIRED",
-      "The native Sites dispatcher did not provide a stable authenticated user ID.",
-      401,
-      undefined,
-      oauthChallenge(requestUrl),
-    );
-  }
-  return principalHashFromStableUserId(stableUserId, requestUrl);
-}
-
-function oauthChallenge(requestUrl: string) {
-  const origin = safeOrigin(requestUrl);
-  return `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource", error="invalid_token", error_description="A native Sites authenticated principal is required"`;
-}
-
 async function principalHashFromStableUserId(
-  stableUserId: string,
+  stablePrincipalKey: string,
   requestUrl: string,
 ) {
-  const normalizedUserId = stableUserId.trim();
-  if (!normalizedUserId || normalizedUserId.length > 512) {
+  const normalizedPrincipalKey = stablePrincipalKey.trim();
+  if (!normalizedPrincipalKey || normalizedPrincipalKey.length > 2_048) {
     throw new McpBridgeServiceError(
-      "SITES_IDENTITY_REQUIRED",
-      "The native Sites dispatcher did not provide a stable authenticated user ID.",
-      401,
+      "INVALID_PRINCIPAL_KEY",
+      "The verified identity did not provide a usable stable principal key.",
+      403,
     );
   }
-  const origin = safeOrigin(requestUrl);
-  const secret = (env as unknown as RuntimeEnv)
-    .GO_SOCIETY_PRINCIPAL_HMAC_SECRET ?? "";
+  let origin: string;
+  try {
+    origin = publicOrigin(requestUrl);
+  } catch {
+    throw new McpBridgeServiceError(
+      "PUBLIC_ORIGIN_UNAVAILABLE",
+      "The canonical public origin is unavailable for principal binding.",
+      503,
+    );
+  }
+  const secret = getRuntimeVariable("GO_SOCIETY_PRINCIPAL_HMAC_SECRET") ?? "";
   try {
     return await hmacSha256(
       secret,
-      stableStringify({ siteOrigin: origin, stableUserId: normalizedUserId }),
+      stableStringify({ siteOrigin: origin, stableUserId: normalizedPrincipalKey }),
     );
   } catch {
     throw new McpBridgeServiceError(
       "PRINCIPAL_BINDING_UNAVAILABLE",
-      "The Site-scoped MCP principal binding is unavailable.",
+      "The OAuth-scoped MCP principal binding is unavailable.",
       503,
     );
   }
@@ -1050,9 +1066,10 @@ async function prepareMcpSourceBinding(
   missionId: number,
   source: { interface: string; threadKey: string },
 ) {
-  const runtime = env as unknown as RuntimeEnv;
-  const principalSecret = runtime.GO_SOCIETY_PRINCIPAL_HMAC_SECRET ?? "";
-  const threadSecret = runtime.GO_SOCIETY_THREAD_HMAC_SECRET ?? "";
+  const principalSecret =
+    getRuntimeVariable("GO_SOCIETY_PRINCIPAL_HMAC_SECRET") ?? "";
+  const threadSecret =
+    getRuntimeVariable("GO_SOCIETY_THREAD_HMAC_SECRET") ?? "";
   try {
     const opaqueClientThreadKey = await hmacSha256(
       principalSecret,

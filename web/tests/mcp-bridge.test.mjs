@@ -85,22 +85,29 @@ test("tool discovery exposes exactly read, private stage and request-review", as
 
 test("unauthenticated tool calls fail before organizational data access", async () => {
   const response = await handleMcpPost(
-    mcpRequest({
-      jsonrpc: "2.0",
-      id: 3,
-      method: "tools/call",
-      params: { name: "go_society_get_context", arguments: {} },
-    }),
+    mcpRequest(
+      {
+        jsonrpc: "2.0",
+        id: 3,
+        method: "tools/call",
+        params: { name: "go_society_get_context", arguments: {} },
+      },
+      {
+        // This header is deliberately attacker-controlled in the test. MCP
+        // authentication must ignore it and require a verified Bearer JWT.
+        headers: { "oai-authenticated-user-id": "spoofed-sites-user" },
+      },
+    ),
   );
   assert.equal(response.status, 200);
   const body = await response.json();
   assert.equal(body.result.isError, true);
   assert.equal(
     body.result.structuredContent.error.code,
-    "SITES_IDENTITY_REQUIRED",
+    "BEARER_TOKEN_REQUIRED",
   );
   assert.deepEqual(body.result._meta["mcp/www_authenticate"], [
-    'Bearer resource_metadata="https://go-society.example/.well-known/oauth-protected-resource", error="invalid_token", error_description="A native Sites authenticated principal is required"',
+    'Bearer resource_metadata="https://go-society.example/.well-known/oauth-protected-resource", error="invalid_token", error_description="A Bearer access token is required."',
   ]);
 });
 

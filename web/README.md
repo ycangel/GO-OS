@@ -26,6 +26,7 @@ or other legal entity.
 - [Migration & Deprecation](../docs/MIGRATION_AND_DEPRECATION_v0.5.0.md)
 - [Evaluation & Red-Team](../docs/EVALUATION_AND_RED_TEAM_v0.5.0.md)
 - [Cognitive Bridge v0.5 Alpha](../docs/COGNITIVE_BRIDGE_v0.5_ALPHA.md)
+- [Isolated self-hosted deployment](../deploy/self-hosted/RUNBOOK.md)
 
 ## What the alpha surface implements
 
@@ -186,9 +187,16 @@ repository-level release and red-team checks remain separate.
 
 ## Deployment boundary
 
-The application is configured for OpenAI Sites and Cloudflare D1 through
-`.openai/hosting.json`. Read-only runtime views may be public. Write actions must
-remain authenticated, same-origin and server-authorized.
+The application supports two explicit deployment adapters:
+
+- OpenAI Sites with Cloudflare D1 through `.openai/hosting.json`; and
+- an isolated Node runtime with SQLite, OAuth-protected MCP and an optional
+  OIDC Web gateway through [`deploy/self-hosted`](../deploy/self-hosted).
+
+The self-hosted adapter does not replace or weaken the Sites adapter. Both use
+the same schema, migrations, AuthorityGrant checks, candidate-only MCP surface
+and Web-only Human Gate. Read-only runtime views may be public. Write actions
+must remain authenticated, same-origin and server-authorized.
 
 Deployment does not by itself certify the identity proxy, database contents,
 privacy process or constitutional enforcement. Review them in the target
@@ -196,12 +204,14 @@ environment before accepting real organizational data.
 
 ### ChatGPT/Codex MCP connection
 
-The repository intentionally does not commit one production connector URL.
-After publishing the private Site, retrieve its deployment metadata and require
-both a published `mcp_url` and `oauth_resource`. If either value is absent, the
-conversation half is not deployed even if the Web page is reachable.
+The repository intentionally does not commit one production connector URL. A
+Sites deployment must report both `mcp_url` and `oauth_resource`. A self-hosted
+deployment must expose a trusted HTTPS `/mcp` endpoint and a valid
+`/.well-known/oauth-protected-resource` document. If either deployment cannot
+prove its MCP URL and OAuth resource metadata, the conversation half is not
+deployed even if the Web page is reachable.
 
-Connect ChatGPT/Codex to that returned `mcp_url`, complete OAuth as the intended
+Connect ChatGPT/Codex to the verified MCP URL, complete OAuth as the intended
 member and verify that the server exposes exactly the bounded bridge tools:
 
 - `go_society_get_context`;
@@ -213,7 +223,7 @@ Mission-update or head-advance tools. Tool discovery alone is not the acceptance
 test. In a newly opened conversation, verify a compact ratified context read,
 explicit internal-only consent before private staging, a Web review request,
 no head transition before Web ratification and a second fresh-context read
-after the human decision. Keep the Site owner-only until unauthorized,
+after the human decision. Keep the deployment owner-only until unauthorized,
 unlinked, revoked, wrong-Mission and replay cases fail closed.
 
 The canonical conversation behavior is

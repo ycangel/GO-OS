@@ -29,6 +29,9 @@ or imply a legally registered foundation.
 - A current public-upstream, enterprise-offering and self-application
   [ecosystem/governance boundary](ECOSYSTEM_AND_GOVERNANCE_BOUNDARY.md).
 - A GO Society Web reference application with its scope and limitations stated.
+- A bounded OAuth-protected Cognitive Bridge and an isolated Node/SQLite
+  self-hosted deployment adapter; live target conformance is reported
+  separately from source availability.
 - A repeatable repository consistency check.
 
 ## What is included
@@ -49,6 +52,12 @@ it does not mean every runtime path is implemented or every fixture has passed.
 GO Society Web demonstrates selected mission, authority, evidence, exception,
 membership, privacy and evolution surfaces. Its own component version and
 implementation coverage are reported in `web/`.
+
+The Web source now supports both the Sites/D1 adapter and an isolated
+self-hosted Node/SQLite adapter. The latter includes an optional OIDC Web
+gateway and OAuth-protected MCP endpoint. This is a reference deployment
+package, not a claim that any particular server, identity provider or fresh
+conversation has completed the acceptance loop.
 
 ### Self-application artifacts
 

@@ -16,8 +16,18 @@ import {
 const MCP_SERVER_NAME = "go-society-cognitive-bridge";
 const MCP_SERVER_VERSION = "0.5.0";
 const MCP_MAX_REQUEST_BYTES = 160_000;
+const MCP_MAX_CONCURRENT_REQUESTS = 8;
+const MCP_RATE_WINDOW_MS = 60_000;
+const MCP_MAX_REQUESTS_PER_SOURCE_WINDOW = 120;
+const MCP_MAX_RATE_SOURCES = 2_048;
 const SKILL_URI =
   "skill://go-society/go-society-cognitive-bridge/SKILL.md";
+
+let activeMcpRequests = 0;
+const mcpRateWindows = new Map<
+  string,
+  { startedAt: number; requestCount: number }
+>();
 
 // Deployment invariant: this vendored UTF-8 file must byte-match the canonical
 // `skills/go-society-cognitive-bridge/SKILL.md`. It lives inside the Sites
@@ -193,6 +203,42 @@ const checkpointSecuritySchemes = [
 
 export async function handleMcpPost(request: Request): Promise<Response> {
   const corsOrigin = allowedCorsOrigin(request);
+  const rateLimit = consumeMcpRateLimit(request);
+  if (!rateLimit.allowed) {
+    return withCors(
+      jsonRpcErrorResponse(
+        429,
+        -32002,
+        "The GO Society MCP request rate is temporarily limited.",
+        { "retry-after": String(rateLimit.retryAfterSeconds) },
+      ),
+      corsOrigin,
+    );
+  }
+  if (activeMcpRequests >= MCP_MAX_CONCURRENT_REQUESTS) {
+    return withCors(
+      jsonRpcErrorResponse(
+        503,
+        -32003,
+        "The GO Society MCP endpoint is at its bounded concurrency limit.",
+        { "retry-after": "1" },
+      ),
+      corsOrigin,
+    );
+  }
+
+  activeMcpRequests += 1;
+  try {
+    return await handleBoundedMcpPost(request, corsOrigin);
+  } finally {
+    activeMcpRequests -= 1;
+  }
+}
+
+async function handleBoundedMcpPost(
+  request: Request,
+  corsOrigin: string | null,
+): Promise<Response> {
   if (request.headers.has("origin") && !corsOrigin) {
     return jsonRpcErrorResponse(
       403,
@@ -300,6 +346,58 @@ export async function handleMcpPost(request: Request): Promise<Response> {
       corsOrigin,
     );
   }
+}
+
+function consumeMcpRateLimit(request: Request): {
+  allowed: boolean;
+  retryAfterSeconds: number;
+} {
+  const now = Date.now();
+  if (mcpRateWindows.size >= MCP_MAX_RATE_SOURCES) {
+    for (const [key, window] of mcpRateWindows) {
+      if (now - window.startedAt >= MCP_RATE_WINDOW_MS) {
+        mcpRateWindows.delete(key);
+      }
+    }
+  }
+
+  const source = mcpRequestSource(request);
+  const key =
+    mcpRateWindows.has(source) || mcpRateWindows.size < MCP_MAX_RATE_SOURCES
+      ? source
+      : "overflow";
+  const current = mcpRateWindows.get(key);
+  if (!current || now - current.startedAt >= MCP_RATE_WINDOW_MS) {
+    mcpRateWindows.set(key, { startedAt: now, requestCount: 1 });
+    return { allowed: true, retryAfterSeconds: 0 };
+  }
+  if (current.requestCount >= MCP_MAX_REQUESTS_PER_SOURCE_WINDOW) {
+    return {
+      allowed: false,
+      retryAfterSeconds: Math.max(
+        1,
+        Math.ceil(
+          (MCP_RATE_WINDOW_MS - (now - current.startedAt)) / 1_000,
+        ),
+      ),
+    };
+  }
+  current.requestCount += 1;
+  return { allowed: true, retryAfterSeconds: 0 };
+}
+
+function mcpRequestSource(request: Request): string {
+  const forwarded = request.headers
+    .get("x-forwarded-for")
+    ?.split(",")
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .at(-1);
+  if (forwarded && forwarded.length <= 128) return forwarded;
+
+  const connecting = request.headers.get("cf-connecting-ip")?.trim();
+  if (connecting && connecting.length <= 128) return connecting;
+  return "direct";
 }
 
 export function handleMcpOptions(request: Request): Response {

@@ -1,43 +1,35 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { resolveWebIdentity } from "../runtime/oauth-resource-server";
 
 export type ChatGPTUser = {
-  /** Stable for the same signed-in person on this Site; never use email as a key. */
+  /** Stable within the verified identity provider; never use email as a key. */
   id: string;
+  /** Issuer-qualified key used for private MCP/Web principal linking. */
+  principalKey: string;
   displayName: string;
-  email: string;
+  email: string | null;
   fullName: string | null;
+  authenticationMethod: "oidc" | "trusted-proxy" | "sites";
+  scopes: string[];
 };
 
-const USER_ID_HEADER = "oai-authenticated-user-id";
-const USER_EMAIL_HEADER = "oai-authenticated-user-email";
-const USER_FULL_NAME_HEADER = "oai-authenticated-user-full-name";
-const USER_FULL_NAME_ENCODING_HEADER =
-  "oai-authenticated-user-full-name-encoding";
-const PERCENT_ENCODED_UTF8 = "percent-encoded-utf-8";
 const SIGN_IN_PATH = "/signin-with-chatgpt";
 const SIGN_OUT_PATH = "/signout-with-chatgpt";
 const CALLBACK_PATH = "/callback";
 
 export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const requestHeaders = await headers();
-  const id = requestHeaders.get(USER_ID_HEADER);
-  const email = requestHeaders.get(USER_EMAIL_HEADER);
-  if (!id || !email) return null;
-
-  const encodedFullName = requestHeaders.get(USER_FULL_NAME_HEADER);
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get(USER_FULL_NAME_ENCODING_HEADER) === PERCENT_ENCODED_UTF8
-      ? safeDecodeURIComponent(encodedFullName)
-      : null;
-
-  return {
-    id,
-    displayName: fullName ?? email,
-    email,
-    fullName,
-  };
+  try {
+    return await resolveWebIdentity(
+      requestHeaders,
+      webRequestUrl(requestHeaders),
+    );
+  } catch {
+    // Authentication and configuration failures are deliberately indistinguishable
+    // from a signed-out Web request at this compatibility boundary.
+    return null;
+  }
 }
 
 export async function requireChatGPTUser(
@@ -82,10 +74,18 @@ function isReservedAuthPath(pathname: string): boolean {
   );
 }
 
-function safeDecodeURIComponent(value: string): string | null {
+function webRequestUrl(requestHeaders: Headers): string {
+  const forwardedHost = requestHeaders.get("x-forwarded-host")?.split(",")[0];
+  const host = forwardedHost?.trim() || requestHeaders.get("host")?.trim();
+  const forwardedProtocol = requestHeaders
+    .get("x-forwarded-proto")
+    ?.split(",")[0]
+    ?.trim();
+  const protocol = forwardedProtocol === "http" ? "http" : "https";
+  if (!host || /[\s/\\]/.test(host)) return "https://go-society.invalid/";
   try {
-    return decodeURIComponent(value);
+    return new URL(`${protocol}://${host}/`).toString();
   } catch {
-    return null;
+    return "https://go-society.invalid/";
   }
 }

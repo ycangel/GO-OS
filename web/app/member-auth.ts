@@ -1,12 +1,7 @@
-import { env } from "cloudflare:workers";
 import { and, eq } from "drizzle-orm";
-import { getDb } from "../db";
+import { getDb, getRuntimeVariable } from "../db";
 import { members, missionMemberships } from "../db/schema";
 import { getChatGPTUser, type ChatGPTUser } from "./chatgpt-auth";
-
-type RuntimeEnv = {
-  GO_SOCIETY_OWNER_EMAIL?: string;
-};
 
 export type RuntimeMember = {
   id: number;
@@ -26,10 +21,11 @@ export type RuntimeIdentity = {
 export async function getRuntimeIdentity(): Promise<RuntimeIdentity> {
   const user = await getChatGPTUser();
   if (!user) return { user: null, member: null };
+  if (!user.email) return { user, member: null };
 
   const email = normalizeEmail(user.email);
   const ownerEmail = normalizeEmail(
-    (env as unknown as RuntimeEnv).GO_SOCIETY_OWNER_EMAIL ?? "",
+    getRuntimeVariable("GO_SOCIETY_OWNER_EMAIL") ?? "",
   );
 
   try {
@@ -173,7 +169,11 @@ export function mutationCameFromSameOrigin(request: Request): boolean {
   if (!origin) return false;
 
   try {
-    return new URL(origin).origin === new URL(request.url).origin;
+    const configuredOrigin = getRuntimeVariable("GO_PUBLIC_ORIGIN")?.trim();
+    const expectedOrigin = configuredOrigin
+      ? new URL(configuredOrigin).origin
+      : new URL(request.url).origin;
+    return new URL(origin).origin === expectedOrigin;
   } catch {
     return false;
   }

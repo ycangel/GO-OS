@@ -10,8 +10,11 @@
     "install:ci": "bash scripts/install-ci.sh",
     "dev": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vite",
     "build": "bash scripts/build-verified.sh",
+    "build:self-hosted": "GO_SELF_HOSTED=1 next build --webpack",
     "start": "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
+    "start:self-hosted": "npm run db:migrate:self-hosted && node .next/standalone/server.js",
     "test": "npm run typecheck && npm run build && node --experimental-strip-types --experimental-loader=./tests/cloudflare-loader.mjs --test tests/*.test.mjs",
+    "db:migrate:self-hosted": "node scripts/migrate-self-hosted.mjs",
     "typecheck": "tsc --noEmit --incremental false",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate"

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const publicOrigin = process.env.GO_PUBLIC_ORIGIN?.trim();
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://go-society.angelo-pix.chatgpt.site"),
+  metadataBase: new URL(
+    publicOrigin || "https://go-society.angelo-pix.chatgpt.site",
+  ),
   title: "GO Society — GO OS v0.5 alpha reference instance",
   description:
     "The alpha self-application reference surface for GO OS v0.5, with selected mission, authority, evidence, privacy and evolution boundaries.",

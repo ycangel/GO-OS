@@ -1,6 +1,9 @@
-import { env } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
-import { getDb } from "../../../db";
+import {
+  executeAtomicBatch,
+  getDb,
+  sqlStatement,
+} from "../../../db";
 import { members, missions } from "../../../db/schema";
 import { requireOrganizationalMutation } from "../../../runtime/api-constitutional-guard";
 import {
@@ -63,13 +66,11 @@ export async function POST(request: Request) {
       ? displayName
       : "Enterprise Reality Mission Partner";
     const now = new Date().toISOString();
-    const d1 = env.DB;
-
-    // D1 batch is the atomic boundary: the member, mission assignment and
-    // AuthorityGrant either all persist or all roll back.
-    await d1.batch([
-      d1
-        .prepare(`
+    // The runtime database batch is the atomic boundary: the member, mission
+    // assignment and AuthorityGrant either all persist or all roll back.
+    await executeAtomicBatch([
+      sqlStatement(
+        `
           INSERT INTO members (
             email, display_name, public_alias, name_public, role, status,
             created_at, updated_at
@@ -85,10 +86,16 @@ export async function POST(request: Request) {
             END,
             expires_at = NULL,
             updated_at = excluded.updated_at
-        `)
-        .bind(email, displayName, publicAlias, publicNameConsent ? 1 : 0, now, now),
-      d1
-        .prepare(`
+        `,
+        email,
+        displayName,
+        publicAlias,
+        publicNameConsent ? 1 : 0,
+        now,
+        now,
+      ),
+      sqlStatement(
+        `
           INSERT INTO mission_memberships (
             mission_id, member_id, can_record, can_review, can_publish, status
           )
@@ -100,10 +107,12 @@ export async function POST(request: Request) {
             can_review = 0,
             can_publish = 0,
             status = 'active'
-        `)
-        .bind(missionId, email),
-      d1
-        .prepare(`
+        `,
+        missionId,
+        email,
+      ),
+      sqlStatement(
+        `
           INSERT INTO authority_grants (
             id, grantor, grantee, accountable_human, scope,
             allowed_actions, prohibited_actions, resource_rights, limits,
@@ -137,56 +146,55 @@ export async function POST(request: Request) {
             revoked_at = NULL,
             self_expansion_allowed = 0,
             revision = authority_grants.revision + 1
-        `)
-        .bind(
-          `member:${identity.member.id}`,
-          identity.member.displayName,
-          JSON.stringify([
-            "create_evidence",
-            "create_exception",
-            "create_cognitive_event",
-            "create_deliberation_session",
-            "create_learning_record",
-            "create_evolution_proposal",
-            "custom:read_cognitive_context",
-            "custom:capture_cognitive_source",
-          ]),
-          JSON.stringify([
-            "custom:expand_own_authority",
-            "custom:modify_own_authority",
-            "custom:review_cognition",
-            "approve_evolution_proposal",
-            "create_cognitive_commit",
-            "create_cognitive_version",
-            "update_mission",
-          ]),
-          JSON.stringify({
-            missionMembershipRequired: true,
-            allowedTargetPrefixes: ["mission:"],
-          }),
-          JSON.stringify({
-            maxRiskClass: "low",
-            maxResourceExposure: 1,
-            allowedTools: ["web-runtime", "mcp-cognitive-bridge"],
-            toolActionScopes: {
-              "mcp-cognitive-bridge": [
-                "custom:read_cognitive_context",
-                "custom:capture_cognitive_source",
-              ],
-            },
-          }),
-          JSON.stringify([
-            "Minimize private data and preserve the source and consent scope.",
-          ]),
-          JSON.stringify([
-            "Escalate publication, authority changes and any action outside the assigned mission.",
-          ]),
-          JSON.stringify([
-            "Multiple active grants fail closed until an explicit conflict-resolution rule is implemented.",
-          ]),
-          now,
-          email,
-        ),
+        `,
+        `member:${identity.member.id}`,
+        identity.member.displayName,
+        JSON.stringify([
+          "create_evidence",
+          "create_exception",
+          "create_cognitive_event",
+          "create_deliberation_session",
+          "create_learning_record",
+          "create_evolution_proposal",
+          "custom:read_cognitive_context",
+          "custom:capture_cognitive_source",
+        ]),
+        JSON.stringify([
+          "custom:expand_own_authority",
+          "custom:modify_own_authority",
+          "custom:review_cognition",
+          "approve_evolution_proposal",
+          "create_cognitive_commit",
+          "create_cognitive_version",
+          "update_mission",
+        ]),
+        JSON.stringify({
+          missionMembershipRequired: true,
+          allowedTargetPrefixes: ["mission:"],
+        }),
+        JSON.stringify({
+          maxRiskClass: "low",
+          maxResourceExposure: 1,
+          allowedTools: ["web-runtime", "mcp-cognitive-bridge"],
+          toolActionScopes: {
+            "mcp-cognitive-bridge": [
+              "custom:read_cognitive_context",
+              "custom:capture_cognitive_source",
+            ],
+          },
+        }),
+        JSON.stringify([
+          "Minimize private data and preserve the source and consent scope.",
+        ]),
+        JSON.stringify([
+          "Escalate publication, authority changes and any action outside the assigned mission.",
+        ]),
+        JSON.stringify([
+          "Multiple active grants fail closed until an explicit conflict-resolution rule is implemented.",
+        ]),
+        now,
+        email,
+      ),
     ]);
 
     const [member] = await db

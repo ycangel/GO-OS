@@ -15,6 +15,11 @@ All notable changes to GO OS are documented here.
 - Quick Start, Architecture Overview and a Whitepaper front structure for the v0.5 baseline.
 - Dedicated v0.5.0 Release Notes and Migration & Deprecation Notes.
 - A unified Evaluation & Red-Team entry point for reproducible checks, counterexamples and the next adversarial review.
+- A bounded Cognitive Bridge MCP source with OAuth resource-server validation,
+  candidate-only staging and a Web-only Human Gate.
+- An isolated self-hosted GO Society reference package using Node, SQLite,
+  optional OIDC Web login and trusted HTTPS, without replacing the Sites/D1
+  adapter.
 
 ### Changed
 

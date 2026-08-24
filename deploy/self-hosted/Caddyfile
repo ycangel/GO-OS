@@ -1,0 +1,80 @@
+{
+	admin off
+	email {$CADDY_ACME_EMAIL}
+}
+
+# Public gateway. The MCP resource server, its discovery metadata and the
+# health probe bypass the interactive Web login but retain application-level
+# OAuth validation. All other traffic must pass through oauth2-proxy.
+{$GO_DOMAIN} {
+	encode zstd gzip
+
+	# Preserve the application UI's existing Sites-compatible links while
+	# preventing attacker-controlled return URLs. The fixed rd targets remain
+	# inside this deployment's configured origin.
+	@self_hosted_sign_in path /signin-with-chatgpt
+	handle @self_hosted_sign_in {
+		redir /oauth2/sign_in?rd=https://{$GO_DOMAIN}/ 302
+	}
+
+	@self_hosted_sign_out path /signout-with-chatgpt
+	handle @self_hosted_sign_out {
+		redir /oauth2/sign_out?rd=https://{$GO_DOMAIN}/ 302
+	}
+
+	@resource_server path \
+		/mcp \
+		/mcp/* \
+		/.well-known/oauth-protected-resource \
+		/.well-known/oauth-protected-resource/* \
+		/api/health
+
+	handle @resource_server {
+		reverse_proxy app:3210 {
+			header_up X-Forwarded-For {http.request.remote.host}
+			header_up -Cf-Connecting-Ip
+			header_up -X-Forwarded-User
+			header_up -X-Forwarded-Email
+			header_up -X-Forwarded-Groups
+			header_up -X-Forwarded-Preferred-Username
+			header_up -X-Auth-Request-User
+			header_up -X-Auth-Request-Email
+			header_up -X-Auth-Request-Groups
+			header_up -X-Auth-Request-Preferred-Username
+			header_up -{$GO_WEB_IDENTITY_SECRET_HEADER:x-go-web-identity-secret}
+			header_up -{$GO_WEB_IDENTITY_ID_HEADER:x-go-web-identity-id}
+			header_up -{$GO_WEB_IDENTITY_EMAIL_HEADER:x-go-web-identity-email}
+			header_up -{$GO_WEB_IDENTITY_NAME_HEADER:x-go-web-identity-name}
+		}
+	}
+
+	handle {
+		reverse_proxy oauth2-proxy:4180 {
+			header_up -X-Forwarded-User
+			header_up -X-Forwarded-Email
+			header_up -X-Forwarded-Groups
+			header_up -X-Forwarded-Preferred-Username
+			header_up -X-Auth-Request-User
+			header_up -X-Auth-Request-Email
+			header_up -X-Auth-Request-Groups
+			header_up -X-Auth-Request-Preferred-Username
+			header_up -{$GO_WEB_IDENTITY_SECRET_HEADER:x-go-web-identity-secret}
+			header_up -{$GO_WEB_IDENTITY_ID_HEADER:x-go-web-identity-id}
+			header_up -{$GO_WEB_IDENTITY_EMAIL_HEADER:x-go-web-identity-email}
+			header_up -{$GO_WEB_IDENTITY_NAME_HEADER:x-go-web-identity-name}
+		}
+	}
+}
+
+# Internal-only authenticated Web hop. oauth2-proxy resolves the OIDC subject
+# and forwards it as X-Forwarded-User. The shared proxy secret is added here,
+# after public traffic has been authenticated, and this listener is not
+# published to the host.
+http://:4181 {
+	reverse_proxy app:3210 {
+		header_up {$GO_WEB_IDENTITY_SECRET_HEADER:x-go-web-identity-secret} {$GO_WEB_IDENTITY_SECRET}
+		header_up {$GO_WEB_IDENTITY_ID_HEADER:x-go-web-identity-id} {http.request.header.X-Forwarded-User}
+		header_up {$GO_WEB_IDENTITY_EMAIL_HEADER:x-go-web-identity-email} {http.request.header.X-Forwarded-Email}
+		header_up {$GO_WEB_IDENTITY_NAME_HEADER:x-go-web-identity-name} {http.request.header.X-Forwarded-Preferred-Username}
+	}
+}

@@ -1,6 +1,10 @@
-import { env } from "cloudflare:workers";
 import { and, eq, inArray, isNotNull } from "drizzle-orm";
-import { getDb } from "../../../../db";
+import {
+  executeAtomicBatch,
+  getDb,
+  getRuntimeVariable,
+  sqlStatement,
+} from "../../../../db";
 import {
   cognitiveFragments,
   cognitiveSyncReceipts,
@@ -36,10 +40,6 @@ const actionByObjectType = {
   LearningRecord: "create_learning_record",
   EvolutionProposal: "create_evolution_proposal",
 } as const;
-
-type RuntimeEnv = {
-  GO_SOCIETY_THREAD_HMAC_SECRET?: string;
-};
 
 const MAX_CHECKPOINT_BYTES = 128_000;
 
@@ -232,8 +232,8 @@ export async function POST(request: Request) {
       });
     }
 
-    const threadBindingSecret = (env as unknown as RuntimeEnv)
-      .GO_SOCIETY_THREAD_HMAC_SECRET ?? "";
+    const threadBindingSecret =
+      getRuntimeVariable("GO_SOCIETY_THREAD_HMAC_SECRET") ?? "";
     const sourceThreadKey = await hmacSha256(
       threadBindingSecret,
       stableStringify({
@@ -410,173 +410,169 @@ export async function POST(request: Request) {
         },
       },
     };
-    const d1 = env.DB;
     const statements = [
-      d1
-        .prepare(`
+      sqlStatement(
+        `
           INSERT OR IGNORE INTO cognitive_threads (
             id, source_interface, source_thread_key, source_title, mission_id,
             accountable_member_id, capture_mode, consent_scope, last_cursor,
             status, created_at, updated_at
           ) VALUES (?, ?, ?, ?, ?, ?, ?, 'internal_only', 0, 'active', ?, ?)
-        `)
-        .bind(
-          threadId,
-          input.source.interface,
-          sourceThreadKey,
-          input.source.title,
-          input.missionId,
-          identity.member.id,
-          input.source.captureMode,
-          createdAt,
-          createdAt,
-        ),
+        `,
+        threadId,
+        input.source.interface,
+        sourceThreadKey,
+        input.source.title,
+        input.missionId,
+        identity.member.id,
+        input.source.captureMode,
+        createdAt,
+        createdAt,
+      ),
       ...[...actions].map((action) => {
         const authority = authorityByAction.get(action)!;
         const context = runtimeMutationContext(action);
-        return d1
-          .prepare(`
+        return sqlStatement(
+          `
             INSERT INTO cognitive_authorization_receipts (
               id, authority_grant_id, grant_revision, member_id, mission_id,
               action, resource_risk, resource_exposure, reversibility,
               executor, requested_by, created_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'web-runtime', 'runtime-api', ?)
-          `)
-          .bind(
-            authorizationReceiptIdByAction.get(action)!,
-            authority.grantId,
-            authority.grantRevision,
-            identity.member!.id,
-            input.missionId,
-            action,
-            context.resourceRisk,
-            context.resourceExposure,
-            context.reversibility,
-            createdAt,
-          );
+          `,
+          authorizationReceiptIdByAction.get(action)!,
+          authority.grantId,
+          authority.grantRevision,
+          identity.member!.id,
+          input.missionId,
+          action,
+          context.resourceRisk,
+          context.resourceExposure,
+          context.reversibility,
+          createdAt,
+        );
       }),
-      d1
-        .prepare(`
+      sqlStatement(
+        `
           INSERT INTO cognitive_checkpoint_claims (
             id, thread_id, cursor_from, cursor_to, request_hash,
             consent_scope, consent_confirmed_by_member_id,
             consent_confirmed_at, authorization_receipt_id, created_at
           ) VALUES (?, ?, ?, ?, ?, 'internal_only', ?, ?, ?, ?)
-        `)
-        .bind(
-          checkpointClaimId,
-          threadId,
-          cursorFrom,
-          cursorTo,
-          requestHash,
-          identity.member.id,
-          createdAt,
-          authorizationReceiptIdByAction.get("custom:capture_cognitive_source")!,
-          createdAt,
-        ),
-      d1
-        .prepare(`
+        `,
+        checkpointClaimId,
+        threadId,
+        cursorFrom,
+        cursorTo,
+        requestHash,
+        identity.member.id,
+        createdAt,
+        authorizationReceiptIdByAction.get("custom:capture_cognitive_source")!,
+        createdAt,
+      ),
+      sqlStatement(
+        `
           UPDATE cognitive_threads
           SET source_title = ?, capture_mode = ?, last_cursor = ?, updated_at = ?
           WHERE id = ? AND mission_id = ? AND accountable_member_id = ?
             AND last_cursor = ?
-        `)
-        .bind(
-          input.source.title,
-          input.source.captureMode,
-          cursorTo,
-          createdAt,
-          threadId,
-          input.missionId,
-          identity.member.id,
-          cursorFrom,
-        ),
+        `,
+        input.source.title,
+        input.source.captureMode,
+        cursorTo,
+        createdAt,
+        threadId,
+        input.missionId,
+        identity.member.id,
+        cursorFrom,
+      ),
     ];
     for (const fragment of preparedFragments.filter((item) => item.isNew)) {
       statements.push(
-        d1
-          .prepare(`
+        sqlStatement(
+          `
             INSERT INTO cognitive_fragments (
               id, thread_id, source_turn_ref, speaker_type, speaker_ref,
               verbatim_text, content_hash, content_kind, visibility,
               provenance_trust, occurred_at, created_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'private', ?, ?, ?)
-          `)
-          .bind(
-            fragment.id,
-            threadId,
-            fragment.sourceTurnRef,
-            fragment.speakerType,
-            fragment.speakerRef ?? null,
-            fragment.verbatimText,
-            fragment.contentHash,
-            fragment.contentKind,
-            fragment.provenanceTrust,
-            fragment.occurredAt ?? null,
-            createdAt,
-          ),
+          `,
+          fragment.id,
+          threadId,
+          fragment.sourceTurnRef,
+          fragment.speakerType,
+          fragment.speakerRef ?? null,
+          fragment.verbatimText,
+          fragment.contentHash,
+          fragment.contentKind,
+          fragment.provenanceTrust,
+          fragment.occurredAt ?? null,
+          createdAt,
+        ),
       );
     }
     for (const object of preparedObjects) {
       statements.push(
-        d1
-          .prepare(`
+        sqlStatement(
+          `
             INSERT INTO cognitive_objects (
               id, object_type, schema_version, mission_id, thread_id,
               decision_state, canonical_payload, payload_hash, created_by,
               accountable_member_id, authority_grant_id,
               authorization_receipt_id, created_at, updated_at
             ) VALUES (?, ?, '0.5.0', ?, ?, 'candidate', ?, ?, ?, ?, ?, ?, ?, ?)
-          `)
-          .bind(
-            object.id,
-            object.objectType,
-            input.missionId,
-            threadId,
-            JSON.stringify(object.payload),
-            object.payloadHash,
-            `bridge:${input.source.interface}:${actor}`,
-            identity.member.id,
-            authorityGrantId,
-            object.authorizationReceiptId,
-            createdAt,
-            createdAt,
-          ),
+          `,
+          object.id,
+          object.objectType,
+          input.missionId,
+          threadId,
+          JSON.stringify(object.payload),
+          object.payloadHash,
+          `bridge:${input.source.interface}:${actor}`,
+          identity.member.id,
+          authorityGrantId,
+          object.authorizationReceiptId,
+          createdAt,
+          createdAt,
+        ),
       );
       for (const fragmentId of object.narrativeRefs) {
         statements.push(
-          d1
-            .prepare(`
+          sqlStatement(
+            `
               INSERT INTO cognitive_object_links (
                 id, from_object_id, to_object_id, fragment_id, relation_type,
                 created_at
               ) VALUES (?, ?, NULL, ?, 'narrative_anchor', ?)
-            `)
-            .bind(`col_${crypto.randomUUID()}`, object.id, fragmentId, createdAt),
+            `,
+            `col_${crypto.randomUUID()}`,
+            object.id,
+            fragmentId,
+            createdAt,
+          ),
         );
       }
     }
     statements.push(
-      d1
-        .prepare(`
+      sqlStatement(
+        `
           INSERT INTO cognitive_sync_receipts (
             id, idempotency_key, thread_id, operation, request_hash,
             response_payload, cursor_from, cursor_to, actor, received_at
           ) VALUES (?, ?, ?, 'checkpoint', ?, ?, ?, ?, ?, ?)
-        `)
-        .bind(
-          receiptId,
-          storedIdempotencyKey,
-          threadId,
-          requestHash,
-          JSON.stringify(responsePayload),
-          cursorFrom,
-          cursorTo,
-          actor,
-          createdAt,
-        ),
+        `,
+        receiptId,
+        storedIdempotencyKey,
+        threadId,
+        requestHash,
+        JSON.stringify(responsePayload),
+        cursorFrom,
+        cursorTo,
+        actor,
+        createdAt,
+      ),
     );
-    await d1.batch(statements);
+    await executeAtomicBatch(statements);
 
     return Response.json(responsePayload, {
       status: 201,

@@ -1,6 +1,9 @@
-import { env } from "cloudflare:workers";
 import { and, eq, inArray } from "drizzle-orm";
-import { getDb } from "../../../../db";
+import {
+  executeAtomicBatch,
+  getDb,
+  sqlStatement,
+} from "../../../../db";
 import {
   cognitiveHeads,
   cognitiveObjects,
@@ -314,7 +317,6 @@ export async function POST(request: Request) {
     const authorityGrant = authorityByAction.get("custom:review_cognition")!;
     const authorityGrantId = authorityGrant.grantId;
     const decidedAt = new Date().toISOString();
-    const d1 = env.DB;
     const authorizationReceiptIdByAction = new Map(
       [...requiredActions].map((action) => [
         action,
@@ -324,26 +326,25 @@ export async function POST(request: Request) {
     const authorizationStatements = [...requiredActions].map((action) => {
       const authority = authorityByAction.get(action)!;
       const context = runtimeMutationContext(action);
-      return d1
-        .prepare(`
+      return sqlStatement(
+        `
           INSERT INTO cognitive_authorization_receipts (
             id, authority_grant_id, grant_revision, member_id, mission_id,
             action, resource_risk, resource_exposure, reversibility,
             executor, requested_by, created_at
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'web-runtime', 'runtime-api', ?)
-        `)
-        .bind(
-          authorizationReceiptIdByAction.get(action)!,
-          authority.grantId,
-          authority.grantRevision,
-          identity.member!.id,
-          input.missionId,
-          action,
-          context.resourceRisk,
-          context.resourceExposure,
-          context.reversibility,
-          decidedAt,
-        );
+        `,
+        authorizationReceiptIdByAction.get(action)!,
+        authority.grantId,
+        authority.grantRevision,
+        identity.member!.id,
+        input.missionId,
+        action,
+        context.resourceRisk,
+        context.resourceExposure,
+        context.reversibility,
+        decidedAt,
+      );
     });
 
     if (input.decision === "reject") {
@@ -360,59 +361,61 @@ export async function POST(request: Request) {
           decidedAt,
         },
       };
-      const statements = [...authorizationStatements, ...candidateRows.map((candidate) =>
-        d1
-          .prepare(`
+      const statements = [
+        ...authorizationStatements,
+        ...candidateRows.map((candidate) =>
+          sqlStatement(
+            `
             INSERT INTO cognitive_candidate_decisions (
               candidate_id, decision, decided_by_member_id, rationale,
               authorization_receipt_id, decided_at
             ) VALUES (?, 'reject', ?, ?, ?, ?)
-          `)
-          .bind(
+          `,
             candidate.id,
             identity.member!.id,
             input.rationale,
             authorizationReceiptIdByAction.get("custom:review_cognition")!,
             decidedAt,
           ),
-      )];
-      statements.push(...candidateRows.map((candidate) =>
-        d1
-          .prepare(`
+        ),
+      ];
+      statements.push(
+        ...candidateRows.map((candidate) =>
+          sqlStatement(
+            `
             UPDATE cognitive_objects
             SET decision_state = 'rejected', decided_by_member_id = ?,
                 decision_rationale = ?, decided_at = ?, updated_at = ?
             WHERE id = ? AND decision_state = 'candidate'
-          `)
-          .bind(
+          `,
             identity.member!.id,
             input.rationale,
             decidedAt,
             decidedAt,
             candidate.id,
           ),
-      ));
+        ),
+      );
       statements.push(
-        d1
-          .prepare(`
+        sqlStatement(
+          `
             INSERT INTO cognitive_sync_receipts (
               id, idempotency_key, thread_id, operation, request_hash,
               response_payload, cursor_from, cursor_to, actor, received_at
             ) VALUES (?, ?, ?, 'ratification_reject', ?, ?, ?, ?, ?, ?)
-          `)
-          .bind(
-            receiptId,
-            storedIdempotencyKey,
-            threadId,
-            requestHash,
-            JSON.stringify(responsePayload),
-            thread.lastCursor,
-            thread.lastCursor,
-            actor,
-            decidedAt,
-          ),
+          `,
+          receiptId,
+          storedIdempotencyKey,
+          threadId,
+          requestHash,
+          JSON.stringify(responsePayload),
+          thread.lastCursor,
+          thread.lastCursor,
+          actor,
+          decidedAt,
+        ),
       );
-      await d1.batch(statements);
+      await executeAtomicBatch(statements);
       return Response.json(responsePayload, {
         headers: { "cache-control": "no-store" },
       });
@@ -515,34 +518,36 @@ export async function POST(request: Request) {
       },
     };
 
-    const statements = [...authorizationStatements, ...candidateRows.map((candidate) =>
-      d1
-        .prepare(`
-          INSERT INTO cognitive_candidate_decisions (
-            candidate_id, decision, decided_by_member_id, rationale,
-            authorization_receipt_id, decided_at
-          ) VALUES (?, 'ratify', ?, ?, ?, ?)
-        `)
-        .bind(
+    const statements = [
+      ...authorizationStatements,
+      ...candidateRows.map((candidate) =>
+        sqlStatement(
+          `
+            INSERT INTO cognitive_candidate_decisions (
+              candidate_id, decision, decided_by_member_id, rationale,
+              authorization_receipt_id, decided_at
+            ) VALUES (?, 'ratify', ?, ?, ?, ?)
+          `,
           candidate.id,
           identity.member!.id,
           input.rationale,
           authorizationReceiptIdByAction.get("custom:review_cognition")!,
           decidedAt,
         ),
-    )];
-    statements.push(...ratifiedObjects.map((object, index) =>
-      d1
-        .prepare(`
-          INSERT INTO cognitive_objects (
-            id, object_type, schema_version, mission_id, thread_id,
-            decision_state, canonical_payload, payload_hash, created_by,
-            accountable_member_id, authority_grant_id, decided_by_member_id,
-            authorization_receipt_id, decision_rationale, decided_at,
-            created_at, updated_at
-          ) VALUES (?, ?, '0.5.0', ?, ?, 'ratified', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `)
-        .bind(
+      ),
+    ];
+    statements.push(
+      ...ratifiedObjects.map((object, index) =>
+        sqlStatement(
+          `
+            INSERT INTO cognitive_objects (
+              id, object_type, schema_version, mission_id, thread_id,
+              decision_state, canonical_payload, payload_hash, created_by,
+              accountable_member_id, authority_grant_id, decided_by_member_id,
+              authorization_receipt_id, decision_rationale, decided_at,
+              created_at, updated_at
+            ) VALUES (?, ?, '0.5.0', ?, ?, 'ratified', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `,
           object.id,
           object.objectType,
           input.missionId,
@@ -563,54 +568,57 @@ export async function POST(request: Request) {
           decidedAt,
           decidedAt,
         ),
-    ));
+      ),
+    );
     for (const [index, candidate] of candidateRows.entries()) {
       const ratified = ratifiedObjects[index];
       statements.push(
-        d1
-          .prepare(`
+        sqlStatement(
+          `
             UPDATE cognitive_objects
             SET decision_state = 'superseded', decided_by_member_id = ?,
                 decision_rationale = ?, decided_at = ?, updated_at = ?
             WHERE id = ? AND decision_state = 'candidate'
-          `)
-          .bind(
-            identity.member.id,
-            `Ratified as ${ratified.id}. ${input.rationale}`,
-            decidedAt,
-            decidedAt,
-            candidate.id,
-          ),
-        d1
-          .prepare(`
+          `,
+          identity.member.id,
+          `Ratified as ${ratified.id}. ${input.rationale}`,
+          decidedAt,
+          decidedAt,
+          candidate.id,
+        ),
+        sqlStatement(
+          `
             INSERT INTO cognitive_object_links (
               id, from_object_id, to_object_id, fragment_id, relation_type,
               created_at
             ) VALUES (?, ?, ?, NULL, 'ratified_from', ?)
-          `)
-          .bind(
-            `col_${crypto.randomUUID()}`,
-            ratified.id,
-            candidate.id,
-            decidedAt,
-          ),
+          `,
+          `col_${crypto.randomUUID()}`,
+          ratified.id,
+          candidate.id,
+          decidedAt,
+        ),
       );
       for (const fragmentId of stringArray(ratified.payload.narrative_refs)) {
         statements.push(
-          d1
-            .prepare(`
+          sqlStatement(
+            `
               INSERT INTO cognitive_object_links (
                 id, from_object_id, to_object_id, fragment_id, relation_type,
                 created_at
               ) VALUES (?, ?, NULL, ?, 'narrative_anchor', ?)
-            `)
-            .bind(`col_${crypto.randomUUID()}`, ratified.id, fragmentId, decidedAt),
+            `,
+            `col_${crypto.randomUUID()}`,
+            ratified.id,
+            fragmentId,
+            decidedAt,
+          ),
         );
       }
     }
     statements.push(
-      d1
-        .prepare(`
+      sqlStatement(
+        `
           INSERT INTO cognitive_objects (
             id, object_type, schema_version, mission_id, thread_id,
             decision_state, canonical_payload, payload_hash, created_by,
@@ -618,25 +626,24 @@ export async function POST(request: Request) {
             authorization_receipt_id, decision_rationale, decided_at,
             created_at, updated_at
           ) VALUES (?, 'CognitiveCommit', '0.5.0', ?, ?, 'ratified', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `)
-        .bind(
-          commitId,
-          input.missionId,
-          threadId,
-          JSON.stringify(commitPayload),
-          commitHash,
-          actor,
-          missionAccountableMember.id,
-          authorityGrantId,
-          identity.member.id,
-          authorizationReceiptIdByAction.get("create_cognitive_commit")!,
-          input.rationale,
-          decidedAt,
-          decidedAt,
-          decidedAt,
-        ),
-      d1
-        .prepare(`
+        `,
+        commitId,
+        input.missionId,
+        threadId,
+        JSON.stringify(commitPayload),
+        commitHash,
+        actor,
+        missionAccountableMember.id,
+        authorityGrantId,
+        identity.member.id,
+        authorizationReceiptIdByAction.get("create_cognitive_commit")!,
+        input.rationale,
+        decidedAt,
+        decidedAt,
+        decidedAt,
+      ),
+      sqlStatement(
+        `
           INSERT INTO cognitive_objects (
             id, object_type, schema_version, mission_id, thread_id,
             decision_state, canonical_payload, payload_hash, created_by,
@@ -644,90 +651,90 @@ export async function POST(request: Request) {
             authorization_receipt_id, decision_rationale, decided_at,
             created_at, updated_at
           ) VALUES (?, 'CognitiveVersion', '0.5.0', ?, ?, 'ratified', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `)
-        .bind(
-          versionId,
-          input.missionId,
-          threadId,
-          JSON.stringify(versionPayload),
-          versionHash,
-          actor,
-          missionAccountableMember.id,
-          authorityGrantId,
-          identity.member.id,
-          authorizationReceiptIdByAction.get("create_cognitive_version")!,
-          input.rationale,
-          decidedAt,
-          decidedAt,
-          decidedAt,
-        ),
+        `,
+        versionId,
+        input.missionId,
+        threadId,
+        JSON.stringify(versionPayload),
+        versionHash,
+        actor,
+        missionAccountableMember.id,
+        authorityGrantId,
+        identity.member.id,
+        authorizationReceiptIdByAction.get("create_cognitive_version")!,
+        input.rationale,
+        decidedAt,
+        decidedAt,
+        decidedAt,
+      ),
     );
     statements.push(
-      d1
-        .prepare(`
+      sqlStatement(
+        `
           INSERT INTO cognitive_head_transitions (
             id, mission_id, previous_revision, next_revision, version_id,
             authorization_receipt_id, created_at
           ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        `)
-        .bind(
-          `cht_${crypto.randomUUID()}`,
-          input.missionId,
-          currentRevision,
-          newRevision,
-          versionId,
-          authorizationReceiptIdByAction.get("create_cognitive_version")!,
-          decidedAt,
-        ),
+        `,
+        `cht_${crypto.randomUUID()}`,
+        input.missionId,
+        currentRevision,
+        newRevision,
+        versionId,
+        authorizationReceiptIdByAction.get("create_cognitive_version")!,
+        decidedAt,
+      ),
     );
     if (head) {
       statements.push(
-        d1
-          .prepare(`
+        sqlStatement(
+          `
             UPDATE cognitive_heads
             SET ratified_version_id = ?, revision = ?, updated_at = ?
             WHERE mission_id = ? AND revision = ?
-          `)
-          .bind(
-            versionId,
-            newRevision,
-            decidedAt,
-            input.missionId,
-            currentRevision,
-          ),
+          `,
+          versionId,
+          newRevision,
+          decidedAt,
+          input.missionId,
+          currentRevision,
+        ),
       );
     } else {
       statements.push(
-        d1
-          .prepare(`
+        sqlStatement(
+          `
             INSERT INTO cognitive_heads (
               mission_id, ratified_version_id, revision, updated_at
             ) VALUES (?, ?, ?, ?)
-          `)
-          .bind(input.missionId, versionId, newRevision, decidedAt),
+          `,
+          input.missionId,
+          versionId,
+          newRevision,
+          decidedAt,
+        ),
       );
     }
     statements.push(
-      d1
-        .prepare(`
+      sqlStatement(
+        `
           INSERT INTO cognitive_sync_receipts (
             id, idempotency_key, thread_id, operation, request_hash,
             response_payload, cursor_from, cursor_to, actor, received_at
           ) VALUES (?, ?, ?, 'ratification_commit', ?, ?, ?, ?, ?, ?)
-        `)
-        .bind(
-          receiptId,
-          storedIdempotencyKey,
-          threadId,
-          requestHash,
-          JSON.stringify(responsePayload),
-          thread.lastCursor,
-          thread.lastCursor,
-          actor,
-          decidedAt,
-        ),
+        `,
+        receiptId,
+        storedIdempotencyKey,
+        threadId,
+        requestHash,
+        JSON.stringify(responsePayload),
+        thread.lastCursor,
+        thread.lastCursor,
+        actor,
+        decidedAt,
+      ),
     );
-    await d1.batch(statements);
+    await executeAtomicBatch(statements);
 
     return Response.json(responsePayload, {
       status: 201,

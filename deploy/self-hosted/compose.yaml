@@ -1,0 +1,205 @@
+name: go-os-self-hosted
+
+services:
+  app:
+    image: go-os-self-hosted-app:local
+    build:
+      context: ../..
+      dockerfile: deploy/self-hosted/Dockerfile
+      target: runtime
+    init: true
+    restart: unless-stopped
+    user: "10001:10001"
+    environment:
+      NODE_ENV: production
+      GO_SELF_HOSTED: "1"
+      GO_SQLITE_PATH: /data/go-society.sqlite
+      GO_SQLITE_MIGRATIONS_DIR: /opt/go-os/web/drizzle
+      HOSTNAME: 0.0.0.0
+      PORT: "3210"
+      GO_PUBLIC_ORIGIN: "${GO_PUBLIC_ORIGIN:-http://127.0.0.1:3210}"
+      GO_OAUTH_ISSUER: "${GO_OAUTH_ISSUER:-}"
+      GO_OAUTH_AUDIENCE: "${GO_OAUTH_AUDIENCE:-}"
+      GO_OAUTH_JWKS_URI: "${GO_OAUTH_JWKS_URI:-}"
+      GO_OAUTH_JWKS_JSON: "${GO_OAUTH_JWKS_JSON:-}"
+      GO_OAUTH_REQUIRED_SCOPES: "${GO_OAUTH_REQUIRED_SCOPES:-}"
+      GO_OAUTH_AUTHORIZATION_SERVERS: "${GO_OAUTH_AUTHORIZATION_SERVERS:-}"
+      GO_OAUTH_ALLOWED_ALGORITHMS: "${GO_OAUTH_ALLOWED_ALGORITHMS:-}"
+      GO_OAUTH_CLOCK_SKEW_SECONDS: "${GO_OAUTH_CLOCK_SKEW_SECONDS:-}"
+      GO_WEB_IDENTITY_MODE: "${GO_WEB_IDENTITY_MODE:-trusted-proxy}"
+      GO_WEB_IDENTITY_SECRET: "${GO_WEB_IDENTITY_SECRET:-}"
+      GO_WEB_IDENTITY_SECRET_HEADER: "${GO_WEB_IDENTITY_SECRET_HEADER:-x-go-web-identity-secret}"
+      GO_WEB_IDENTITY_ID_HEADER: "${GO_WEB_IDENTITY_ID_HEADER:-x-go-web-identity-id}"
+      GO_WEB_IDENTITY_EMAIL_HEADER: "${GO_WEB_IDENTITY_EMAIL_HEADER:-x-go-web-identity-email}"
+      GO_WEB_IDENTITY_NAME_HEADER: "${GO_WEB_IDENTITY_NAME_HEADER:-x-go-web-identity-name}"
+      GO_SOCIETY_OWNER_EMAIL: "${GO_SOCIETY_OWNER_EMAIL:-}"
+      GO_SOCIETY_PRINCIPAL_HMAC_SECRET: "${GO_SOCIETY_PRINCIPAL_HMAC_SECRET:-}"
+      GO_SOCIETY_THREAD_HMAC_SECRET: "${GO_SOCIETY_THREAD_HMAC_SECRET:-}"
+    ports:
+      - "127.0.0.1:${GO_HOST_PORT:-3210}:3210"
+    volumes:
+      - go_os_data:/data
+    networks:
+      - go_os_net
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+      - /opt/go-os/web/.next/standalone/.next/cache:size=64m,uid=10001,gid=10001,mode=0750
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    cpus: 1.00
+    mem_limit: 512m
+    mem_reservation: 192m
+    stop_grace_period: 30s
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - >-
+          fetch('http://127.0.0.1:3210/api/health', {signal: AbortSignal.timeout(3000)})
+          .then((response) => process.exit(response.ok ? 0 : 1))
+          .catch(() => process.exit(1))
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  oauth2-proxy:
+    image: quay.io/oauth2-proxy/oauth2-proxy:v7.15.3
+    profiles:
+      - https
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      OAUTH2_PROXY_PROVIDER: oidc
+      OAUTH2_PROXY_HTTP_ADDRESS: 0.0.0.0:4180
+      OAUTH2_PROXY_OIDC_ISSUER_URL: "${OAUTH2_PROXY_OIDC_ISSUER_URL:-}"
+      OAUTH2_PROXY_OIDC_USER_ID_CLAIM: sub
+      OAUTH2_PROXY_CLIENT_ID: "${OAUTH2_PROXY_CLIENT_ID:-}"
+      OAUTH2_PROXY_CLIENT_SECRET: "${OAUTH2_PROXY_CLIENT_SECRET:-}"
+      OAUTH2_PROXY_COOKIE_SECRET: "${OAUTH2_PROXY_COOKIE_SECRET:-}"
+      OAUTH2_PROXY_COOKIE_SECURE: "true"
+      OAUTH2_PROXY_COOKIE_SAMESITE: lax
+      OAUTH2_PROXY_EMAIL_DOMAINS: "${OAUTH2_PROXY_EMAIL_DOMAINS:-}"
+      OAUTH2_PROXY_SCOPE: "${OAUTH2_PROXY_SCOPE:-openid profile email}"
+      OAUTH2_PROXY_REDIRECT_URL: "https://${GO_DOMAIN:-localhost}/oauth2/callback"
+      OAUTH2_PROXY_REVERSE_PROXY: "true"
+      OAUTH2_PROXY_PASS_USER_HEADERS: "true"
+      OAUTH2_PROXY_SET_XAUTHREQUEST: "true"
+      OAUTH2_PROXY_SKIP_PROVIDER_BUTTON: "true"
+      OAUTH2_PROXY_UPSTREAMS: http://gateway:4181/
+    networks:
+      - go_os_net
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    cpus: 0.15
+    mem_limit: 96m
+    mem_reservation: 32m
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  gateway:
+    image: caddy:2.11.4-alpine
+    profiles:
+      - https
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    user: "1000:1000"
+    environment:
+      GO_DOMAIN: "${GO_DOMAIN:-}"
+      GO_PUBLIC_ORIGIN: "${GO_PUBLIC_ORIGIN:-}"
+      CADDY_ACME_EMAIL: "${CADDY_ACME_EMAIL:-}"
+      GO_OAUTH_ISSUER: "${GO_OAUTH_ISSUER:-}"
+      OAUTH2_PROXY_OIDC_ISSUER_URL: "${OAUTH2_PROXY_OIDC_ISSUER_URL:-}"
+      OAUTH2_PROXY_EMAIL_DOMAINS: "${OAUTH2_PROXY_EMAIL_DOMAINS:-}"
+      GO_WEB_IDENTITY_SECRET: "${GO_WEB_IDENTITY_SECRET:-}"
+      GO_WEB_IDENTITY_SECRET_HEADER: "${GO_WEB_IDENTITY_SECRET_HEADER:-x-go-web-identity-secret}"
+      GO_WEB_IDENTITY_ID_HEADER: "${GO_WEB_IDENTITY_ID_HEADER:-x-go-web-identity-id}"
+      GO_WEB_IDENTITY_EMAIL_HEADER: "${GO_WEB_IDENTITY_EMAIL_HEADER:-x-go-web-identity-email}"
+      GO_WEB_IDENTITY_NAME_HEADER: "${GO_WEB_IDENTITY_NAME_HEADER:-x-go-web-identity-name}"
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - >-
+        test -n "$${GO_DOMAIN}" || { echo 'GO_DOMAIN is required for the https profile' >&2; exit 64; };
+        test "$${GO_PUBLIC_ORIGIN}" = "https://$${GO_DOMAIN}" || { echo 'GO_PUBLIC_ORIGIN must exactly match the HTTPS GO_DOMAIN origin' >&2; exit 64; };
+        test -n "$${CADDY_ACME_EMAIL}" || { echo 'CADDY_ACME_EMAIL is required for the https profile' >&2; exit 64; };
+        test -n "$${GO_OAUTH_ISSUER}" || { echo 'GO_OAUTH_ISSUER is required for the https profile' >&2; exit 64; };
+        test -n "$${OAUTH2_PROXY_EMAIL_DOMAINS}" || { echo 'OAUTH2_PROXY_EMAIL_DOMAINS is required for the https profile' >&2; exit 64; };
+        test -n "$${GO_WEB_IDENTITY_SECRET}" || { echo 'GO_WEB_IDENTITY_SECRET is required for the https profile' >&2; exit 64; };
+        test "$${GO_OAUTH_ISSUER}" = "$${OAUTH2_PROXY_OIDC_ISSUER_URL}" || { echo 'Web and MCP must use the same OIDC issuer' >&2; exit 64; };
+        exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+    ports:
+      - "${GO_HTTPS_BIND_IP:-0.0.0.0}:80:80"
+      - "${GO_HTTPS_BIND_IP:-0.0.0.0}:443:443"
+      - "${GO_HTTPS_BIND_IP:-0.0.0.0}:443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - go_os_caddy_data:/data
+      - go_os_caddy_config:/config
+    networks:
+      - go_os_net
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    cpus: 0.15
+    mem_limit: 96m
+    mem_reservation: 32m
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+networks:
+  go_os_net:
+    name: go-os-self-hosted-net-v1
+    driver: bridge
+    labels:
+      org.go-os.deployment: self-hosted
+
+volumes:
+  go_os_data:
+    name: go-os-self-hosted-data-v1
+    labels:
+      org.go-os.deployment: self-hosted
+      org.go-os.contents: sqlite
+  go_os_caddy_data:
+    name: go-os-self-hosted-caddy-data-v1
+    labels:
+      org.go-os.deployment: self-hosted
+      org.go-os.contents: caddy-certificates
+  go_os_caddy_config:
+    name: go-os-self-hosted-caddy-config-v1
+    labels:
+      org.go-os.deployment: self-hosted
+      org.go-os.contents: caddy-runtime

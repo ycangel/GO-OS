@@ -153,11 +153,13 @@ the user sees the exact staging preview, selects the material and explicitly
 confirms internal-only processing.
 
 The public repository intentionally does not hard-code a production MCP URL,
-OAuth resource or member identity. Those are deployment outputs. Retrieve the
-published `mcp_url` and `oauth_resource` from the target private Sites
-deployment, complete its OAuth flow and verify the principal-to-member link
-before installing or sharing a connector. Never substitute copied Web cookies
-or user-supplied `oai-authenticated-*` headers.
+OAuth resource or member identity. Those are deployment outputs. For Sites,
+retrieve the published `mcp_url` and `oauth_resource`. For the isolated
+self-hosted adapter, verify the trusted HTTPS `/mcp` endpoint and its
+`/.well-known/oauth-protected-resource` metadata. Complete the target OAuth
+flow and verify the principal-to-member link before installing or sharing a
+connector. Never substitute copied Web cookies or user-supplied
+`oai-authenticated-*` headers.
 
 ## Acceptance test
 

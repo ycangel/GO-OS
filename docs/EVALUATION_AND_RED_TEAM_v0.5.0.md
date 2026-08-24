@@ -212,19 +212,50 @@ governance, security or real-world evidence gates below.
 - [ ] **I7. Scale boundary:** do not generalize from one organization, mission or
   domain without evidence.
 
-## J. Governance, ecosystem and licensing
+## J. Cognitive Bridge self-hosting
 
-- [ ] **J1. Public upstream:** distinguish GO OS from any commercial packaging,
+- [ ] **J1. Isolation:** the project owns a unique directory, Compose project,
+  network, volumes and loopback port; starting, stopping and updating it does
+  not mutate another server project.
+- [ ] **J2. Canonical origin:** the public origin exactly matches the HTTPS
+  domain used by OAuth metadata, same-origin checks and principal binding.
+- [ ] **J3. Issuer binding:** Web login and MCP access tokens use the same
+  verified OIDC issuer and stable `sub`; cross-issuer subject collisions cannot
+  link a member.
+- [ ] **J4. Token denial matrix:** absent, malformed, expired, not-yet-valid,
+  wrong-issuer, wrong-audience, forged-signature, unsupported-critical-header
+  and insufficient-scope tokens all fail closed.
+- [ ] **J5. Header spoofing:** public requests cannot inject the trusted Web
+  identity secret or identity headers, and MCP never treats Web identity
+  headers as bearer authentication.
+- [ ] **J6. Tool ceiling:** discovery exposes exactly context read, private
+  checkpoint staging and human-review request; no ratify, commit, version,
+  authority or Mission mutation tool exists.
+- [ ] **J7. Human Gate:** a staged draft cannot change the cognitive head before
+  exact-hash Web review and named-human ratification.
+- [ ] **J8. Load boundary:** request size, source rate, concurrency, process,
+  CPU, memory and log growth remain inside the declared server envelope.
+- [ ] **J9. Persistence:** migrations are checksum-verified and atomic; restart,
+  backup and guarded restore preserve SQLite integrity, HMAC identity bindings
+  and cognitive history.
+- [ ] **J10. Fresh-conversation round trip:** a newly authorized ChatGPT/Codex
+  conversation reads current context, stages selected material after explicit
+  consent, reaches the Web Human Gate and observes the ratified revision on a
+  second read.
+
+## K. Governance, ecosystem and licensing
+
+- [ ] **K1. Public upstream:** distinguish GO OS from any commercial packaging,
   customer deployment or implementation company.
-- [ ] **J2. IP boundary:** verify software, documentation, Skills, trademarks,
+- [ ] **K2. IP boundary:** verify software, documentation, Skills, trademarks,
   contributions, company IP and customer-specific IP have clear terms.
-- [ ] **J3. Data return:** no customer learning returns to a public commons
+- [ ] **K3. Data return:** no customer learning returns to a public commons
   without contractual authority, consent and effective de-identification.
-- [ ] **J4. Maintainer power:** document who can merge constitutional or schema
+- [ ] **K4. Maintainer power:** document who can merge constitutional or schema
   changes and how decisions can be contested.
-- [ ] **J5. Dependency on one steward:** test succession, fork and continuity
+- [ ] **K5. Dependency on one steward:** test succession, fork and continuity
   risks.
-- [ ] **J6. Legal status:** no release language invents or implies a foundation
+- [ ] **K6. Legal status:** no release language invents or implies a foundation
   or other legal body that has not been established.
 
 ## Suggested review sequence

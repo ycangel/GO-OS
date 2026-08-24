@@ -20,6 +20,7 @@ silently rewritten to look current.
 |---|---|
 | Understand the project | [English README](../README.md) or [中文 README](../README.zh-CN.md) |
 | Run the smallest useful loop | [Quick Start](QUICK_START.md) |
+| Deploy an isolated self-hosted GO Society instance | [Self-hosted runbook](../deploy/self-hosted/RUNBOOK.md) |
 | Connect a Human–AI conversation to GO Society cognition | [Cognitive Bridge v0.5 Alpha](COGNITIVE_BRIDGE_v0.5_ALPHA.md) |
 | Apply the conversation-side consent and authority contract | [GO Society Cognitive Bridge Skill](../skills/go-society-cognitive-bridge/SKILL.md) |
 | Understand the frozen v0.5 model | [Architecture Overview](ARCHITECTURE_OVERVIEW.md) |
@@ -44,6 +45,7 @@ The following documents define the current release baseline.
 | [`skills/`](../skills) | Semantic gateway, bounded Cognitive Bridge conversation adapter and specialist application skills | **Reference implementation** |
 | [`tests/`](../tests) | Evaluation cases, adversarial fixtures and release gates | **Declared tests; execution status is reported separately** |
 | [`web/`](../web) | GO Society reference application | **Bounded two-sided Cognitive Bridge source; live MCP/OAuth and fresh-conversation conformance are reported separately** |
+| [`deploy/self-hosted/`](../deploy/self-hosted) | Isolated Node, SQLite, OAuth proxy and HTTPS deployment package | **Reference deployment; target-environment acceptance is required** |
 | [Release Notes](RELEASE_NOTES_v0.5.0.md) | Release scope, verification and known limitations | **Release record** |
 
 ## Status vocabulary

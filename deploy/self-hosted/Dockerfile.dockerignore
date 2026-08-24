@@ -1,0 +1,15 @@
+.git
+.github
+**/.DS_Store
+**/.env
+**/.env.*
+!**/.env.example
+web/node_modules
+web/.next
+web/dist
+web/.wrangler
+web/.sites-runtime
+web/coverage
+web/outputs
+web/work
+deploy/self-hosted/backups

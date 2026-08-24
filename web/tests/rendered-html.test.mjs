@@ -115,7 +115,7 @@ test("constitutional mutation routes share the canonical authority vocabulary", 
   assert.match(exceptionRoute, /"create_exception"/);
   assert.match(evolutionRoute, /"create_evolution_proposal"/);
   assert.match(membersRoute, /"custom:manage_membership"/);
-  assert.match(membersRoute, /d1\.batch/);
+  assert.match(membersRoute, /executeAtomicBatch/);
 });
 
 test("member reads are membership-scoped and never expose another mission owner", async () => {
@@ -135,14 +135,18 @@ test("member reads are membership-scoped and never expose another mission owner"
   assert.doesNotMatch(memberAuth, /status:\s*"active",\s*joinedAt/);
 });
 
-test("identity headers and owner configuration stay server-side trust inputs", async () => {
-  const [authSource, memberAuthSource, readme] = await Promise.all([
+test("Web identity adapters and owner configuration stay server-side trust inputs", async () => {
+  const [authSource, oauthSource, memberAuthSource, readme] = await Promise.all([
     readFile(new URL("../app/chatgpt-auth.ts", import.meta.url), "utf8"),
+    readFile(new URL("../runtime/oauth-resource-server.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/member-auth.ts", import.meta.url), "utf8"),
     readFile(new URL("../README.md", import.meta.url), "utf8"),
   ]);
 
-  assert.match(authSource, /oai-authenticated-user-email/);
+  assert.match(authSource, /resolveWebIdentity/);
+  assert.match(oauthSource, /oai-authenticated-user-email/);
+  assert.match(oauthSource, /GO_WEB_IDENTITY_SECRET/);
+  assert.match(oauthSource, /authenticateBearerRequest/);
   assert.match(memberAuthSource, /GO_SOCIETY_OWNER_EMAIL/);
   assert.match(readme, /strip\s+any client-supplied headers/);
   assert.match(readme, /server-side secret\/environment value/);

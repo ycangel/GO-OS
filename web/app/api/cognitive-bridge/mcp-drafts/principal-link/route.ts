@@ -20,7 +20,11 @@ export async function GET(request: Request) {
     return Response.json({ error: "Only approved GO Society members can link the bridge." }, { status: 403 });
   }
   try {
-    const link = await getWebMcpPrincipalLink(identity.member, identity.user.id, request.url);
+    const link = await getWebMcpPrincipalLink(
+      identity.member,
+      identity.user.principalKey,
+      request.url,
+    );
     return Response.json(
       { linked: Boolean(link), linkedAt: link?.linkedAt ?? null },
       { headers: { "cache-control": "no-store" } },
@@ -36,7 +40,7 @@ export async function POST(request: Request) {
   try {
     const link = await linkWebMcpPrincipal(
       authorized,
-      authorized.userId,
+      authorized.principalKey,
       request.url,
     );
     return Response.json(
@@ -54,7 +58,7 @@ export async function DELETE(request: Request) {
   try {
     const revoked = await revokeWebMcpPrincipal(
       authorized,
-      authorized.userId,
+      authorized.principalKey,
       request.url,
     );
     return Response.json(
@@ -77,7 +81,7 @@ async function requireSameOriginMember(request: Request) {
   if (!identity.member) {
     return Response.json({ error: "Only approved GO Society members can link the bridge." }, { status: 403 });
   }
-  return { ...identity.member, userId: identity.user.id };
+  return { ...identity.member, principalKey: identity.user.principalKey };
 }
 
 function serviceErrorResponse(error: unknown) {
