@@ -20,6 +20,7 @@ silently rewritten to look current.
 |---|---|
 | Understand the project | [English README](../README.md) or [中文 README](../README.zh-CN.md) |
 | Run the smallest useful loop | [Quick Start](QUICK_START.md) |
+| Connect a Human–AI conversation to GO Society cognition | [Cognitive Bridge v0.5 Alpha](COGNITIVE_BRIDGE_v0.5_ALPHA.md) |
 | Understand the frozen v0.5 model | [Architecture Overview](ARCHITECTURE_OVERVIEW.md) |
 | Review the planned argument and research agenda | [Whitepaper editorial scaffold](WHITEPAPER.md) |
 | See exactly what v0.5.0 includes | [Release Notes](RELEASE_NOTES_v0.5.0.md) |
@@ -41,7 +42,7 @@ The following documents define the current release baseline.
 | [Skill Routing & Contracts v0.2.0](SKILL_ROUTING_AND_CONTRACTS_v0.2.0.md) | Reviewed routing and contract boundary referenced by the Skill Specification | **Reviewed current reference** |
 | [`skills/`](../skills) | Semantic gateway and specialist application skills | **Reference implementation** |
 | [`tests/`](../tests) | Evaluation cases, adversarial fixtures and release gates | **Declared tests; execution status is reported separately** |
-| [`web/`](../web) | GO Society reference application | **Runnable alpha reference surface, not complete-loop or production certification** |
+| [`web/`](../web) | GO Society reference application | **Runnable organization-side private checkpoint-to-version primitive; Skill/MCP fresh-conversation integration remains pending** |
 | [Release Notes](RELEASE_NOTES_v0.5.0.md) | Release scope, verification and known limitations | **Release record** |
 
 ## Status vocabulary

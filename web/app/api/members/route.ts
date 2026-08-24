@@ -109,7 +109,7 @@ export async function POST(request: Request) {
             allowed_actions, prohibited_actions, resource_rights, limits,
             reversibility_ceiling, evidence_obligations, escalation,
             conflict_rules, valid_from, expires_at, revoked_at,
-            self_expansion_allowed
+            self_expansion_allowed, revision
           )
           SELECT
             'authority-member-' || id || '-v050',
@@ -117,7 +117,7 @@ export async function POST(request: Request) {
             'member:' || id,
             ?,
             'Record bounded field evidence and raise exceptions for assigned missions.',
-            ?, ?, ?, ?, 'reversible_only', ?, ?, ?, ?, expires_at, NULL, 0
+            ?, ?, ?, ?, 'reversible_only', ?, ?, ?, ?, expires_at, NULL, 0, 1
           FROM members
           WHERE email = ?
           ON CONFLICT(id) DO UPDATE SET
@@ -135,16 +135,29 @@ export async function POST(request: Request) {
             valid_from = excluded.valid_from,
             expires_at = excluded.expires_at,
             revoked_at = NULL,
-            self_expansion_allowed = 0
+            self_expansion_allowed = 0,
+            revision = authority_grants.revision + 1
         `)
         .bind(
           `member:${identity.member.id}`,
           identity.member.displayName,
-          JSON.stringify(["create_evidence", "create_exception"]),
+          JSON.stringify([
+            "create_evidence",
+            "create_exception",
+            "create_cognitive_event",
+            "create_deliberation_session",
+            "create_learning_record",
+            "create_evolution_proposal",
+            "custom:read_cognitive_context",
+            "custom:capture_cognitive_source",
+          ]),
           JSON.stringify([
             "custom:expand_own_authority",
             "custom:modify_own_authority",
-            "create_evolution_proposal",
+            "custom:review_cognition",
+            "approve_evolution_proposal",
+            "create_cognitive_commit",
+            "create_cognitive_version",
             "update_mission",
           ]),
           JSON.stringify({

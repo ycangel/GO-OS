@@ -15,6 +15,8 @@ export type { AuthorityAction } from "../db/authority-grants";
 export interface AuthorityDecision {
   allowed: boolean;
   reason: string;
+  grantId?: string;
+  grantRevision?: number;
 }
 
 /**
@@ -86,8 +88,28 @@ export async function requireAuthority(
         eq(missionMemberships.missionId, Number(targetMatch[1])),
         eq(missionMemberships.status, "active"),
       ];
-      if (["create_evidence", "create_exception"].includes(request.action)) {
+      if (
+        [
+          "create_evidence",
+          "create_exception",
+          "create_cognitive_event",
+          "create_deliberation_session",
+          "create_learning_record",
+          "create_evolution_proposal",
+          "custom:capture_cognitive_source",
+        ].includes(request.action)
+      ) {
         predicates.push(eq(missionMemberships.canRecord, true));
+      }
+      if (
+        [
+          "approve_evolution_proposal",
+          "create_cognitive_commit",
+          "create_cognitive_version",
+          "custom:review_cognition",
+        ].includes(request.action)
+      ) {
+        predicates.push(eq(missionMemberships.canReview, true));
       }
 
       const [membership] = await db
@@ -103,7 +125,11 @@ export async function requireAuthority(
       }
     }
 
-    return decision;
+    return {
+      ...decision,
+      grantId: grant.id,
+      grantRevision: grant.revision,
+    };
   } catch {
     return {
       allowed: false,

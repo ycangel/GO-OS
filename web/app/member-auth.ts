@@ -125,6 +125,49 @@ export async function canRecordMission(
   return Boolean(permission);
 }
 
+export async function canAccessMission(
+  member: RuntimeMember,
+  missionId: number,
+): Promise<boolean> {
+  if (member.isOwner) return true;
+
+  const db = getDb();
+  const [membership] = await db
+    .select({ id: missionMemberships.id })
+    .from(missionMemberships)
+    .where(
+      and(
+        eq(missionMemberships.memberId, member.id),
+        eq(missionMemberships.missionId, missionId),
+        eq(missionMemberships.status, "active"),
+      ),
+    )
+    .limit(1);
+  return Boolean(membership);
+}
+
+export async function canReviewMission(
+  member: RuntimeMember,
+  missionId: number,
+): Promise<boolean> {
+  if (member.isOwner) return true;
+
+  const db = getDb();
+  const [permission] = await db
+    .select({ id: missionMemberships.id })
+    .from(missionMemberships)
+    .where(
+      and(
+        eq(missionMemberships.memberId, member.id),
+        eq(missionMemberships.missionId, missionId),
+        eq(missionMemberships.canReview, true),
+        eq(missionMemberships.status, "active"),
+      ),
+    )
+    .limit(1);
+  return Boolean(permission);
+}
+
 export function mutationCameFromSameOrigin(request: Request): boolean {
   const origin = request.headers.get("origin");
   if (!origin) return false;

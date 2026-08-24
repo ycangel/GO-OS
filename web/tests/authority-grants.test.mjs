@@ -11,6 +11,7 @@ import {
 function grant(overrides = {}) {
   return {
     id: "authority-test-001",
+    revision: 1,
     grantor: "human:owner",
     grantee: "agent:test",
     accountableHuman: "human:owner",

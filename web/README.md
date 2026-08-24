@@ -8,8 +8,9 @@
 
 GO Society Web is the first self-application reference instance for GO OS. It
 demonstrates selected organizational-runtime boundaries in a deployable Web
-application. It does not yet implement or validate the complete eight-object
-cognitive loop.
+application. The v0.5 Cognitive Bridge adds one private, durable
+conversation-to-CognitiveVersion path; it does not yet certify the complete
+eight-object loop or automatic ChatGPT installation.
 
 `Foundation Release` is a software milestone name. **“奠基版本”** is the
 canonical Chinese rendering; the name does not imply a registered foundation
@@ -24,6 +25,7 @@ or other legal entity.
 - [Release Notes](../docs/RELEASE_NOTES_v0.5.0.md)
 - [Migration & Deprecation](../docs/MIGRATION_AND_DEPRECATION_v0.5.0.md)
 - [Evaluation & Red-Team](../docs/EVALUATION_AND_RED_TEAM_v0.5.0.md)
+- [Cognitive Bridge v0.5 Alpha](../docs/COGNITIVE_BRIDGE_v0.5_ALPHA.md)
 
 ## What the alpha surface implements
 
@@ -39,6 +41,13 @@ or other legal entity.
   mission membership, lifecycle, risk, exposure, tool and reversibility on the
   current mutation routes;
 - same-origin protection for write requests;
+- private Narrative Anchors, conversation cursors and candidate-only cognitive
+  checkpoints;
+- named-human ratification/rejection with idempotent receipts, append-only
+  CognitiveCommit/CognitiveVersion creation, dependency-closed ratification and
+  an atomically claimed Mission head transition;
+- an authenticated cognitive context API for reloading ratified state, pending
+  candidates and unresolved questions;
 - Cloudflare D1 persistence and forward migrations;
 - explicit privacy and publication policy surfaces.
 
@@ -56,11 +65,11 @@ public.
 | Mission | persisted and rendered |
 | AuthorityGrant | persisted and structurally enforced for current mutation routes; free-text semantic scope and full policy composition remain incomplete |
 | Evidence | private intake plus separately published public-case surface |
-| CognitiveEvent | TypeScript contract; no complete durable lifecycle |
-| DeliberationSession | TypeScript contract; no complete durable lifecycle |
-| LearningRecord | TypeScript contract; no complete durable lifecycle |
-| EvolutionProposal | persisted proposal surface; approval/apply/rollback loop incomplete |
-| CognitiveVersion | repository specification and tests; not persisted by this Web app |
+| CognitiveEvent | private candidate and ratified-copy persistence in the bounded Cognitive Bridge path; general lifecycle incomplete |
+| DeliberationSession | private checkpoint persistence and human resolution in the bounded bridge path; general orchestration incomplete |
+| LearningRecord | private candidate/ratified-copy persistence with epistemic status retained; capability promotion incomplete |
+| EvolutionProposal | bridge candidate approval plus legacy proposal surface; application/rollback loop incomplete |
+| CognitiveVersion | append-only bridge version and one Mission head implemented; branching, merge and general repository APIs incomplete |
 
 The Web table and TypeScript type are a camelCase **enforcement projection** of
 the canonical snake-case `AuthorityGrant`, not a direct canonical
@@ -74,15 +83,24 @@ security certification or organizational impact.
 
 ### Known enforcement gaps for the next red team
 
-- Authority validation and the subsequent mutation are not one atomic
-  transaction. A concurrent revocation/expiry or replay can race the write;
-  authority-version preconditions and idempotency keys are still required.
-- `resourceExposure` is currently a declared per-route value of `1`. The guard
-  enforces a ceiling, but the alpha does not yet measure actual or aggregate
-  resource exposure.
+- Cognitive Bridge writes revalidate the exact AuthorityGrant revision inside
+  the D1 batch and bind every object to that receipt. Private context reads also
+  fail closed without `custom:read_cognitive_context`; cross-member review
+  additionally requires review authority. Older mutation routes do not yet
+  share this model and remain red-team scope.
+- Each private checkpoint persists the authenticated member's internal-use
+  consent claim. Client input cannot self-assert `host_attested` provenance;
+  that trust level is reserved for a future trusted adapter boundary.
+- `resourceExposure` is currently `1` because each bridge operation is bounded
+  to one Mission; object counts and byte limits are separately enforced. The
+  alpha does not yet measure aggregate economic or operational exposure.
 - Route-level privacy and authorization tests include source-boundary checks,
   not a complete D1 HTTP integration matrix. Anonymous, cross-origin, revoked,
   `canReview=false`, rollback and replay cases remain explicit red-team work.
+- The current implementation is the authenticated organization-side Web/API
+  half-bridge, not a conversation adapter. A Skill plus OAuth 2.1 MCP adapter is
+  still required before a fresh ChatGPT conversation can load and checkpoint
+  GO Society cognition automatically.
 - In the alpha lifecycle, `invited` means owner-authorized and email-matched;
   an explicit invitation-acceptance transition and reliable `joinedAt` audit
   record are not yet implemented.
@@ -123,6 +141,14 @@ without that boundary would allow header spoofing.
 
 `GO_SOCIETY_OWNER_EMAIL` is a server-side secret/environment value. Never place
 it in source, browser code, logs, local storage or a committed environment file.
+For an isolated local preview, the Vite adapter accepts the command-scoped
+`GO_SOCIETY_LOCAL_OWNER_EMAIL` value and maps it to the Worker binding; it is
+not a production configuration source.
+
+`GO_SOCIETY_THREAD_HMAC_SECRET` is a separate server-side secret used to bind
+source conversations without storing their raw external key. Local previews
+may map a command-scoped `GO_SOCIETY_LOCAL_THREAD_HMAC_SECRET`; use at least 32
+random characters and never commit it.
 
 ## Build and verification
 

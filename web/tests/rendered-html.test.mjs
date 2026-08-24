@@ -32,6 +32,7 @@ test("renders GO Society as the product surface", async () => {
   assert.match(html, /A self-evolving organization/i);
   assert.match(html, /for self-evolving organizations/i);
   assert.match(html, /alpha self-application reference (?:surface|instance)/i);
+  assert.match(html, /Narrative Anchors/i);
 });
 
 test("public runtime is structurally separated from private field records", async () => {
@@ -47,6 +48,51 @@ test("public runtime is structurally separated from private field records", asyn
   assert.doesNotMatch(source, /fieldRecords/);
   assert.doesNotMatch(source, /privateNotes/);
   assert.doesNotMatch(source, /createdBy/);
+  assert.doesNotMatch(source, /cognitiveFragments/);
+  assert.doesNotMatch(source, /cognitiveObjects/);
+});
+
+test("the cognitive bridge keeps source, candidates and human head mutation separate", async () => {
+  const [contextRoute, checkpointRoute, ratificationRoute, bridgeRuntime] =
+    await Promise.all([
+      readFile(
+        new URL("../app/api/cognitive-bridge/context/route.ts", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../app/api/cognitive-bridge/checkpoints/route.ts", import.meta.url),
+        "utf8",
+      ),
+      readFile(
+        new URL("../app/api/cognitive-bridge/ratifications/route.ts", import.meta.url),
+        "utf8",
+      ),
+      readFile(new URL("../runtime/cognitive-bridge.ts", import.meta.url), "utf8"),
+    ]);
+
+  assert.match(contextRoute, /getRuntimeIdentity/);
+  assert.match(contextRoute, /canAccessMission/);
+  assert.match(contextRoute, /"custom:read_cognitive_context"/);
+  assert.match(contextRoute, /"custom:review_cognition"/);
+  assert.match(contextRoute, /sourceIsEvidence:\s*false/);
+  assert.match(checkpointRoute, /mutationCameFromSameOrigin/);
+  assert.match(checkpointRoute, /validateEvidenceReferences/);
+  assert.match(checkpointRoute, /hmacSha256/);
+  assert.match(checkpointRoute, /cognitive_checkpoint_claims/);
+  assert.match(checkpointRoute, /consent_confirmed_by_member_id/);
+  assert.match(checkpointRoute, /headChanged:\s*false/);
+  assert.doesNotMatch(checkpointRoute, /UPDATE cognitive_heads/);
+  assert.match(ratificationRoute, /canReviewMission/);
+  assert.match(ratificationRoute, /"create_cognitive_commit"/);
+  assert.match(ratificationRoute, /"create_cognitive_version"/);
+  assert.match(ratificationRoute, /UPDATE cognitive_heads/);
+  assert.match(ratificationRoute, /cognitive_candidate_decisions/);
+  assert.match(ratificationRoute, /cognitive_head_transitions/);
+  assert.match(ratificationRoute, /candidateHashes/);
+  assert.match(ratificationRoute, /INVALID_COGNITIVE_DEPENDENCY/);
+  assert.match(bridgeRuntime, /narrative anchors?/i);
+  assert.match(bridgeRuntime, /pending_human_review|candidate checkpoint/i);
+  assert.doesNotMatch(bridgeRuntime, /host_attested/);
 });
 
 test("constitutional mutation routes share the canonical authority vocabulary", async () => {

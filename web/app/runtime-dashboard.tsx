@@ -98,6 +98,100 @@ type TeamMember = {
   canPublish: boolean | null;
 };
 
+type CognitiveFragment = {
+  id: string;
+  threadId?: string;
+  sourceTurnRef: string;
+  speakerType: string;
+  speakerRef: string | null;
+  verbatimText: string;
+  contentKind: string;
+  contentHash: string;
+  provenanceTrust: string;
+  occurredAt?: string | null;
+};
+
+type CognitiveCandidate = {
+  id: string;
+  threadId: string;
+  sourceTitle: string;
+  sourceInterface: string;
+  objectType: string;
+  decisionState: string;
+  payload: Record<string, unknown>;
+  payloadHash: string;
+  createdBy: string;
+  createdAt: string;
+  narrativeAnchors: CognitiveFragment[];
+};
+
+type CognitiveContext = {
+  contractVersion: string;
+  mission: {
+    id: number;
+    slug: string;
+    title: string;
+    purpose: string;
+    accountableHuman: string;
+  };
+  sync: {
+    threadId: string;
+    sourceInterface: string;
+    sourceTitle: string;
+    cursor: number;
+    status: string;
+    updatedAt: string;
+  } | null;
+  threads: Array<{
+    threadId: string;
+    sourceInterface: string;
+    sourceTitle: string;
+    cursor: number;
+    status: string;
+    updatedAt: string;
+  }>;
+  ratifiedState: {
+    id: string;
+    revision: number;
+    payload: Record<string, unknown> | null;
+    payloadHash: string;
+    createdAt: string;
+    commit: {
+      id: string;
+      payload: Record<string, unknown>;
+      payloadHash: string;
+      rationale: string | null;
+      decidedAt: string | null;
+    } | null;
+  } | null;
+  candidateState: CognitiveCandidate[];
+  sourceMaterial: CognitiveFragment[];
+  realityEvidence: Array<{
+    ref: string;
+    kind: string;
+    title: string;
+    observation: string;
+    source: string;
+    reliability: string;
+    freshness: string;
+  }>;
+  openQuestions: string[];
+  authority: {
+    actor: string;
+    accountableHuman: string;
+    currentReviewer: string;
+    canCheckpoint: boolean;
+    canRatify: boolean;
+    candidateOnlyForAgents: boolean;
+    headChangesRequireHuman: boolean;
+  };
+  boundary: {
+    visibility: string;
+    sourceIsEvidence: boolean;
+    candidateIsRatified: boolean;
+  };
+};
+
 type RuntimeState = {
   missions: Mission[];
   evidence: PublicCase[];
@@ -120,7 +214,13 @@ const emptyState: RuntimeState = {
   privacyMode: "public_deidentified",
 };
 
-type View = "Pulse" | "Missions" | "Evidence" | "Evolution" | "Private intake";
+type View =
+  | "Pulse"
+  | "Missions"
+  | "Evidence"
+  | "Evolution"
+  | "Cognitive space"
+  | "Private intake";
 type ComposerKind = "fieldRecord" | "exception" | "evolution" | "member";
 
 function formatDate(value: string | null) {
@@ -150,10 +250,13 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
   const [error, setError] = useState<string | null>(null);
   const [composer, setComposer] = useState<ComposerKind | null>(null);
   const [saving, setSaving] = useState(false);
+  const [cognition, setCognition] = useState<CognitiveContext | null>(null);
+  const [cognitionLoading, setCognitionLoading] = useState(false);
+  const [cognitionSaving, setCognitionSaving] = useState(false);
   const canWrite = Boolean(viewer?.canWrite);
 
   const views: View[] = viewer?.canWrite
-    ? ["Pulse", "Missions", "Evidence", "Evolution", "Private intake"]
+    ? ["Pulse", "Missions", "Evidence", "Evolution", "Cognitive space", "Private intake"]
     : ["Pulse", "Missions", "Evidence", "Evolution"];
 
   const openExceptions = useMemo(
@@ -176,6 +279,32 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
     }
   }, [canWrite]);
 
+  const loadCognition = useCallback(async (threadId?: string) => {
+    if (!canWrite) {
+      setCognition(null);
+      return;
+    }
+    setCognitionLoading(true);
+    try {
+      const query = new URLSearchParams({ view: "review" });
+      if (threadId) query.set("threadId", threadId);
+      const response = await fetch(`/api/cognitive-bridge/context?${query}`, {
+        cache: "no-store",
+      });
+      const payload = (await response.json()) as CognitiveContext & { error?: string };
+      if (!response.ok) throw new Error(payload.error ?? "Cognitive space unavailable");
+      setCognition(payload);
+    } catch (cognitiveError) {
+      setError(
+        cognitiveError instanceof Error
+          ? cognitiveError.message
+          : "Cognitive space unavailable",
+      );
+    } finally {
+      setCognitionLoading(false);
+    }
+  }, [canWrite]);
+
   useEffect(() => {
     if (!initialViewer) return;
     const timer = window.setTimeout(() => {
@@ -194,6 +323,12 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
     const timer = window.setTimeout(() => void loadRuntime(), 0);
     return () => window.clearTimeout(timer);
   }, [loadRuntime]);
+
+  useEffect(() => {
+    if (!canWrite) return;
+    const timer = window.setTimeout(() => void loadCognition(), 0);
+    return () => window.clearTimeout(timer);
+  }, [canWrite, loadCognition]);
 
   function beginCompose(kind: ComposerKind) {
     if (!viewer) {
@@ -248,6 +383,53 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
     }
   }
 
+  async function decideCognition(
+    decision: "ratify" | "reject",
+    candidateIds: string[],
+    rationale: string,
+    idempotencyKey: string,
+  ): Promise<boolean> {
+    if (!cognition || !candidateIds.length) return false;
+    setCognitionSaving(true);
+    try {
+      const response = await fetch("/api/cognitive-bridge/ratifications", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          idempotencyKey,
+          missionId: cognition.mission.id,
+          candidateIds,
+          candidateHashes: Object.fromEntries(
+            cognition.candidateState
+              .filter((candidate) => candidateIds.includes(candidate.id))
+              .map((candidate) => [candidate.id, candidate.payloadHash]),
+          ),
+          expectedRevision: cognition.ratifiedState?.revision ?? 0,
+          decision,
+          rationale,
+        }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (response.status === 401) {
+        window.location.href = `/signin-with-chatgpt?return_to=${encodeURIComponent("/")}`;
+        return false;
+      }
+      if (!response.ok) throw new Error(result.error ?? "Unable to review cognition");
+      await Promise.all([loadCognition(), loadRuntime()]);
+      setError(null);
+      return true;
+    } catch (reviewError) {
+      setError(
+        reviewError instanceof Error
+          ? reviewError.message
+          : "Unable to review cognition",
+      );
+      return false;
+    } finally {
+      setCognitionSaving(false);
+    }
+  }
+
   return (
     <main className="shell">
       <header className="topbar">
@@ -263,6 +445,7 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
           {views.map((item) => (
             <button
               className={view === item ? "active" : ""}
+              aria-pressed={view === item}
               key={item}
               onClick={() => setView(item)}
               type="button"
@@ -274,7 +457,13 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
 
         <div className="actor">
           <span className="privacy-dot" aria-hidden="true" />
-          <span className="runtime-label">Public read · de-identified</span>
+          <span className="runtime-label">
+            {view === "Cognitive space"
+              ? "Private · member-only · verbatim source"
+              : view === "Private intake"
+                ? "Private · operational material"
+                : "Public · de-identified"}
+          </span>
           {viewer ? (
             <>
               <span className="actor-mode">{viewer.canWrite ? viewer.role : "read-only"}</span>
@@ -338,16 +527,16 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
               <h1>A self-evolving organization<br />for self-evolving organizations.</h1>
               <p className="brief-copy">
                 GO Society is GO OS&apos;s first self-application reference instance. This
-                alpha surface persists selected runtime objects; CognitiveEvent,
-                Deliberation, Learning and CognitiveVersion remain incomplete as one
-                durable end-to-end loop. Public evidence here is a deliberately separate,
-                human-approved artifact derived from private records.
+                alpha now persists private Narrative Anchors and candidate GO OS objects,
+                with a named-human gate that appends CognitiveCommit and CognitiveVersion.
+                Public Reality Evidence remains a deliberately separate, human-approved
+                boundary; source meaning is never silently promoted into fact.
               </p>
             </div>
             <div className="brief-state">
               <span>Current state</span>
-              <strong>FORMING</strong>
-              <small>Privacy-safe Alpha · Cycle 02</small>
+              <strong>LEARNING</strong>
+              <small>Cognitive Bridge · Cycle 03</small>
             </div>
           </div>
 
@@ -396,6 +585,16 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
               loading={loading}
               canPropose={Boolean(viewer?.canInvite)}
               onCompose={() => beginCompose("evolution")}
+            />
+          )}
+          {view === "Cognitive space" && viewer?.canWrite && (
+            <CognitiveSpaceView
+              key={cognition?.sync?.threadId ?? "empty-cognitive-space"}
+              data={cognition}
+              loading={cognitionLoading}
+              saving={cognitionSaving}
+              onDecision={decideCognition}
+              onSelectThread={loadCognition}
             />
           )}
           {view === "Private intake" && viewer?.canWrite && (
@@ -619,6 +818,499 @@ function EvolutionView({ evolutions, capabilities, loading, canPropose, onCompos
       </section>
     </div>
   );
+}
+
+function CognitiveSpaceView({
+  data,
+  loading,
+  saving,
+  onDecision,
+  onSelectThread,
+}: {
+  data: CognitiveContext | null;
+  loading: boolean;
+  saving: boolean;
+  onDecision: (
+    decision: "ratify" | "reject",
+    candidateIds: string[],
+    rationale: string,
+    idempotencyKey: string,
+  ) => Promise<boolean>;
+  onSelectThread: (threadId?: string) => Promise<void>;
+}) {
+  const [selectedCandidateIds, setSelectedCandidateIds] = useState<string[]>([]);
+  const [rationale, setRationale] = useState("");
+  const [announcement, setAnnouncement] = useState("");
+  const [reviewAttempt, setReviewAttempt] = useState<{
+    signature: string;
+    idempotencyKey: string;
+  } | null>(null);
+
+  if (loading && !data) {
+    return <section className="panel full-panel"><Skeleton rows={5} /></section>;
+  }
+  if (!data) {
+    return (
+      <section className="panel full-panel">
+        <div className="empty-ledger">
+          <strong>The private cognitive space is not available.</strong>
+          <p>Only an authenticated GO Society member can enter this boundary.</p>
+        </div>
+      </section>
+    );
+  }
+
+  const selectedIds = data.candidateState
+    .filter((candidate) => selectedCandidateIds.includes(candidate.id))
+    .map((candidate) => candidate.id);
+  const versionPayload = data.ratifiedState?.payload ?? {};
+  const reasoningPatterns = payloadStrings(versionPayload.reasoning_patterns);
+  const openQuestions = payloadStrings(versionPayload.open_questions);
+  const decisions = payloadRecords(versionPayload.decisions);
+
+  const selectedSet = new Set(selectedIds);
+  const pendingSet = new Set(data.candidateState.map((candidate) => candidate.id));
+  const missingDependencies = data.candidateState
+    .filter((candidate) => selectedSet.has(candidate.id))
+    .flatMap((candidate) => candidateDependencies(candidate))
+    .filter((reference) => pendingSet.has(reference) && !selectedSet.has(reference));
+  const hasDeliberation = data.candidateState.some(
+    (candidate) =>
+      selectedSet.has(candidate.id) &&
+      candidate.objectType === "DeliberationSession",
+  );
+  const anchorLabels = new Map(
+    data.sourceMaterial.map((fragment, index) => [
+      fragment.id,
+      `A-${String(index + 1).padStart(2, "0")}`,
+    ]),
+  );
+  const evidenceByRef = new Map(
+    data.realityEvidence.map((item) => [item.ref, item]),
+  );
+
+  function toggleCandidate(id: string) {
+    setSelectedCandidateIds((current) =>
+      current.includes(id)
+        ? current.filter((candidateId) => candidateId !== id)
+        : [...current, id],
+    );
+    setReviewAttempt(null);
+    setAnnouncement("");
+  }
+
+  function selectThread(threadId: string) {
+    setSelectedCandidateIds([]);
+    setRationale("");
+    setReviewAttempt(null);
+    setAnnouncement("");
+    void onSelectThread(threadId);
+  }
+
+  async function submitDecision(decision: "ratify" | "reject") {
+    if (loading || saving) return;
+    const signature = JSON.stringify({ decision, selectedIds, rationale });
+    const attempt =
+      reviewAttempt?.signature === signature
+        ? reviewAttempt
+        : { signature, idempotencyKey: crypto.randomUUID() };
+    setReviewAttempt(attempt);
+    const succeeded = await onDecision(
+      decision,
+      selectedIds,
+      rationale.trim(),
+      attempt.idempotencyKey,
+    );
+    if (succeeded) {
+      setAnnouncement(
+        decision === "ratify"
+          ? "The human decision was committed as a new CognitiveVersion."
+          : "The selected candidates were rejected and remain auditable.",
+      );
+      setSelectedCandidateIds([]);
+      setRationale("");
+      setReviewAttempt(null);
+    }
+  }
+
+  return (
+    <div className="view-stack cognitive-space">
+      <section className="cognitive-pulse" aria-live="polite">
+        <div>
+          <span>Private cognitive space</span>
+          <strong>{data.mission.title}</strong>
+        </div>
+        <div className="cognitive-pulse-state">
+          <span className={data.sync ? "runtime-dot" : "privacy-dot"} aria-hidden="true" />
+          <strong>{data.sync ? `${data.sync.sourceTitle} · cursor ${data.sync.cursor}` : "Awaiting first private checkpoint"}</strong>
+          <small>{data.candidateState.length} candidate objects · {data.ratifiedState ? `head r${data.ratifiedState.revision}` : "no ratified head"}</small>
+        </div>
+      </section>
+
+      {data.threads.length > 1 && (
+        <nav className="cognitive-thread-switcher" aria-label="Private deliberations">
+          {data.threads.map((thread) => (
+            <button
+              type="button"
+              key={thread.threadId}
+              aria-pressed={thread.threadId === data.sync?.threadId}
+              className={thread.threadId === data.sync?.threadId ? "active" : ""}
+              onClick={() => selectThread(thread.threadId)}
+              disabled={loading || saving}
+            >
+              <strong>{thread.sourceTitle}</strong>
+              <span>cursor {thread.cursor}</span>
+            </button>
+          ))}
+        </nav>
+      )}
+
+      <section className="cognitive-boundary">
+        <div className="cognitive-boundary-sources">
+          <div>
+            <span>01 · Narrative Anchor</span>
+            <strong>What a member actually said—preserved verbatim</strong>
+          </div>
+          <div>
+            <span>02 · Reality Evidence</span>
+            <strong>What has been observed beyond the conversation</strong>
+          </div>
+        </div>
+        <i aria-hidden="true">→</i>
+        <div>
+          <span>03 · Cognitive Candidate</span>
+          <strong>What a member or agent proposes may change</strong>
+        </div>
+        <i aria-hidden="true">→</i>
+        <div>
+          <span>04 · Human Ratification</span>
+          <strong>What enters the next CognitiveVersion</strong>
+        </div>
+      </section>
+
+      <div className="cognitive-grid">
+        <section className="panel source-anchor-panel">
+          <PanelHeader
+            eyebrow="Verbatim private source"
+            title="Original words preserved before interpretation"
+          />
+          <div className="source-anchor-note">
+            These quotations are source anchors, not Reality Evidence. GO Society
+            preserves their wording and context; the human reviewer remains responsible
+            for interpretation.
+          </div>
+          <div className="source-anchor-list">
+            {data.sourceMaterial.length ? data.sourceMaterial.map((fragment, index) => (
+              <article key={fragment.id}>
+                <div>
+                  <span>A-{String(index + 1).padStart(2, "0")}</span>
+                  <small>{fragment.contentKind} · {fragment.provenanceTrust.replaceAll("_", " ")}</small>
+                </div>
+                <blockquote lang={containsHan(fragment.verbatimText) ? "zh-CN" : undefined}>“{fragment.verbatimText}”</blockquote>
+                <footer>
+                  <strong>{fragment.speakerRef ?? fragment.speakerType}</strong>
+                  <code>{fragment.contentHash.slice(0, 10)}</code>
+                </footer>
+              </article>
+            )) : (
+              <div className="empty-ledger compact">
+                <strong>No private source has been staged.</strong>
+                <p>The repository contains no real transcript. A consented checkpoint must enter through the authenticated bridge.</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="panel evidence-source-panel">
+          <PanelHeader
+            eyebrow="Reality Evidence"
+            title="Independent support and disconfirmation"
+          />
+          <div className="source-anchor-note">
+            Evidence supports or challenges empirical claims. It does not replace
+            narrative meaning, values, taste or human judgment.
+          </div>
+          <div className="reality-evidence-list">
+            {data.realityEvidence.length ? data.realityEvidence.map((item, index) => (
+              <article key={item.ref}>
+                <div><span>EV-{String(index + 1).padStart(2, "0")}</span><small>{item.reliability} · {item.freshness}</small></div>
+                <h3>{item.title}</h3>
+                <p>{item.observation}</p>
+                <footer><strong>{item.kind}</strong><span>{item.source}</span></footer>
+              </article>
+            )) : (
+              <div className="empty-ledger compact">
+                <strong>No referenced Reality Evidence.</strong>
+                <p>An evidence-backed commit cannot cross the human gate yet.</p>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+
+      <section className="panel candidate-panel">
+        <PanelHeader
+          eyebrow="Structured cognitive delta"
+          title="Candidates awaiting human judgment"
+        />
+        <div className="candidate-boundary-note">
+          <strong>Candidate ≠ organizational truth.</strong>
+          <span>Nothing is preselected; every inclusion requires an explicit human choice.</span>
+        </div>
+        {data.candidateState.length ? (
+          <div className="candidate-list">
+            {data.candidateState.map((candidate, index) => {
+              const checked = selectedSet.has(candidate.id);
+              const evidenceRefs = payloadStrings(candidate.payload.evidence_refs);
+              const counterEvidenceRefs = payloadStrings(candidate.payload.counter_evidence_refs);
+              const titleId = `candidate-title-${index}`;
+              return (
+                <article key={candidate.id} className={checked ? "selected" : ""}>
+                  <label className="candidate-select">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleCandidate(candidate.id)}
+                      disabled={!data.authority.canRatify || saving}
+                      aria-labelledby={titleId}
+                    />
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                  </label>
+                  <div className="candidate-copy">
+                    <div className="candidate-meta">
+                      <span>{candidate.objectType}</span>
+                      <strong>{checked ? "selected" : "not selected"}</strong>
+                    </div>
+                    <h3 id={titleId}>{candidateSummary(candidate)}</h3>
+                    <p>{candidateDetail(candidate)}</p>
+                    <small className="candidate-provenance">
+                      Proposed by {candidate.createdBy} · {formatDate(candidate.createdAt)}
+                    </small>
+                    <div className="candidate-trace" aria-label="Narrative grounds">
+                      {candidate.narrativeAnchors.map((anchor) => (
+                        <span key={anchor.id}>{anchorLabels.get(anchor.id) ?? anchor.sourceTurnRef}</span>
+                      ))}
+                    </div>
+                    <div className="candidate-trace evidence-trace" aria-label="Reality Evidence">
+                      {evidenceRefs.map((reference) => (
+                        <span key={reference}>{evidenceByRef.get(reference)?.title ?? reference}</span>
+                      ))}
+                      {counterEvidenceRefs.map((reference) => (
+                        <span className="counter" key={reference}>Counter: {evidenceByRef.get(reference)?.title ?? reference}</span>
+                      ))}
+                    </div>
+                    <details className="candidate-details">
+                      <summary>Review full structured proposal</summary>
+                      <dl>
+                        {candidateReviewFields(candidate).map(([label, value]) => (
+                          <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
+                        ))}
+                      </dl>
+                    </details>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="empty-ledger compact">
+            <strong>No candidates awaiting review.</strong>
+            <p>Stage a consented private checkpoint before the human gate can act.</p>
+          </div>
+        )}
+      </section>
+
+      <div className="two-column cognitive-review-grid">
+        <section className="panel cognitive-head-panel">
+          <PanelHeader eyebrow="Cognitive repository head" title="Current ratified organizational cognition" />
+          {data.ratifiedState ? (
+            <div className="cognitive-head">
+              <div className="version-stamp">
+                <span>HEAD</span>
+                <strong>R{String(data.ratifiedState.revision).padStart(2, "0")}</strong>
+                <small>{String(versionPayload.version ?? data.ratifiedState.id)}</small>
+              </div>
+              <div className="version-content">
+                <VersionList label="Decisions" items={decisions.map((decision) => String(decision.summary ?? ""))} />
+                <VersionList label="Reasoning patterns" items={reasoningPatterns} />
+                <VersionList label="Open questions" items={openQuestions} />
+              </div>
+            </div>
+          ) : (
+            <div className="empty-head">
+              <span>∅</span>
+              <div>
+                <strong>No ratified CognitiveVersion yet.</strong>
+                <p>The source and candidates are durable, but the organizational head remains unchanged until a named human decides.</p>
+              </div>
+            </div>
+          )}
+        </section>
+
+        <section className="human-gate">
+          <p className="eyebrow">Named human gate</p>
+          <h2>{data.authority.accountableHuman} remains accountable for what becomes organizational cognition.</h2>
+          <p>
+            Ratification records a human-owned CognitiveCommit and advances the
+            append-only head. It does not make every embedded hypothesis true.
+            Current reviewer: {data.authority.currentReviewer}.
+          </p>
+          {data.candidateState.length ? (
+            <>
+              <label>
+                Decision rationale
+                <textarea
+                  rows={4}
+                  maxLength={2000}
+                  value={rationale}
+                  onChange={(event) => {
+                    setRationale(event.target.value);
+                    setReviewAttempt(null);
+                  }}
+                  placeholder="Why should these selected candidates enter—or stay out of—the next organizational version?"
+                  disabled={!data.authority.canRatify || saving}
+                />
+              </label>
+              <div className="gate-actions">
+                {missingDependencies.length > 0 && (
+                  <p className="gate-warning">Select the referenced upstream candidates: {missingDependencies.join(", ")}.</p>
+                )}
+                {!hasDeliberation && selectedIds.length > 0 && (
+                  <p className="gate-warning">A ratified commit requires a selected DeliberationSession.</p>
+                )}
+                <button
+                  className="primary-action"
+                  type="button"
+                  disabled={!data.authority.canRatify || loading || saving || !rationale.trim() || !selectedIds.length || !hasDeliberation || missingDependencies.length > 0}
+                  onClick={() => void submitDecision("ratify")}
+                >
+                  {saving ? "Committing…" : `Ratify ${selectedIds.length} into next version`}
+                </button>
+                <button
+                  type="button"
+                  disabled={!data.authority.canRatify || loading || saving || !rationale.trim() || !selectedIds.length}
+                  onClick={() => void submitDecision("reject")}
+                >
+                  Reject selected
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="gate-complete"><span>✓</span><strong>No candidates awaiting review</strong></div>
+          )}
+          <p className="gate-announcement" role="status" aria-live="polite">{announcement}</p>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+function VersionList({ label, items }: { label: string; items: string[] }) {
+  const visible = items.filter(Boolean);
+  return (
+    <section>
+      <span>{label}</span>
+      {visible.length ? (
+        <ul>{visible.map((item) => <li key={item}>{item}</li>)}</ul>
+      ) : (
+        <small>None recorded in this version.</small>
+      )}
+    </section>
+  );
+}
+
+function candidateSummary(candidate: CognitiveCandidate): string {
+  const key = {
+    CognitiveEvent: "trigger",
+    DeliberationSession: "learning_candidate",
+    LearningRecord: "learning_statement",
+    EvolutionProposal: "proposed_state",
+  }[candidate.objectType];
+  return String((key ? candidate.payload[key] : null) ?? candidate.objectType);
+}
+
+function candidateDetail(candidate: CognitiveCandidate): string {
+  if (candidate.objectType === "CognitiveEvent") {
+    return payloadStrings(candidate.payload.questions)[0] ?? "A capability gap requires deliberation.";
+  }
+  if (candidate.objectType === "DeliberationSession") {
+    return payloadStrings(candidate.payload.hypotheses)[0] ?? "Human–AI deliberation is still open.";
+  }
+  if (candidate.objectType === "LearningRecord") {
+    return String(candidate.payload.reusable_pattern ?? "A reusable learning pattern is proposed.");
+  }
+  return String(candidate.payload.rationale ?? "An organizational change is proposed.");
+}
+
+function candidateDependencies(candidate: CognitiveCandidate): string[] {
+  if (
+    candidate.objectType === "LearningRecord" &&
+    candidate.payload.source_type !== "deliberation"
+  ) {
+    return [];
+  }
+  const keys = {
+    CognitiveEvent: [],
+    DeliberationSession: ["cognitive_event_ref"],
+    LearningRecord: ["source_ref"],
+    EvolutionProposal: ["source_learning_ref"],
+  }[candidate.objectType] ?? [];
+  return keys
+    .map((key) => candidate.payload[key])
+    .filter((value): value is string => typeof value === "string");
+}
+
+function candidateReviewFields(
+  candidate: CognitiveCandidate,
+): Array<[string, string]> {
+  const keys = [
+    "type",
+    "trigger",
+    "expected_decision",
+    "hypotheses",
+    "arguments",
+    "alternative_interpretations",
+    "open_questions",
+    "claim_type",
+    "changed_belief",
+    "capability_impact",
+    "reusable_pattern",
+    "current_state",
+    "proposed_state",
+    "rationale",
+    "disconfirming_conditions",
+    "risk_class",
+    "reversibility",
+    "accountable_human",
+  ];
+  return keys
+    .filter((key) => candidate.payload[key] != null)
+    .map((key) => [key.replaceAll("_", " "), formatCognitiveValue(candidate.payload[key])]);
+}
+
+function formatCognitiveValue(value: unknown): string {
+  if (Array.isArray(value)) return value.map(String).join(" · ");
+  if (value && typeof value === "object") return JSON.stringify(value);
+  return String(value ?? "");
+}
+
+function containsHan(value: string): boolean {
+  return /[\u3400-\u9fff]/u.test(value);
+}
+
+function payloadStrings(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+}
+
+function payloadRecords(value: unknown): Record<string, unknown>[] {
+  return Array.isArray(value)
+    ? value.filter(
+        (item): item is Record<string, unknown> =>
+          Boolean(item) && typeof item === "object" && !Array.isArray(item),
+      )
+    : [];
 }
 
 function IntakeView({ records, team, loading, canInvite, onRecord, onInvite }: { records: FieldRecord[]; team: TeamMember[]; loading: boolean; canInvite: boolean; onRecord: () => void; onInvite: () => void }) {

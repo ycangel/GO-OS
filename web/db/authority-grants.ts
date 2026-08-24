@@ -52,6 +52,7 @@ export interface AuthorityResourceRights {
  */
 export interface AuthorityGrant {
   id: string;
+  revision: number;
   grantor: string;
   grantee: string;
   accountableHuman: string;
@@ -104,6 +105,7 @@ const dateTimeSchema = z
 export const authorityGrantSchema = z
   .object({
     id: z.string().min(1),
+    revision: z.number().int().positive(),
     grantor: z.string().min(1),
     grantee: z.string().min(1),
     accountableHuman: z.string().min(1),
