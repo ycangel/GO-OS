@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.7
-
 ARG NODE_IMAGE=node:24.19.0-bookworm-slim
 
 FROM ${NODE_IMAGE} AS build
