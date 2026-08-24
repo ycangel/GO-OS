@@ -13,6 +13,9 @@ This directory is the canonical evaluation entry for GO OS v0.5.0.
   defines the v0.5 conformance expectations.
 - [`go-os-v0.5.0-red-team-evals.yaml`](go-os-v0.5.0-red-team-evals.yaml)
   is the canonical adversarial entry for the next review round.
+- [`go-society-cognitive-bridge-evals-v0.1.0.yaml`](go-society-cognitive-bridge-evals-v0.1.0.yaml)
+  declares the conversation adapter's trigger, consent, authority, provenance
+  and non-ratification behavior contract.
 - [`manifest-v0.5.0.yaml`](manifest-v0.5.0.yaml) records the suite taxonomy and
   the version policy.
 
@@ -34,6 +37,7 @@ contracts.
 | Portability and headless core | v0.3.4–v0.3.8 suites | Release gate |
 | Cognitive Repository | v0.3.9–v0.4.7 suites | Release gate |
 | GO Society integration | v0.4.8–v0.4.9 suites | Release gate + red team |
+| GO Society conversation bridge | — | `go-society-cognitive-bridge-evals-v0.1.0.yaml` + executable Web MCP tests |
 
 ## Artifact and execution status
 
@@ -49,6 +53,10 @@ contracts.
 All YAML evaluation files in this repository currently function as reference
 vectors. The v0.5 files intentionally declare `artifact_status: declared` and
 `execution_status: not_executed`.
+
+The Web suite `web/tests/mcp-bridge.test.mjs` executes transport, tool-surface
+and implementation-boundary checks. It does not establish that a model passed
+the declarative Skill behavior vectors above.
 
 ## Static checks
 

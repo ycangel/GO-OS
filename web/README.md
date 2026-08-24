@@ -97,10 +97,11 @@ security certification or organizational impact.
 - Route-level privacy and authorization tests include source-boundary checks,
   not a complete D1 HTTP integration matrix. Anonymous, cross-origin, revoked,
   `canReview=false`, rollback and replay cases remain explicit red-team work.
-- The current implementation is the authenticated organization-side Web/API
-  half-bridge, not a conversation adapter. A Skill plus OAuth 2.1 MCP adapter is
-  still required before a fresh ChatGPT conversation can load and checkpoint
-  GO Society cognition automatically.
+- The source tree now contains both halves of the bounded bridge: the
+  organization-side Web Human Gate and a Skill-backed, OAuth-protected MCP
+  conversation adapter. This is not a deployment claim: a release is connected
+  only after the private Site reports both `mcp_url` and `oauth_resource` and
+  the fresh-conversation acceptance loop passes.
 - In the alpha lifecycle, `invited` means owner-authorized and email-matched;
   an explicit invitation-acceptance transition and reliable `joinedAt` audit
   record are not yet implemented.
@@ -134,10 +135,25 @@ Database migrations live in `drizzle/`; the runtime schema is defined in
 
 ### Identity trust boundary
 
-The Sites host supplies trusted `oai-authenticated-*` identity headers. A
-different reverse proxy must strip any client-supplied headers with those names
-before injecting its own trusted identity. Directly exposing the application
-without that boundary would allow header spoofing.
+For browser requests, the Sites host supplies trusted
+`oai-authenticated-*` identity headers. A different reverse proxy must strip
+any client-supplied headers with those names before injecting its own trusted
+identity. Directly exposing the application without that boundary would allow
+header spoofing.
+
+The conversation MCP path is a separate OAuth-protected resource boundary. It
+must not copy browser cookies, accept user-authored Sites identity headers or
+proxy into member Web APIs by synthesizing those headers. A published MCP
+principal must be resolved through the server-side, revocable member link and
+rechecked against Mission membership and bounded authority on every private
+operation.
+
+Private MCP drafts are eligible for review for 24 hours and are lazily expired
+when the bridge is accessed. Confirmation, rejection and expiry clear the
+duplicate staged payload and free-text source title atomically; audit hashes, bounded source keys,
+authority revision and any canonical receipt remain. Web confirmation also
+recomputes the deterministic checkpoint request hash, and D1 requires the
+matching actor, Mission, thread, cursor, consent claim and response receipt.
 
 `GO_SOCIETY_OWNER_EMAIL` is a server-side secret/environment value. Never place
 it in source, browser code, logs, local storage or a committed environment file.
@@ -149,6 +165,13 @@ not a production configuration source.
 source conversations without storing their raw external key. Local previews
 may map a command-scoped `GO_SOCIETY_LOCAL_THREAD_HMAC_SECRET`; use at least 32
 random characters and never commit it.
+
+`GO_SOCIETY_PRINCIPAL_HMAC_SECRET` is an independent, Site-scoped server secret
+used to bind the native Sites authenticated-user identifier to a revocable GO
+Society member link without storing the raw identifier. Local previews may map
+a command-scoped `GO_SOCIETY_LOCAL_PRINCIPAL_HMAC_SECRET`; do not reuse the
+thread-binding secret, expose either value to browser code or commit either
+value.
 
 ## Build and verification
 
@@ -170,6 +193,33 @@ remain authenticated, same-origin and server-authorized.
 Deployment does not by itself certify the identity proxy, database contents,
 privacy process or constitutional enforcement. Review them in the target
 environment before accepting real organizational data.
+
+### ChatGPT/Codex MCP connection
+
+The repository intentionally does not commit one production connector URL.
+After publishing the private Site, retrieve its deployment metadata and require
+both a published `mcp_url` and `oauth_resource`. If either value is absent, the
+conversation half is not deployed even if the Web page is reachable.
+
+Connect ChatGPT/Codex to that returned `mcp_url`, complete OAuth as the intended
+member and verify that the server exposes exactly the bounded bridge tools:
+
+- `go_society_get_context`;
+- `go_society_stage_checkpoint`;
+- `go_society_request_human_review`.
+
+The connection must not expose ratify, approve, commit, version,
+Mission-update or head-advance tools. Tool discovery alone is not the acceptance
+test. In a newly opened conversation, verify a compact ratified context read,
+explicit internal-only consent before private staging, a Web review request,
+no head transition before Web ratification and a second fresh-context read
+after the human decision. Keep the Site owner-only until unauthorized,
+unlinked, revoked, wrong-Mission and replay cases fail closed.
+
+The canonical conversation behavior is
+[`skills/go-society-cognitive-bridge`](../skills/go-society-cognitive-bridge/SKILL.md).
+The complete round-trip and non-claim boundary are documented in
+[Cognitive Bridge v0.5 Alpha](../docs/COGNITIVE_BRIDGE_v0.5_ALPHA.md).
 
 ## Constitutional invariants
 

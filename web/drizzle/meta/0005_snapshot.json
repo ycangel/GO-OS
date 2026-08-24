@@ -1,0 +1,2820 @@
+{
+  "version": "6",
+  "dialect": "sqlite",
+  "id": "5b7e3843-96a9-441b-848c-ce5616ccfaef",
+  "prevId": "3cf4b3fe-4679-4308-89b3-c2c4ce1de597",
+  "tables": {
+    "authority_grants": {
+      "name": "authority_grants",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "grantor": {
+          "name": "grantor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "grantee": {
+          "name": "grantee",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "accountable_human": {
+          "name": "accountable_human",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "scope": {
+          "name": "scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "allowed_actions": {
+          "name": "allowed_actions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "prohibited_actions": {
+          "name": "prohibited_actions",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "resource_rights": {
+          "name": "resource_rights",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "limits": {
+          "name": "limits",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reversibility_ceiling": {
+          "name": "reversibility_ceiling",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "evidence_obligations": {
+          "name": "evidence_obligations",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "escalation": {
+          "name": "escalation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "conflict_rules": {
+          "name": "conflict_rules",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "valid_from": {
+          "name": "valid_from",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "revoked_at": {
+          "name": "revoked_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "revision": {
+          "name": "revision",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 1
+        },
+        "self_expansion_allowed": {
+          "name": "self_expansion_allowed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "authority_grants_grantee_active_unique": {
+          "name": "authority_grants_grantee_active_unique",
+          "columns": [
+            "grantee"
+          ],
+          "isUnique": true,
+          "where": "\"authority_grants\".\"revoked_at\" IS NULL"
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "capabilities": {
+      "name": "capabilities",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "maturity": {
+          "name": "maturity",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'emerging'"
+        },
+        "evidence_count": {
+          "name": "evidence_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "last_learned_at": {
+          "name": "last_learned_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "capabilities_name_unique": {
+          "name": "capabilities_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "cognitive_authorization_receipts": {
+      "name": "cognitive_authorization_receipts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "authority_grant_id": {
+          "name": "authority_grant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "grant_revision": {
+          "name": "grant_revision",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "action": {
+          "name": "action",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "resource_risk": {
+          "name": "resource_risk",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "resource_exposure": {
+          "name": "resource_exposure",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reversibility": {
+          "name": "reversibility",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "executor": {
+          "name": "executor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "requested_by": {
+          "name": "requested_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "cognitive_authorization_receipts_authority_grant_id_authority_grants_id_fk": {
+          "name": "cognitive_authorization_receipts_authority_grant_id_authority_grants_id_fk",
+          "tableFrom": "cognitive_authorization_receipts",
+          "tableTo": "authority_grants",
+          "columnsFrom": [
+            "authority_grant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_authorization_receipts_member_id_members_id_fk": {
+          "name": "cognitive_authorization_receipts_member_id_members_id_fk",
+          "tableFrom": "cognitive_authorization_receipts",
+          "tableTo": "members",
+          "columnsFrom": [
+            "member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_authorization_receipts_mission_id_missions_id_fk": {
+          "name": "cognitive_authorization_receipts_mission_id_missions_id_fk",
+          "tableFrom": "cognitive_authorization_receipts",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "cognitive_candidate_decisions": {
+      "name": "cognitive_candidate_decisions",
+      "columns": {
+        "candidate_id": {
+          "name": "candidate_id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "decision": {
+          "name": "decision",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "decided_by_member_id": {
+          "name": "decided_by_member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "rationale": {
+          "name": "rationale",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "authorization_receipt_id": {
+          "name": "authorization_receipt_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "decided_at": {
+          "name": "decided_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "cognitive_candidate_decisions_candidate_id_cognitive_objects_id_fk": {
+          "name": "cognitive_candidate_decisions_candidate_id_cognitive_objects_id_fk",
+          "tableFrom": "cognitive_candidate_decisions",
+          "tableTo": "cognitive_objects",
+          "columnsFrom": [
+            "candidate_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_candidate_decisions_decided_by_member_id_members_id_fk": {
+          "name": "cognitive_candidate_decisions_decided_by_member_id_members_id_fk",
+          "tableFrom": "cognitive_candidate_decisions",
+          "tableTo": "members",
+          "columnsFrom": [
+            "decided_by_member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_candidate_decisions_authorization_receipt_id_cognitive_authorization_receipts_id_fk": {
+          "name": "cognitive_candidate_decisions_authorization_receipt_id_cognitive_authorization_receipts_id_fk",
+          "tableFrom": "cognitive_candidate_decisions",
+          "tableTo": "cognitive_authorization_receipts",
+          "columnsFrom": [
+            "authorization_receipt_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "cognitive_candidate_decisions_decision_check": {
+          "name": "cognitive_candidate_decisions_decision_check",
+          "value": "\"cognitive_candidate_decisions\".\"decision\" IN ('ratify', 'reject')"
+        }
+      }
+    },
+    "cognitive_checkpoint_claims": {
+      "name": "cognitive_checkpoint_claims",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "thread_id": {
+          "name": "thread_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "cursor_from": {
+          "name": "cursor_from",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "cursor_to": {
+          "name": "cursor_to",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "request_hash": {
+          "name": "request_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "consent_scope": {
+          "name": "consent_scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "consent_confirmed_by_member_id": {
+          "name": "consent_confirmed_by_member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "consent_confirmed_at": {
+          "name": "consent_confirmed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "authorization_receipt_id": {
+          "name": "authorization_receipt_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "cognitive_checkpoint_claims_thread_cursor_unique": {
+          "name": "cognitive_checkpoint_claims_thread_cursor_unique",
+          "columns": [
+            "thread_id",
+            "cursor_from"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "cognitive_checkpoint_claims_thread_id_cognitive_threads_id_fk": {
+          "name": "cognitive_checkpoint_claims_thread_id_cognitive_threads_id_fk",
+          "tableFrom": "cognitive_checkpoint_claims",
+          "tableTo": "cognitive_threads",
+          "columnsFrom": [
+            "thread_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_checkpoint_claims_consent_confirmed_by_member_id_members_id_fk": {
+          "name": "cognitive_checkpoint_claims_consent_confirmed_by_member_id_members_id_fk",
+          "tableFrom": "cognitive_checkpoint_claims",
+          "tableTo": "members",
+          "columnsFrom": [
+            "consent_confirmed_by_member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_checkpoint_claims_authorization_receipt_id_cognitive_authorization_receipts_id_fk": {
+          "name": "cognitive_checkpoint_claims_authorization_receipt_id_cognitive_authorization_receipts_id_fk",
+          "tableFrom": "cognitive_checkpoint_claims",
+          "tableTo": "cognitive_authorization_receipts",
+          "columnsFrom": [
+            "authorization_receipt_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "cognitive_checkpoint_claims_cursor_step": {
+          "name": "cognitive_checkpoint_claims_cursor_step",
+          "value": "\"cognitive_checkpoint_claims\".\"cursor_to\" = \"cognitive_checkpoint_claims\".\"cursor_from\" + 1"
+        },
+        "cognitive_checkpoint_claims_consent_scope": {
+          "name": "cognitive_checkpoint_claims_consent_scope",
+          "value": "\"cognitive_checkpoint_claims\".\"consent_scope\" = 'internal_only'"
+        }
+      }
+    },
+    "cognitive_fragments": {
+      "name": "cognitive_fragments",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "thread_id": {
+          "name": "thread_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_turn_ref": {
+          "name": "source_turn_ref",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "speaker_type": {
+          "name": "speaker_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "speaker_ref": {
+          "name": "speaker_ref",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "verbatim_text": {
+          "name": "verbatim_text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "content_hash": {
+          "name": "content_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "content_kind": {
+          "name": "content_kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'narrative'"
+        },
+        "provenance_trust": {
+          "name": "provenance_trust",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'model_reported'"
+        },
+        "visibility": {
+          "name": "visibility",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'private'"
+        },
+        "occurred_at": {
+          "name": "occurred_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "cognitive_fragments_thread_turn_unique": {
+          "name": "cognitive_fragments_thread_turn_unique",
+          "columns": [
+            "thread_id",
+            "source_turn_ref"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "cognitive_fragments_thread_id_cognitive_threads_id_fk": {
+          "name": "cognitive_fragments_thread_id_cognitive_threads_id_fk",
+          "tableFrom": "cognitive_fragments",
+          "tableTo": "cognitive_threads",
+          "columnsFrom": [
+            "thread_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "cognitive_head_transitions": {
+      "name": "cognitive_head_transitions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "previous_revision": {
+          "name": "previous_revision",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "next_revision": {
+          "name": "next_revision",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "version_id": {
+          "name": "version_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "authorization_receipt_id": {
+          "name": "authorization_receipt_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "cognitive_head_transitions_revision_unique": {
+          "name": "cognitive_head_transitions_revision_unique",
+          "columns": [
+            "mission_id",
+            "previous_revision"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "cognitive_head_transitions_mission_id_missions_id_fk": {
+          "name": "cognitive_head_transitions_mission_id_missions_id_fk",
+          "tableFrom": "cognitive_head_transitions",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_head_transitions_authorization_receipt_id_cognitive_authorization_receipts_id_fk": {
+          "name": "cognitive_head_transitions_authorization_receipt_id_cognitive_authorization_receipts_id_fk",
+          "tableFrom": "cognitive_head_transitions",
+          "tableTo": "cognitive_authorization_receipts",
+          "columnsFrom": [
+            "authorization_receipt_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "cognitive_head_transitions_revision_step": {
+          "name": "cognitive_head_transitions_revision_step",
+          "value": "\"cognitive_head_transitions\".\"next_revision\" = \"cognitive_head_transitions\".\"previous_revision\" + 1"
+        }
+      }
+    },
+    "cognitive_heads": {
+      "name": "cognitive_heads",
+      "columns": {
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ratified_version_id": {
+          "name": "ratified_version_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "revision": {
+          "name": "revision",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "cognitive_heads_mission_id_missions_id_fk": {
+          "name": "cognitive_heads_mission_id_missions_id_fk",
+          "tableFrom": "cognitive_heads",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_heads_ratified_version_id_cognitive_objects_id_fk": {
+          "name": "cognitive_heads_ratified_version_id_cognitive_objects_id_fk",
+          "tableFrom": "cognitive_heads",
+          "tableTo": "cognitive_objects",
+          "columnsFrom": [
+            "ratified_version_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "cognitive_mcp_drafts": {
+      "name": "cognitive_mcp_drafts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "principal_link_id": {
+          "name": "principal_link_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "accountable_member_id": {
+          "name": "accountable_member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_interface": {
+          "name": "source_interface",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_thread_key_hash": {
+          "name": "source_thread_key_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_title": {
+          "name": "source_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expected_cursor": {
+          "name": "expected_cursor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "staged_payload": {
+          "name": "staged_payload",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "payload_hash": {
+          "name": "payload_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "expected_checkpoint_request_hash": {
+          "name": "expected_checkpoint_request_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "payload_cleared_at": {
+          "name": "payload_cleared_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "idempotency_key_hash": {
+          "name": "idempotency_key_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'staged'"
+        },
+        "authority_grant_id": {
+          "name": "authority_grant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "authority_grant_revision": {
+          "name": "authority_grant_revision",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "review_requested_at": {
+          "name": "review_requested_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "confirmed_checkpoint_receipt_id": {
+          "name": "confirmed_checkpoint_receipt_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "confirmed_at": {
+          "name": "confirmed_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "rejected_at": {
+          "name": "rejected_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "cognitive_mcp_drafts_idempotency_unique": {
+          "name": "cognitive_mcp_drafts_idempotency_unique",
+          "columns": [
+            "idempotency_key_hash"
+          ],
+          "isUnique": true
+        },
+        "cognitive_mcp_drafts_cursor_active_unique": {
+          "name": "cognitive_mcp_drafts_cursor_active_unique",
+          "columns": [
+            "principal_link_id",
+            "mission_id",
+            "source_interface",
+            "source_thread_key_hash",
+            "expected_cursor"
+          ],
+          "isUnique": true,
+          "where": "\"cognitive_mcp_drafts\".\"status\" IN ('staged', 'pending_human_consent', 'confirming')"
+        }
+      },
+      "foreignKeys": {
+        "cognitive_mcp_drafts_principal_link_id_cognitive_mcp_principal_links_id_fk": {
+          "name": "cognitive_mcp_drafts_principal_link_id_cognitive_mcp_principal_links_id_fk",
+          "tableFrom": "cognitive_mcp_drafts",
+          "tableTo": "cognitive_mcp_principal_links",
+          "columnsFrom": [
+            "principal_link_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_mcp_drafts_mission_id_missions_id_fk": {
+          "name": "cognitive_mcp_drafts_mission_id_missions_id_fk",
+          "tableFrom": "cognitive_mcp_drafts",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_mcp_drafts_accountable_member_id_members_id_fk": {
+          "name": "cognitive_mcp_drafts_accountable_member_id_members_id_fk",
+          "tableFrom": "cognitive_mcp_drafts",
+          "tableTo": "members",
+          "columnsFrom": [
+            "accountable_member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_mcp_drafts_authority_grant_id_authority_grants_id_fk": {
+          "name": "cognitive_mcp_drafts_authority_grant_id_authority_grants_id_fk",
+          "tableFrom": "cognitive_mcp_drafts",
+          "tableTo": "authority_grants",
+          "columnsFrom": [
+            "authority_grant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_mcp_drafts_confirmed_checkpoint_receipt_id_cognitive_sync_receipts_id_fk": {
+          "name": "cognitive_mcp_drafts_confirmed_checkpoint_receipt_id_cognitive_sync_receipts_id_fk",
+          "tableFrom": "cognitive_mcp_drafts",
+          "tableTo": "cognitive_sync_receipts",
+          "columnsFrom": [
+            "confirmed_checkpoint_receipt_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "cognitive_mcp_drafts_cursor_check": {
+          "name": "cognitive_mcp_drafts_cursor_check",
+          "value": "\"cognitive_mcp_drafts\".\"expected_cursor\" >= 0"
+        },
+        "cognitive_mcp_drafts_payload_hash_check": {
+          "name": "cognitive_mcp_drafts_payload_hash_check",
+          "value": "length(\"cognitive_mcp_drafts\".\"payload_hash\") = 64 AND \"cognitive_mcp_drafts\".\"payload_hash\" NOT GLOB '*[^0-9a-f]*'"
+        },
+        "cognitive_mcp_drafts_checkpoint_hash_check": {
+          "name": "cognitive_mcp_drafts_checkpoint_hash_check",
+          "value": "length(\"cognitive_mcp_drafts\".\"expected_checkpoint_request_hash\") = 64 AND \"cognitive_mcp_drafts\".\"expected_checkpoint_request_hash\" NOT GLOB '*[^0-9a-f]*'"
+        },
+        "cognitive_mcp_drafts_payload_json_check": {
+          "name": "cognitive_mcp_drafts_payload_json_check",
+          "value": "\"cognitive_mcp_drafts\".\"staged_payload\" IS NULL OR json_valid(\"cognitive_mcp_drafts\".\"staged_payload\")"
+        },
+        "cognitive_mcp_drafts_status_check": {
+          "name": "cognitive_mcp_drafts_status_check",
+          "value": "\"cognitive_mcp_drafts\".\"status\" IN ('staged', 'pending_human_consent', 'confirming', 'confirmed', 'rejected', 'expired')"
+        },
+        "cognitive_mcp_drafts_terminal_check": {
+          "name": "cognitive_mcp_drafts_terminal_check",
+          "value": "(\"cognitive_mcp_drafts\".\"status\" = 'confirmed' AND \"cognitive_mcp_drafts\".\"staged_payload\" IS NULL AND \"cognitive_mcp_drafts\".\"payload_cleared_at\" IS NOT NULL AND \"cognitive_mcp_drafts\".\"confirmed_at\" IS NOT NULL AND \"cognitive_mcp_drafts\".\"confirmed_checkpoint_receipt_id\" IS NOT NULL AND \"cognitive_mcp_drafts\".\"rejected_at\" IS NULL) OR (\"cognitive_mcp_drafts\".\"status\" = 'rejected' AND \"cognitive_mcp_drafts\".\"staged_payload\" IS NULL AND \"cognitive_mcp_drafts\".\"payload_cleared_at\" IS NOT NULL AND \"cognitive_mcp_drafts\".\"rejected_at\" IS NOT NULL AND \"cognitive_mcp_drafts\".\"confirmed_at\" IS NULL AND \"cognitive_mcp_drafts\".\"confirmed_checkpoint_receipt_id\" IS NULL) OR (\"cognitive_mcp_drafts\".\"status\" = 'expired' AND \"cognitive_mcp_drafts\".\"staged_payload\" IS NULL AND \"cognitive_mcp_drafts\".\"payload_cleared_at\" IS NOT NULL AND \"cognitive_mcp_drafts\".\"confirmed_at\" IS NULL AND \"cognitive_mcp_drafts\".\"rejected_at\" IS NULL AND \"cognitive_mcp_drafts\".\"confirmed_checkpoint_receipt_id\" IS NULL) OR (\"cognitive_mcp_drafts\".\"status\" IN ('staged', 'pending_human_consent', 'confirming') AND \"cognitive_mcp_drafts\".\"staged_payload\" IS NOT NULL AND \"cognitive_mcp_drafts\".\"payload_cleared_at\" IS NULL AND \"cognitive_mcp_drafts\".\"confirmed_at\" IS NULL AND \"cognitive_mcp_drafts\".\"rejected_at\" IS NULL AND \"cognitive_mcp_drafts\".\"confirmed_checkpoint_receipt_id\" IS NULL)"
+        }
+      }
+    },
+    "cognitive_mcp_principal_links": {
+      "name": "cognitive_mcp_principal_links",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "principal_hash": {
+          "name": "principal_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'active'"
+        },
+        "linked_at": {
+          "name": "linked_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "revoked_at": {
+          "name": "revoked_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "cognitive_mcp_principal_links_principal_active_unique": {
+          "name": "cognitive_mcp_principal_links_principal_active_unique",
+          "columns": [
+            "principal_hash"
+          ],
+          "isUnique": true,
+          "where": "\"cognitive_mcp_principal_links\".\"status\" = 'active' AND \"cognitive_mcp_principal_links\".\"revoked_at\" IS NULL"
+        },
+        "cognitive_mcp_principal_links_member_active_unique": {
+          "name": "cognitive_mcp_principal_links_member_active_unique",
+          "columns": [
+            "member_id"
+          ],
+          "isUnique": true,
+          "where": "\"cognitive_mcp_principal_links\".\"status\" = 'active' AND \"cognitive_mcp_principal_links\".\"revoked_at\" IS NULL"
+        }
+      },
+      "foreignKeys": {
+        "cognitive_mcp_principal_links_member_id_members_id_fk": {
+          "name": "cognitive_mcp_principal_links_member_id_members_id_fk",
+          "tableFrom": "cognitive_mcp_principal_links",
+          "tableTo": "members",
+          "columnsFrom": [
+            "member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "cognitive_mcp_principal_links_status_check": {
+          "name": "cognitive_mcp_principal_links_status_check",
+          "value": "\"cognitive_mcp_principal_links\".\"status\" IN ('active', 'revoked')"
+        },
+        "cognitive_mcp_principal_links_revocation_check": {
+          "name": "cognitive_mcp_principal_links_revocation_check",
+          "value": "(\"cognitive_mcp_principal_links\".\"status\" = 'active' AND \"cognitive_mcp_principal_links\".\"revoked_at\" IS NULL) OR (\"cognitive_mcp_principal_links\".\"status\" = 'revoked' AND \"cognitive_mcp_principal_links\".\"revoked_at\" IS NOT NULL)"
+        }
+      }
+    },
+    "cognitive_object_links": {
+      "name": "cognitive_object_links",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "from_object_id": {
+          "name": "from_object_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "to_object_id": {
+          "name": "to_object_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fragment_id": {
+          "name": "fragment_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "relation_type": {
+          "name": "relation_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "cognitive_object_links_object_unique": {
+          "name": "cognitive_object_links_object_unique",
+          "columns": [
+            "from_object_id",
+            "to_object_id",
+            "relation_type"
+          ],
+          "isUnique": true,
+          "where": "\"cognitive_object_links\".\"to_object_id\" IS NOT NULL"
+        },
+        "cognitive_object_links_fragment_unique": {
+          "name": "cognitive_object_links_fragment_unique",
+          "columns": [
+            "from_object_id",
+            "fragment_id",
+            "relation_type"
+          ],
+          "isUnique": true,
+          "where": "\"cognitive_object_links\".\"fragment_id\" IS NOT NULL"
+        }
+      },
+      "foreignKeys": {
+        "cognitive_object_links_from_object_id_cognitive_objects_id_fk": {
+          "name": "cognitive_object_links_from_object_id_cognitive_objects_id_fk",
+          "tableFrom": "cognitive_object_links",
+          "tableTo": "cognitive_objects",
+          "columnsFrom": [
+            "from_object_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_object_links_to_object_id_cognitive_objects_id_fk": {
+          "name": "cognitive_object_links_to_object_id_cognitive_objects_id_fk",
+          "tableFrom": "cognitive_object_links",
+          "tableTo": "cognitive_objects",
+          "columnsFrom": [
+            "to_object_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_object_links_fragment_id_cognitive_fragments_id_fk": {
+          "name": "cognitive_object_links_fragment_id_cognitive_fragments_id_fk",
+          "tableFrom": "cognitive_object_links",
+          "tableTo": "cognitive_fragments",
+          "columnsFrom": [
+            "fragment_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {
+        "cognitive_object_links_one_target": {
+          "name": "cognitive_object_links_one_target",
+          "value": "(\"cognitive_object_links\".\"to_object_id\" IS NULL) <> (\"cognitive_object_links\".\"fragment_id\" IS NULL)"
+        }
+      }
+    },
+    "cognitive_objects": {
+      "name": "cognitive_objects",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "object_type": {
+          "name": "object_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "schema_version": {
+          "name": "schema_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'0.5.0'"
+        },
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "thread_id": {
+          "name": "thread_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "decision_state": {
+          "name": "decision_state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'candidate'"
+        },
+        "canonical_payload": {
+          "name": "canonical_payload",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "payload_hash": {
+          "name": "payload_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "accountable_member_id": {
+          "name": "accountable_member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "authority_grant_id": {
+          "name": "authority_grant_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "authorization_receipt_id": {
+          "name": "authorization_receipt_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "decided_by_member_id": {
+          "name": "decided_by_member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "decision_rationale": {
+          "name": "decision_rationale",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "decided_at": {
+          "name": "decided_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "cognitive_objects_mission_id_missions_id_fk": {
+          "name": "cognitive_objects_mission_id_missions_id_fk",
+          "tableFrom": "cognitive_objects",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_objects_thread_id_cognitive_threads_id_fk": {
+          "name": "cognitive_objects_thread_id_cognitive_threads_id_fk",
+          "tableFrom": "cognitive_objects",
+          "tableTo": "cognitive_threads",
+          "columnsFrom": [
+            "thread_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_objects_accountable_member_id_members_id_fk": {
+          "name": "cognitive_objects_accountable_member_id_members_id_fk",
+          "tableFrom": "cognitive_objects",
+          "tableTo": "members",
+          "columnsFrom": [
+            "accountable_member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_objects_authority_grant_id_authority_grants_id_fk": {
+          "name": "cognitive_objects_authority_grant_id_authority_grants_id_fk",
+          "tableFrom": "cognitive_objects",
+          "tableTo": "authority_grants",
+          "columnsFrom": [
+            "authority_grant_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_objects_authorization_receipt_id_cognitive_authorization_receipts_id_fk": {
+          "name": "cognitive_objects_authorization_receipt_id_cognitive_authorization_receipts_id_fk",
+          "tableFrom": "cognitive_objects",
+          "tableTo": "cognitive_authorization_receipts",
+          "columnsFrom": [
+            "authorization_receipt_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_objects_decided_by_member_id_members_id_fk": {
+          "name": "cognitive_objects_decided_by_member_id_members_id_fk",
+          "tableFrom": "cognitive_objects",
+          "tableTo": "members",
+          "columnsFrom": [
+            "decided_by_member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "cognitive_sync_receipts": {
+      "name": "cognitive_sync_receipts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "idempotency_key": {
+          "name": "idempotency_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "thread_id": {
+          "name": "thread_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "operation": {
+          "name": "operation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "request_hash": {
+          "name": "request_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "response_payload": {
+          "name": "response_payload",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "cursor_from": {
+          "name": "cursor_from",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "cursor_to": {
+          "name": "cursor_to",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "actor": {
+          "name": "actor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "received_at": {
+          "name": "received_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "cognitive_sync_receipts_idempotency_unique": {
+          "name": "cognitive_sync_receipts_idempotency_unique",
+          "columns": [
+            "idempotency_key"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "cognitive_sync_receipts_thread_id_cognitive_threads_id_fk": {
+          "name": "cognitive_sync_receipts_thread_id_cognitive_threads_id_fk",
+          "tableFrom": "cognitive_sync_receipts",
+          "tableTo": "cognitive_threads",
+          "columnsFrom": [
+            "thread_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "cognitive_threads": {
+      "name": "cognitive_threads",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_interface": {
+          "name": "source_interface",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_thread_key": {
+          "name": "source_thread_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_title": {
+          "name": "source_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "accountable_member_id": {
+          "name": "accountable_member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "capture_mode": {
+          "name": "capture_mode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'selected_checkpoint'"
+        },
+        "consent_scope": {
+          "name": "consent_scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'internal_only'"
+        },
+        "last_cursor": {
+          "name": "last_cursor",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'active'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "cognitive_threads_source_unique": {
+          "name": "cognitive_threads_source_unique",
+          "columns": [
+            "source_interface",
+            "source_thread_key"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "cognitive_threads_mission_id_missions_id_fk": {
+          "name": "cognitive_threads_mission_id_missions_id_fk",
+          "tableFrom": "cognitive_threads",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "cognitive_threads_accountable_member_id_members_id_fk": {
+          "name": "cognitive_threads_accountable_member_id_members_id_fk",
+          "tableFrom": "cognitive_threads",
+          "tableTo": "members",
+          "columnsFrom": [
+            "accountable_member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "evidence": {
+      "name": "evidence",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "observation": {
+          "name": "observation",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source": {
+          "name": "source",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "freshness": {
+          "name": "freshness",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'current'"
+        },
+        "reliability": {
+          "name": "reliability",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'medium'"
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'GO Society'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "evidence_mission_id_missions_id_fk": {
+          "name": "evidence_mission_id_missions_id_fk",
+          "tableFrom": "evidence",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "evolution_proposals": {
+      "name": "evolution_proposals",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "trigger_evidence": {
+          "name": "trigger_evidence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "proposed_change": {
+          "name": "proposed_change",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "sponsor": {
+          "name": "sponsor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'proposed'"
+        },
+        "reversible": {
+          "name": "reversible",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "exceptions": {
+      "name": "exceptions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "context": {
+          "name": "context",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "severity": {
+          "name": "severity",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'medium'"
+        },
+        "required_decision": {
+          "name": "required_decision",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "accountable_owner": {
+          "name": "accountable_owner",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'open'"
+        },
+        "created_by": {
+          "name": "created_by",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'GO Society'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "exceptions_mission_id_missions_id_fk": {
+          "name": "exceptions_mission_id_missions_id_fk",
+          "tableFrom": "exceptions",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "field_records": {
+      "name": "field_records",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "organization_alias": {
+          "name": "organization_alias",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_kind": {
+          "name": "source_kind",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "role_class": {
+          "name": "role_class",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "private_notes": {
+          "name": "private_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "stage": {
+          "name": "stage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'signal'"
+        },
+        "consent_scope": {
+          "name": "consent_scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'internal_only'"
+        },
+        "privacy_status": {
+          "name": "privacy_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'private_intake'"
+        },
+        "created_by_member_id": {
+          "name": "created_by_member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "field_records_mission_id_missions_id_fk": {
+          "name": "field_records_mission_id_missions_id_fk",
+          "tableFrom": "field_records",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "field_records_created_by_member_id_members_id_fk": {
+          "name": "field_records_created_by_member_id_members_id_fk",
+          "tableFrom": "field_records",
+          "tableTo": "members",
+          "columnsFrom": [
+            "created_by_member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "members": {
+      "name": "members",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "display_name": {
+          "name": "display_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "public_alias": {
+          "name": "public_alias",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'GO Society Mission Partner'"
+        },
+        "name_public": {
+          "name": "name_public",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'mission_partner'"
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'invited'"
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "joined_at": {
+          "name": "joined_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "members_email_unique": {
+          "name": "members_email_unique",
+          "columns": [
+            "email"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "mission_memberships": {
+      "name": "mission_memberships",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "member_id": {
+          "name": "member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "can_record": {
+          "name": "can_record",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": true
+        },
+        "can_review": {
+          "name": "can_review",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "can_publish": {
+          "name": "can_publish",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'active'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "mission_memberships_mission_member_unique": {
+          "name": "mission_memberships_mission_member_unique",
+          "columns": [
+            "mission_id",
+            "member_id"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "mission_memberships_mission_id_missions_id_fk": {
+          "name": "mission_memberships_mission_id_missions_id_fk",
+          "tableFrom": "mission_memberships",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "mission_memberships_member_id_members_id_fk": {
+          "name": "mission_memberships_member_id_members_id_fk",
+          "tableFrom": "mission_memberships",
+          "tableTo": "members",
+          "columnsFrom": [
+            "member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "missions": {
+      "name": "missions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "purpose": {
+          "name": "purpose",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "owner": {
+          "name": "owner",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "public_owner_label": {
+          "name": "public_owner_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'Named human owner'"
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'forming'"
+        },
+        "authority_summary": {
+          "name": "authority_summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "success_signal": {
+          "name": "success_signal",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "next_decision": {
+          "name": "next_decision",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "confidence": {
+          "name": "confidence",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 50
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {
+        "missions_slug_unique": {
+          "name": "missions_slug_unique",
+          "columns": [
+            "slug"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "public_cases": {
+      "name": "public_cases",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "mission_id": {
+          "name": "mission_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "source_field_record_id": {
+          "name": "source_field_record_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "public_title": {
+          "name": "public_title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "public_summary": {
+          "name": "public_summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "organization_profile": {
+          "name": "organization_profile",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "source_role_class": {
+          "name": "source_role_class",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "stage": {
+          "name": "stage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'signal'"
+        },
+        "consent_scope": {
+          "name": "consent_scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reidentification_risk": {
+          "name": "reidentification_risk",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "privacy_status": {
+          "name": "privacy_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'pending'"
+        },
+        "publication_status": {
+          "name": "publication_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "'draft'"
+        },
+        "approved_by_member_id": {
+          "name": "approved_by_member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "approved_at": {
+          "name": "approved_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "published_at": {
+          "name": "published_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "public_cases_mission_id_missions_id_fk": {
+          "name": "public_cases_mission_id_missions_id_fk",
+          "tableFrom": "public_cases",
+          "tableTo": "missions",
+          "columnsFrom": [
+            "mission_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "public_cases_source_field_record_id_field_records_id_fk": {
+          "name": "public_cases_source_field_record_id_field_records_id_fk",
+          "tableFrom": "public_cases",
+          "tableTo": "field_records",
+          "columnsFrom": [
+            "source_field_record_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "public_cases_approved_by_member_id_members_id_fk": {
+          "name": "public_cases_approved_by_member_id_members_id_fk",
+          "tableFrom": "public_cases",
+          "tableTo": "members",
+          "columnsFrom": [
+            "approved_by_member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "publication_reviews": {
+      "name": "publication_reviews",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "public_case_id": {
+          "name": "public_case_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reviewer_member_id": {
+          "name": "reviewer_member_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "decision": {
+          "name": "decision",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "pii_check_status": {
+          "name": "pii_check_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reidentification_risk": {
+          "name": "reidentification_risk",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "consent_scope": {
+          "name": "consent_scope",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "private_notes": {
+          "name": "private_notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "publication_reviews_public_case_id_public_cases_id_fk": {
+          "name": "publication_reviews_public_case_id_public_cases_id_fk",
+          "tableFrom": "publication_reviews",
+          "tableTo": "public_cases",
+          "columnsFrom": [
+            "public_case_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "publication_reviews_reviewer_member_id_members_id_fk": {
+          "name": "publication_reviews_reviewer_member_id_members_id_fk",
+          "tableFrom": "publication_reviews",
+          "tableTo": "members",
+          "columnsFrom": [
+            "reviewer_member_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    }
+  },
+  "views": {},
+  "enums": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "indexes": {}
+  }
+}

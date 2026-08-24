@@ -16,6 +16,13 @@ export type RuntimeMutationAction =
   | "custom:review_cognition"
   | "custom:manage_membership";
 
+export type RuntimeExecutor = "web-runtime" | "mcp-cognitive-bridge";
+
+export type RuntimeExecutionContext = {
+  executor: RuntimeExecutor;
+  requestedBy: "runtime-api" | "mcp-runtime";
+};
+
 const mutationContext: Record<
   RuntimeMutationAction,
   {
@@ -103,12 +110,39 @@ export function runtimeMutationContext(action: RuntimeMutationAction) {
   return mutationContext[action];
 }
 
+export function runtimeExecutorAllowsAction(
+  execution: RuntimeExecutionContext,
+  action: RuntimeMutationAction,
+): boolean {
+  if (execution.executor === "web-runtime") {
+    return execution.requestedBy === "runtime-api";
+  }
+  return (
+    execution.requestedBy === "mcp-runtime" &&
+    [
+      "custom:read_cognitive_context",
+      "custom:capture_cognitive_source",
+    ].includes(action)
+  );
+}
+
 export async function requireOrganizationalMutation(
   actor: string,
   action: RuntimeMutationAction,
   target: string,
   metadata?: Record<string, unknown>,
+  execution: RuntimeExecutionContext = {
+    executor: "web-runtime",
+    requestedBy: "runtime-api",
+  },
 ) {
+  if (!runtimeExecutorAllowsAction(execution, action)) {
+    return {
+      allowed: false,
+      reason:
+        "The conversation bridge executor cannot cross its read-and-stage boundary",
+    };
+  }
   const context = mutationContext[action];
   return requireAuthority({
     actor,
@@ -116,9 +150,9 @@ export async function requireOrganizationalMutation(
     target,
     resourceRisk: context.resourceRisk,
     resourceExposure: context.resourceExposure,
-    tool: "web-runtime",
+    tool: execution.executor,
     reversibility: context.reversibility,
-    requestedBy: "runtime-api",
+    requestedBy: execution.requestedBy,
     metadata,
   });
 }

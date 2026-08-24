@@ -15,6 +15,7 @@ version_policy:
 canonical_entries:
   release_gate: go-os-v0.5.0-release-gate-evals.yaml
   red_team: go-os-v0.5.0-red-team-evals.yaml
+  cognitive_bridge_skill: go-society-cognitive-bridge-evals-v0.1.0.yaml
   static_structure_check: validate_repository.rb
   json_schema_check: validate_json_schemas.py
 

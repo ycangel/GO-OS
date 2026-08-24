@@ -7,6 +7,7 @@ import {
   hasUnambiguousAuthority,
   parseAuthorityGrant,
 } from "../db/authority-grants.ts";
+import { runtimeExecutorAllowsAction } from "../runtime/api-constitutional-guard.ts";
 
 function grant(overrides = {}) {
   return {
@@ -181,6 +182,84 @@ test("target, tool, exposure and reversibility limits are enforced", () => {
     canPerformAction(
       grant(),
       actionRequest({ reversibility: "costly_to_reverse_allowed" }),
+    ),
+    false,
+  );
+});
+
+test("non-Web tools require an action-scoped authority envelope", () => {
+  const mcpGrant = grant({
+    allowedActions: ["create_evidence", "custom:read_cognitive_context"],
+    limits: {
+      maxRiskClass: "medium",
+      maxResourceExposure: 2,
+      allowedTools: ["web-runtime", "mcp-cognitive-bridge"],
+      toolActionScopes: {
+        "mcp-cognitive-bridge": ["custom:read_cognitive_context"],
+      },
+    },
+  });
+  assert.equal(
+    canPerformAction(
+      mcpGrant,
+      actionRequest({
+        action: "custom:read_cognitive_context",
+        resourceExposure: 0,
+        tool: "mcp-cognitive-bridge",
+      }),
+    ),
+    true,
+  );
+  assert.equal(
+    canPerformAction(
+      mcpGrant,
+      actionRequest({ tool: "mcp-cognitive-bridge" }),
+    ),
+    false,
+  );
+  assert.equal(
+    canPerformAction(
+      grant({
+        limits: {
+          maxRiskClass: "medium",
+          maxResourceExposure: 2,
+          allowedTools: ["web-runtime", "mcp-cognitive-bridge"],
+        },
+      }),
+      actionRequest({ tool: "mcp-cognitive-bridge" }),
+    ),
+    false,
+  );
+});
+
+test("the MCP executor is structurally limited to context reads and private staging", () => {
+  const mcpExecution = {
+    executor: "mcp-cognitive-bridge",
+    requestedBy: "mcp-runtime",
+  };
+
+  assert.equal(
+    runtimeExecutorAllowsAction(mcpExecution, "custom:read_cognitive_context"),
+    true,
+  );
+  assert.equal(
+    runtimeExecutorAllowsAction(mcpExecution, "custom:capture_cognitive_source"),
+    true,
+  );
+  for (const action of [
+    "custom:review_cognition",
+    "approve_evolution_proposal",
+    "create_cognitive_commit",
+    "create_cognitive_version",
+    "update_mission",
+    "custom:manage_membership",
+  ]) {
+    assert.equal(runtimeExecutorAllowsAction(mcpExecution, action), false);
+  }
+  assert.equal(
+    runtimeExecutorAllowsAction(
+      { executor: "mcp-cognitive-bridge", requestedBy: "runtime-api" },
+      "custom:read_cognitive_context",
     ),
     false,
   );

@@ -4,7 +4,7 @@
 
 **Release name:** Foundation Release / 奠基版本
 
-**Last aligned:** 2026-08-23
+**Last aligned:** 2026-08-24
 
 This page is the canonical entry point for GO OS v0.5 documentation. Earlier
 versioned documents remain part of the project's design history; they are not
@@ -21,6 +21,7 @@ silently rewritten to look current.
 | Understand the project | [English README](../README.md) or [中文 README](../README.zh-CN.md) |
 | Run the smallest useful loop | [Quick Start](QUICK_START.md) |
 | Connect a Human–AI conversation to GO Society cognition | [Cognitive Bridge v0.5 Alpha](COGNITIVE_BRIDGE_v0.5_ALPHA.md) |
+| Apply the conversation-side consent and authority contract | [GO Society Cognitive Bridge Skill](../skills/go-society-cognitive-bridge/SKILL.md) |
 | Understand the frozen v0.5 model | [Architecture Overview](ARCHITECTURE_OVERVIEW.md) |
 | Review the planned argument and research agenda | [Whitepaper editorial scaffold](WHITEPAPER.md) |
 | See exactly what v0.5.0 includes | [Release Notes](RELEASE_NOTES_v0.5.0.md) |
@@ -40,9 +41,9 @@ The following documents define the current release baseline.
 | [`schemas/`](../schemas) | Machine-readable object contracts | **Normative where a schema exists** |
 | [Skill Specification v0.2.2](SKILL_SPEC_v0.2.2.md) | Skill format, discovery and evaluation contract | **Normative** |
 | [Skill Routing & Contracts v0.2.0](SKILL_ROUTING_AND_CONTRACTS_v0.2.0.md) | Reviewed routing and contract boundary referenced by the Skill Specification | **Reviewed current reference** |
-| [`skills/`](../skills) | Semantic gateway and specialist application skills | **Reference implementation** |
+| [`skills/`](../skills) | Semantic gateway, bounded Cognitive Bridge conversation adapter and specialist application skills | **Reference implementation** |
 | [`tests/`](../tests) | Evaluation cases, adversarial fixtures and release gates | **Declared tests; execution status is reported separately** |
-| [`web/`](../web) | GO Society reference application | **Runnable organization-side private checkpoint-to-version primitive; Skill/MCP fresh-conversation integration remains pending** |
+| [`web/`](../web) | GO Society reference application | **Bounded two-sided Cognitive Bridge source; live MCP/OAuth and fresh-conversation conformance are reported separately** |
 | [Release Notes](RELEASE_NOTES_v0.5.0.md) | Release scope, verification and known limitations | **Release record** |
 
 ## Status vocabulary

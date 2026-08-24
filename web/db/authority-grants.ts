@@ -34,6 +34,7 @@ export interface AuthorityLimits {
   maxResourceExposure?: number;
   maxRiskClass?: "low" | "medium" | "high";
   allowedTools?: string[];
+  toolActionScopes?: Record<string, AuthorityAction[]>;
 }
 
 export interface AuthorityResourceRights {
@@ -129,6 +130,9 @@ export const authorityGrantSchema = z
         maxResourceExposure: z.number().finite().nonnegative().optional(),
         maxRiskClass: z.enum(["low", "medium", "high"]).optional(),
         allowedTools: z.array(z.string()).optional(),
+        toolActionScopes: z
+          .record(z.string().min(1), z.array(authorityActionSchema).min(1))
+          .optional(),
       })
       .passthrough(),
     reversibilityCeiling: z.enum([
@@ -184,6 +188,12 @@ export function canPerformAction(
   }
 
   if (!grant.limits.allowedTools?.includes(request.tool)) return false;
+  if (
+    request.tool !== "web-runtime" &&
+    !grant.limits.toolActionScopes?.[request.tool]?.includes(request.action)
+  ) {
+    return false;
+  }
 
   const reversibilityRank = {
     reversible_only: 0,

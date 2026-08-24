@@ -21,6 +21,15 @@ skills:
     status: public-alpha
     go_os_compatibility: 0.5.x
 
+  - name: go-society-cognitive-bridge
+    role: conversation-adapter
+    path: go-society-cognitive-bridge/SKILL.md
+    version: 0.1.0
+    contract_path: go-society-cognitive-bridge/CONTRACT.md
+    contract_version: 0.1.0
+    status: public-alpha
+    go_os_compatibility: 0.5.x
+
   - name: ai-native-organization-design
     role: specialist
     path: ai-native-organization-design/SKILL.md

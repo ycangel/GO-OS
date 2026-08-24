@@ -607,6 +607,41 @@ export async function POST(request: Request) {
   }
 }
 
+/**
+ * Re-enter the canonical checkpoint handler after the Web Human Gate has
+ * confirmed an exact MCP draft hash. This is an in-process function call: it
+ * neither proxies an HTTP request nor synthesizes an authenticated identity.
+ * The surrounding Next request context remains authoritative for
+ * getRuntimeIdentity(), while the original browser Origin is preserved for
+ * the same-origin write check.
+ */
+export async function persistHumanConfirmedCheckpoint(
+  humanGateRequest: Request,
+  input: unknown,
+): Promise<Response> {
+  const origin = humanGateRequest.headers.get("origin");
+  if (!origin) {
+    return Response.json(
+      { error: "The Human Gate requires an explicit same-origin browser request." },
+      { status: 403 },
+    );
+  }
+  const headers = new Headers({
+    origin,
+    "content-type": "application/json",
+  });
+  return POST(
+    new Request(
+      new URL("/api/cognitive-bridge/checkpoints", humanGateRequest.url),
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify(input),
+      },
+    ),
+  );
+}
+
 function resolveCandidateReferences(
   value: Record<string, unknown>,
   objectIds: Map<string, string>,

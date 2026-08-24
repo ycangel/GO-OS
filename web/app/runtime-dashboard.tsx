@@ -192,6 +192,32 @@ type CognitiveContext = {
   };
 };
 
+type McpDraft = {
+  id: string;
+  missionId: number;
+  sourceInterface: string;
+  sourceTitle: string;
+  expectedCursor: number;
+  payload: Record<string, unknown> | null;
+  payloadHash: string;
+  status: string;
+  reviewRequestedAt: string | null;
+  confirmedCheckpointReceiptId: string | null;
+  expiresAt: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type McpInbox = {
+  bridge: {
+    linked: boolean;
+    linkedAt: string | null;
+    revocable: boolean;
+    identityBoundary: string;
+  };
+  drafts: McpDraft[];
+};
+
 type RuntimeState = {
   missions: Mission[];
   evidence: PublicCase[];
@@ -253,6 +279,9 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
   const [cognition, setCognition] = useState<CognitiveContext | null>(null);
   const [cognitionLoading, setCognitionLoading] = useState(false);
   const [cognitionSaving, setCognitionSaving] = useState(false);
+  const [mcpInbox, setMcpInbox] = useState<McpInbox | null>(null);
+  const [mcpInboxLoading, setMcpInboxLoading] = useState(false);
+  const [mcpInboxSaving, setMcpInboxSaving] = useState(false);
   const canWrite = Boolean(viewer?.canWrite);
 
   const views: View[] = viewer?.canWrite
@@ -305,6 +334,30 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
     }
   }, [canWrite]);
 
+  const loadMcpInbox = useCallback(async () => {
+    if (!canWrite) {
+      setMcpInbox(null);
+      return;
+    }
+    setMcpInboxLoading(true);
+    try {
+      const response = await fetch("/api/cognitive-bridge/mcp-drafts", {
+        cache: "no-store",
+      });
+      const payload = (await response.json()) as McpInbox & { error?: string };
+      if (!response.ok) throw new Error(payload.error ?? "Conversation bridge inbox unavailable");
+      setMcpInbox(payload);
+    } catch (inboxError) {
+      setError(
+        inboxError instanceof Error
+          ? inboxError.message
+          : "Conversation bridge inbox unavailable",
+      );
+    } finally {
+      setMcpInboxLoading(false);
+    }
+  }, [canWrite]);
+
   useEffect(() => {
     if (!initialViewer) return;
     const timer = window.setTimeout(() => {
@@ -326,9 +379,14 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
 
   useEffect(() => {
     if (!canWrite) return;
-    const timer = window.setTimeout(() => void loadCognition(), 0);
+    const timer = window.setTimeout(() => {
+      void Promise.all([loadCognition(), loadMcpInbox()]);
+      if (new URLSearchParams(window.location.search).has("mcpDraft")) {
+        setView("Cognitive space");
+      }
+    }, 0);
     return () => window.clearTimeout(timer);
-  }, [canWrite, loadCognition]);
+  }, [canWrite, loadCognition, loadMcpInbox]);
 
   function beginCompose(kind: ComposerKind) {
     if (!viewer) {
@@ -427,6 +485,46 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
       return false;
     } finally {
       setCognitionSaving(false);
+    }
+  }
+
+  async function changeMcpLink(link: boolean) {
+    setMcpInboxSaving(true);
+    try {
+      const response = await fetch(
+        "/api/cognitive-bridge/mcp-drafts/principal-link",
+        { method: link ? "POST" : "DELETE" },
+      );
+      const payload = (await response.json()) as { error?: string };
+      if (!response.ok) throw new Error(payload.error ?? "Unable to change conversation bridge link");
+      await loadMcpInbox();
+      setError(null);
+    } catch (linkError) {
+      setError(linkError instanceof Error ? linkError.message : "Unable to change conversation bridge link");
+    } finally {
+      setMcpInboxSaving(false);
+    }
+  }
+
+  async function decideMcpDraft(draft: McpDraft, decision: "confirm" | "reject") {
+    setMcpInboxSaving(true);
+    try {
+      const response = await fetch(
+        `/api/cognitive-bridge/mcp-drafts/${encodeURIComponent(draft.id)}/${decision}`,
+        {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ payloadHash: draft.payloadHash }),
+        },
+      );
+      const payload = (await response.json()) as { error?: string };
+      if (!response.ok) throw new Error(payload.error ?? `Unable to ${decision} MCP draft`);
+      await Promise.all([loadMcpInbox(), loadCognition(), loadRuntime()]);
+      setError(null);
+    } catch (draftError) {
+      setError(draftError instanceof Error ? draftError.message : "Unable to review MCP draft");
+    } finally {
+      setMcpInboxSaving(false);
     }
   }
 
@@ -588,14 +686,23 @@ export default function RuntimeDashboard({ viewer: initialViewer }: { viewer: Vi
             />
           )}
           {view === "Cognitive space" && viewer?.canWrite && (
-            <CognitiveSpaceView
-              key={cognition?.sync?.threadId ?? "empty-cognitive-space"}
-              data={cognition}
-              loading={cognitionLoading}
-              saving={cognitionSaving}
-              onDecision={decideCognition}
-              onSelectThread={loadCognition}
-            />
+            <div className="view-stack">
+              <McpHumanGate
+                inbox={mcpInbox}
+                loading={mcpInboxLoading}
+                saving={mcpInboxSaving}
+                onLink={changeMcpLink}
+                onDecision={decideMcpDraft}
+              />
+              <CognitiveSpaceView
+                key={cognition?.sync?.threadId ?? "empty-cognitive-space"}
+                data={cognition}
+                loading={cognitionLoading}
+                saving={cognitionSaving}
+                onDecision={decideCognition}
+                onSelectThread={loadCognition}
+              />
+            </div>
           )}
           {view === "Private intake" && viewer?.canWrite && (
             <IntakeView
@@ -817,6 +924,146 @@ function EvolutionView({ evolutions, capabilities, loading, canPropose, onCompos
         ))}
       </section>
     </div>
+  );
+}
+
+function McpHumanGate({
+  inbox,
+  loading,
+  saving,
+  onLink,
+  onDecision,
+}: {
+  inbox: McpInbox | null;
+  loading: boolean;
+  saving: boolean;
+  onLink: (link: boolean) => Promise<void>;
+  onDecision: (draft: McpDraft, decision: "confirm" | "reject") => Promise<void>;
+}) {
+  const requested = inbox?.drafts.filter(
+    (draft) => ["pending_human_consent", "confirming"].includes(draft.status),
+  ) ?? [];
+  const staged = inbox?.drafts.filter((draft) => draft.status === "staged") ?? [];
+
+  return (
+    <section className="panel full-panel" id="mcp-human-gate" aria-live="polite">
+      <PanelHeader
+        eyebrow="Conversation bridge · Web Human Gate"
+        title="Nothing from an agent enters organizational cognition without you"
+      />
+      <div className="ledger-notice">
+        The bridge binds the native Sites stable user identity—not an email—to
+        your GO Society membership. MCP may read ratified context and stage a
+        temporary <code>model_reported</code> draft. Only this same-origin Web
+        gate can confirm the exact payload hash and create candidates; ratification
+        remains a separate named-human decision below.
+      </div>
+
+      {loading && !inbox ? <Skeleton rows={2} /> : (
+        <>
+          <div className="control-strip">
+            <div>
+              <span>Conversation identity</span>
+              <strong>
+                {inbox?.bridge.linked
+                  ? `Linked · ${formatDate(inbox.bridge.linkedAt)}`
+                  : "Not linked · MCP access fails closed"}
+              </strong>
+            </div>
+            <div>
+              <span>Authority boundary</span>
+              <strong>Read ratified · stage draft · request Web review</strong>
+            </div>
+            <button
+              type="button"
+              disabled={saving}
+              onClick={() => void onLink(!Boolean(inbox?.bridge.linked))}
+            >
+              {saving
+                ? "Working…"
+                : inbox?.bridge.linked
+                  ? "撤销对话桥 · Unlink"
+                  : "连接对话桥 · Link"}
+            </button>
+          </div>
+
+          {requested.length ? (
+            <div className="candidate-list">
+              {requested.map((draft) => {
+                const fragments = payloadRecords(draft.payload?.fragments);
+                const candidates = payloadRecords(draft.payload?.candidates);
+                return (
+                  <article key={draft.id} className="selected">
+                    <div className="candidate-copy">
+                      <div className="candidate-meta">
+                        <span>{draft.status === "confirming" ? "Confirmation recovery" : "Pending exact consent"}</span>
+                        <code>{draft.payloadHash.slice(0, 16)}</code>
+                      </div>
+                      <h3>{draft.sourceTitle}</h3>
+                      <p>
+                        {draft.sourceInterface} · cursor {draft.expectedCursor} · {fragments.length} source fragments · {candidates.length} cognitive candidates
+                      </p>
+                      <small className="candidate-provenance">
+                        Staged {formatDate(draft.createdAt)} · expires {formatDate(draft.expiresAt)} · model reported until confirmed
+                      </small>
+
+                      <div className="source-anchor-list">
+                        {fragments.map((fragment, index) => (
+                          <article key={String(fragment.clientRef ?? index)}>
+                            <div>
+                              <span>MCP-{String(index + 1).padStart(2, "0")}</span>
+                              <small>{String(fragment.speakerType ?? "agent")} · model reported</small>
+                            </div>
+                            <blockquote lang={containsHan(String(fragment.verbatimText ?? "")) ? "zh-CN" : undefined}>
+                              “{String(fragment.verbatimText ?? "")}”
+                            </blockquote>
+                            <footer><strong>{String(fragment.speakerRef ?? fragment.speakerType ?? "agent")}</strong></footer>
+                          </article>
+                        ))}
+                      </div>
+
+                      <details className="candidate-details">
+                        <summary>Inspect exact staged JSON and payload hash</summary>
+                        <dl>
+                          <div><dt>SHA-256</dt><dd><code>{draft.payloadHash}</code></dd></div>
+                        </dl>
+                        <pre>{JSON.stringify(draft.payload, null, 2)}</pre>
+                      </details>
+
+                      <div className="gate-actions">
+                        <button
+                          type="button"
+                          disabled={saving}
+                          onClick={() => void onDecision(draft, "confirm")}
+                        >
+                          Confirm exact checkpoint
+                        </button>
+                        <button
+                          type="button"
+                          disabled={saving || draft.status === "confirming"}
+                          onClick={() => void onDecision(draft, "reject")}
+                        >
+                          Reject draft
+                        </button>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="empty-ledger compact">
+              <strong>No MCP draft is waiting for your consent.</strong>
+              <p>
+                {staged.length
+                  ? `${staged.length} staged draft${staged.length === 1 ? " is" : "s are"} waiting for the conversation to request Web review.`
+                  : "A linked conversation can stage a bounded checkpoint and request this Human Gate."}
+              </p>
+            </div>
+          )}
+        </>
+      )}
+    </section>
   );
 }
 

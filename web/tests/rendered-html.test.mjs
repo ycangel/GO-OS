@@ -144,6 +144,6 @@ test("identity headers and owner configuration stay server-side trust inputs", a
 
   assert.match(authSource, /oai-authenticated-user-email/);
   assert.match(memberAuthSource, /GO_SOCIETY_OWNER_EMAIL/);
-  assert.match(readme, /strip any client-supplied headers/);
+  assert.match(readme, /strip\s+any client-supplied headers/);
   assert.match(readme, /server-side secret\/environment value/);
 });

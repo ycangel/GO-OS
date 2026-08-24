@@ -36,6 +36,13 @@
       "when": 1787497464785,
       "tag": "0004_calm_ares",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1787546609138,
+      "tag": "0005_loose_banshee",
+      "breakpoints": true
     }
   ]
 }

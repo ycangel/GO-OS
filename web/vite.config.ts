@@ -24,6 +24,12 @@ const localBindingConfig = {
             process.env.GO_SOCIETY_LOCAL_THREAD_HMAC_SECRET,
         }
       : {}),
+    ...(process.env.GO_SOCIETY_LOCAL_PRINCIPAL_HMAC_SECRET
+      ? {
+          GO_SOCIETY_PRINCIPAL_HMAC_SECRET:
+            process.env.GO_SOCIETY_LOCAL_PRINCIPAL_HMAC_SECRET,
+        }
+      : {}),
   },
   d1_databases: d1
     ? [

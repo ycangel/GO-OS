@@ -167,7 +167,13 @@ export async function POST(request: Request) {
           JSON.stringify({
             maxRiskClass: "low",
             maxResourceExposure: 1,
-            allowedTools: ["web-runtime"],
+            allowedTools: ["web-runtime", "mcp-cognitive-bridge"],
+            toolActionScopes: {
+              "mcp-cognitive-bridge": [
+                "custom:read_cognitive_context",
+                "custom:capture_cognitive_source",
+              ],
+            },
           }),
           JSON.stringify([
             "Minimize private data and preserve the source and consent scope.",

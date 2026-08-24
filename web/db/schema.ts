@@ -527,3 +527,124 @@ export const cognitiveSyncReceipts = sqliteTable(
     ),
   ],
 );
+
+/**
+ * Explicit, revocable binding between the Sites dispatcher stable user ID and
+ * a GO Society member. The raw dispatcher subject is never stored; callers
+ * persist only an HMAC made with the Site-scoped principal secret.
+ */
+export const cognitiveMcpPrincipalLinks = sqliteTable(
+  "cognitive_mcp_principal_links",
+  {
+    id: text("id").primaryKey(),
+    principalHash: text("principal_hash").notNull(),
+    memberId: integer("member_id")
+      .notNull()
+      .references(() => members.id),
+    status: text("status").notNull().default("active"),
+    linkedAt: text("linked_at").notNull(),
+    revokedAt: text("revoked_at"),
+    createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  },
+  (table) => [
+    uniqueIndex("cognitive_mcp_principal_links_principal_active_unique")
+      .on(table.principalHash)
+      .where(sql`${table.status} = 'active' AND ${table.revokedAt} IS NULL`),
+    uniqueIndex("cognitive_mcp_principal_links_member_active_unique")
+      .on(table.memberId)
+      .where(sql`${table.status} = 'active' AND ${table.revokedAt} IS NULL`),
+    check(
+      "cognitive_mcp_principal_links_status_check",
+      sql`${table.status} IN ('active', 'revoked')`,
+    ),
+    check(
+      "cognitive_mcp_principal_links_revocation_check",
+      sql`(${table.status} = 'active' AND ${table.revokedAt} IS NULL) OR (${table.status} = 'revoked' AND ${table.revokedAt} IS NOT NULL)`,
+    ),
+  ],
+);
+
+/**
+ * Private, temporary MCP intake. A draft is not a CognitiveFragment,
+ * CognitiveObject, checkpoint claim, or organizational head. Only an exact
+ * Web Human Gate confirmation may promote its bounded payload through the
+ * canonical checkpoint path.
+ */
+export const cognitiveMcpDrafts = sqliteTable(
+  "cognitive_mcp_drafts",
+  {
+    id: text("id").primaryKey(),
+    principalLinkId: text("principal_link_id")
+      .notNull()
+      .references(() => cognitiveMcpPrincipalLinks.id),
+    missionId: integer("mission_id")
+      .notNull()
+      .references(() => missions.id),
+    accountableMemberId: integer("accountable_member_id")
+      .notNull()
+      .references(() => members.id),
+    sourceInterface: text("source_interface").notNull(),
+    sourceThreadKeyHash: text("source_thread_key_hash").notNull(),
+    sourceTitle: text("source_title").notNull(),
+    expectedCursor: integer("expected_cursor").notNull(),
+    stagedPayload: text("staged_payload", { mode: "json" })
+      .$type<Record<string, unknown> | null>(),
+    payloadHash: text("payload_hash").notNull(),
+    expectedCheckpointRequestHash: text("expected_checkpoint_request_hash")
+      .notNull(),
+    payloadClearedAt: text("payload_cleared_at"),
+    idempotencyKeyHash: text("idempotency_key_hash").notNull(),
+    status: text("status").notNull().default("staged"),
+    authorityGrantId: text("authority_grant_id")
+      .notNull()
+      .references(() => authorityGrants.id),
+    authorityGrantRevision: integer("authority_grant_revision").notNull(),
+    reviewRequestedAt: text("review_requested_at"),
+    confirmedCheckpointReceiptId: text("confirmed_checkpoint_receipt_id")
+      .references(() => cognitiveSyncReceipts.id),
+    confirmedAt: text("confirmed_at"),
+    rejectedAt: text("rejected_at"),
+    expiresAt: text("expires_at").notNull(),
+    createdAt: text("created_at").notNull(),
+    updatedAt: text("updated_at").notNull(),
+  },
+  (table) => [
+    uniqueIndex("cognitive_mcp_drafts_idempotency_unique").on(
+      table.idempotencyKeyHash,
+    ),
+    uniqueIndex("cognitive_mcp_drafts_cursor_active_unique")
+      .on(
+        table.principalLinkId,
+        table.missionId,
+        table.sourceInterface,
+        table.sourceThreadKeyHash,
+        table.expectedCursor,
+      )
+      .where(sql`${table.status} IN ('staged', 'pending_human_consent', 'confirming')`),
+    check(
+      "cognitive_mcp_drafts_cursor_check",
+      sql`${table.expectedCursor} >= 0`,
+    ),
+    check(
+      "cognitive_mcp_drafts_payload_hash_check",
+      sql`length(${table.payloadHash}) = 64 AND ${table.payloadHash} NOT GLOB '*[^0-9a-f]*'`,
+    ),
+    check(
+      "cognitive_mcp_drafts_checkpoint_hash_check",
+      sql`length(${table.expectedCheckpointRequestHash}) = 64 AND ${table.expectedCheckpointRequestHash} NOT GLOB '*[^0-9a-f]*'`,
+    ),
+    check(
+      "cognitive_mcp_drafts_payload_json_check",
+      sql`${table.stagedPayload} IS NULL OR json_valid(${table.stagedPayload})`,
+    ),
+    check(
+      "cognitive_mcp_drafts_status_check",
+      sql`${table.status} IN ('staged', 'pending_human_consent', 'confirming', 'confirmed', 'rejected', 'expired')`,
+    ),
+    check(
+      "cognitive_mcp_drafts_terminal_check",
+      sql`(${table.status} = 'confirmed' AND ${table.stagedPayload} IS NULL AND ${table.payloadClearedAt} IS NOT NULL AND ${table.confirmedAt} IS NOT NULL AND ${table.confirmedCheckpointReceiptId} IS NOT NULL AND ${table.rejectedAt} IS NULL) OR (${table.status} = 'rejected' AND ${table.stagedPayload} IS NULL AND ${table.payloadClearedAt} IS NOT NULL AND ${table.rejectedAt} IS NOT NULL AND ${table.confirmedAt} IS NULL AND ${table.confirmedCheckpointReceiptId} IS NULL) OR (${table.status} = 'expired' AND ${table.stagedPayload} IS NULL AND ${table.payloadClearedAt} IS NOT NULL AND ${table.confirmedAt} IS NULL AND ${table.rejectedAt} IS NULL AND ${table.confirmedCheckpointReceiptId} IS NULL) OR (${table.status} IN ('staged', 'pending_human_consent', 'confirming') AND ${table.stagedPayload} IS NOT NULL AND ${table.payloadClearedAt} IS NULL AND ${table.confirmedAt} IS NULL AND ${table.rejectedAt} IS NULL AND ${table.confirmedCheckpointReceiptId} IS NULL)`,
+    ),
+  ],
+);
