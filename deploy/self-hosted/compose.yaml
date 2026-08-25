@@ -36,7 +36,7 @@ services:
       GO_SOCIETY_PRINCIPAL_HMAC_SECRET: "${GO_SOCIETY_PRINCIPAL_HMAC_SECRET:-}"
       GO_SOCIETY_THREAD_HMAC_SECRET: "${GO_SOCIETY_THREAD_HMAC_SECRET:-}"
     ports:
-      - "127.0.0.1:${GO_HOST_PORT:-3210}:3210"
+      - "${GO_BIND_IP:-127.0.0.1}:${GO_HOST_PORT:-3210}:3210"
     volumes:
       - go_os_data:/data
     networks:

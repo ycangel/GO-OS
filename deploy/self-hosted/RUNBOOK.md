@@ -26,6 +26,25 @@ compose down --volumes` as routine maintenance: that explicitly deletes this
 instance's database and Caddy state. None of the commands below stop, remove or
 reuse containers belonging to another Compose project.
 
+### Temporary IP-only preview
+
+The application listener can be moved off loopback for a short-lived,
+anonymous read-only preview by setting `GO_BIND_IP=0.0.0.0`. This mode is not a
+member login, private cognitive workspace, write path or MCP endpoint. Plain
+HTTP does not provide the confidentiality or verified origin required for
+credentials, bearer tokens or private organizational cognition.
+
+Use this mode only when the host or cloud firewall restricts `GO_HOST_PORT` to
+one explicitly approved source address (`/32`). Never expose it to
+`0.0.0.0/0`. Keep `GO_PUBLIC_ORIGIN=http://127.0.0.1:3210`, leave the `https`
+profile disabled and do not publish ports 80 or 443 from this project. Audit
+the anonymous `/api/runtime` response before opening the port because its
+Mission and Capability content is public by design.
+
+After the preview, restore `GO_BIND_IP=127.0.0.1` before configuring the shared
+reverse proxy, domain, HTTPS and OIDC. The existing SSH tunnel remains the safe
+fully functional access path until that work is complete.
+
 ## 1. Prerequisites and configuration
 
 Install Docker Engine with Docker Compose v2. Run all commands from this
