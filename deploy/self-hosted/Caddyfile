@@ -1,3 +1,5 @@
+# Alternative standalone gateway template. The active go.pixmoving.net
+# deployment uses the host's shared Nginx and must not enable this listener.
 {
 	admin off
 	email {$CADDY_ACME_EMAIL}

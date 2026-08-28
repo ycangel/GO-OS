@@ -259,13 +259,18 @@ test("Web identity keeps native Sites compatibility and secures self-hosted prox
   configure({
     GO_WEB_IDENTITY_MODE: "trusted-proxy",
     GO_WEB_IDENTITY_SECRET: "a-private-proxy-secret-with-32-bytes",
+    GO_WEB_IDENTITY_ID_HEADER: "x-go-web-identity-id",
+    GO_WEB_IDENTITY_EMAIL_HEADER: "x-go-web-identity-email",
+    GO_WEB_IDENTITY_NAME_HEADER: "x-go-web-identity-name",
   });
   assert.equal(
     await resolveWebIdentity(sitesHeaders, "https://go-society.example/"),
     null,
   );
   const proxyHeaders = new Headers(sitesHeaders);
-  proxyHeaders.set("oai-authenticated-user-id", "member-42");
+  proxyHeaders.set("x-go-web-identity-id", "member-42");
+  proxyHeaders.set("x-go-web-identity-email", "sites@example.com");
+  proxyHeaders.set("x-go-web-identity-name", "Sites Member");
   proxyHeaders.set(
     "x-go-web-identity-secret",
     "a-private-proxy-secret-with-32-bytes",
@@ -282,6 +287,34 @@ test("Web identity keeps native Sites compatibility and secures self-hosted prox
   assert.equal(proxied?.authenticationMethod, "trusted-proxy");
   assert.equal(proxied?.principalKey, bearer.principalKey);
 
+  const subjectOnlyHeaders = new Headers({
+    "x-go-web-identity-secret":
+      "a-private-proxy-secret-with-32-bytes",
+    "x-go-web-identity-id": "dingtalk-union-subject-42",
+    "x-go-web-identity-name": "Verified DingTalk Member",
+  });
+  const subjectOnly = await resolveWebIdentity(
+    subjectOnlyHeaders,
+    "https://go-society.example/",
+  );
+  assert.equal(subjectOnly?.id, "dingtalk-union-subject-42");
+  assert.equal(subjectOnly?.email, null);
+  assert.equal(subjectOnly?.displayName, "Verified DingTalk Member");
+
+  configure({
+    GO_OAUTH_ISSUER: "https://another-issuer.example",
+    GO_WEB_IDENTITY_MODE: "trusted-proxy",
+    GO_WEB_IDENTITY_SECRET: "a-private-proxy-secret-with-32-bytes",
+    GO_WEB_IDENTITY_ID_HEADER: "x-go-web-identity-id",
+    GO_WEB_IDENTITY_EMAIL_HEADER: "x-go-web-identity-email",
+    GO_WEB_IDENTITY_NAME_HEADER: "x-go-web-identity-name",
+  });
+  const otherIssuerSubject = await resolveWebIdentity(
+    subjectOnlyHeaders,
+    "https://go-society.example/",
+  );
+  assert.notEqual(otherIssuerSubject?.principalKey, subjectOnly?.principalKey);
+
   configure({ GO_WEB_IDENTITY_MODE: "oidc" });
   assert.equal(
     await resolveWebIdentity(sitesHeaders, "https://go-society.example/"),
@@ -296,4 +329,18 @@ test("Web identity keeps native Sites compatibility and secures self-hosted prox
   assert.equal(oidc?.authenticationMethod, "oidc");
   assert.equal(oidc?.id, "member-42");
   assert.equal(oidc?.displayName, "Verified Member");
+
+  const oidcWithoutEmail = await resolveWebIdentity(
+    bearerHeaders(
+      await token({
+        email: undefined,
+        name: undefined,
+        preferred_username: "dingtalk-member-42",
+      }),
+    ),
+    "https://go-society.example/",
+  );
+  assert.equal(oidcWithoutEmail?.id, "member-42");
+  assert.equal(oidcWithoutEmail?.email, null);
+  assert.equal(oidcWithoutEmail?.displayName, "dingtalk-member-42");
 });

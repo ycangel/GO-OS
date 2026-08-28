@@ -2,14 +2,18 @@
 
 This package runs one GO-OS Web instance without reusing another Compose
 project, container, network or data volume. Its default listener is
-`127.0.0.1:3210`; it is not reachable from another machine until the optional
-`https` profile is deliberately enabled.
+`127.0.0.1:3210`. External access requires either a deliberately configured
+shared reverse proxy or the optional standalone `https` profile.
 
 The application container runs as UID/GID `10001`, has no Linux capabilities,
 uses a read-only root filesystem and is limited to 1 CPU, 512 MiB RAM and 256
 processes. With the optional gateway and login proxy enabled, the complete
-stack is capped at 1.3 CPU and 704 MiB RAM, leaving host and Docker headroom on
-the minimum 2 CPU / approximately 1 GiB host.
+stack is capped at 1.3 CPU and 704 MiB RAM. Limits are ceilings, not evidence
+that a shared host has sufficient production headroom; measure the complete
+host before adding an identity provider or enabling the optional services.
+
+The dated [deployment status](../../docs/DEPLOYMENT_STATUS.md) records the
+active `go.pixmoving.net` instance separately from this reusable procedure.
 
 ## Isolation contract
 
@@ -17,8 +21,9 @@ the minimum 2 CPU / approximately 1 GiB host.
 - application image: `go-os-self-hosted-app:local`
 - network: `go-os-self-hosted-net-v1`
 - SQLite volume: `go-os-self-hosted-data-v1`
-- Caddy volumes: `go-os-self-hosted-caddy-data-v1` and
-  `go-os-self-hosted-caddy-config-v1`
+- optional standalone Caddy volumes: `go-os-self-hosted-caddy-data-v1` and
+  `go-os-self-hosted-caddy-config-v1` (not used by the current shared-Nginx
+  deployment)
 - default host socket: `127.0.0.1:3210`
 
 Do not rename these resources to match another project. Do not run `docker
@@ -41,9 +46,10 @@ profile disabled and do not publish ports 80 or 443 from this project. Audit
 the anonymous `/api/runtime` response before opening the port because its
 Mission and Capability content is public by design.
 
-After the preview, restore `GO_BIND_IP=127.0.0.1` before configuring the shared
-reverse proxy, domain, HTTPS and OIDC. The existing SSH tunnel remains the safe
-fully functional access path until that work is complete.
+After the preview, restore `GO_BIND_IP=127.0.0.1` before configuring a shared
+reverse proxy, domain, HTTPS and OIDC. An SSH tunnel is a safe operator path
+before a public origin exists; it is not required after a reviewed reverse
+proxy is active.
 
 ## 1. Prerequisites and configuration
 
@@ -55,7 +61,9 @@ cp .env.example .env
 chmod 600 .env
 ```
 
-Fill the MCP resource-server values in `.env`. Set either
+Leave the MCP resource-server values empty while the instance is intentionally
+`public_read_only`. Empty values mean OAuth is not deployed; they do not enable
+automatic discovery. Before claiming `oauth_ready`, fill them and set either
 `GO_OAUTH_JWKS_URI` or `GO_OAUTH_JWKS_JSON`, not both, unless the application
 auth contract explicitly says otherwise. Treat inline JWKS JSON as sensitive
 configuration even when it contains public keys.
@@ -68,8 +76,10 @@ must stay in `GO_WEB_IDENTITY_MODE=trusted-proxy` for deployment. Requests that
 do not carry the matching internal secret must fail closed rather than trust
 user-supplied identity headers.
 
-Set `GO_SOCIETY_OWNER_EMAIL` to the exact email claim of the intended initial
-OIDC owner. Generate `GO_SOCIETY_PRINCIPAL_HMAC_SECRET` and
+Prefer `GO_SOCIETY_OWNER_SUBJECT` set to the exact stable `sub` from the
+configured `GO_OAUTH_ISSUER`. Self-hosted OIDC and trusted-proxy identities do
+not receive owner authority through the native Sites email fallback. Generate
+`GO_SOCIETY_PRINCIPAL_HMAC_SECRET` and
 `GO_SOCIETY_THREAD_HMAC_SECRET` independently, each with at least 32 random
 bytes (64 hexadecimal characters). They bind different identifiers and must
 not equal each other, `GO_WEB_IDENTITY_SECRET`, the oauth2-proxy cookie secret
@@ -125,7 +135,39 @@ safety snapshot, replaces only `go-os-self-hosted-data-v1`, and restarts the app
 only if it was running before. Afterward, require both a healthy probe and an
 authenticated read of expected data.
 
-## 4. Optional domain HTTPS and OIDC Web login
+## 4. Current shared-Nginx topology
+
+The active reference deployment uses this topology:
+
+```text
+https://go.pixmoving.net
+        ↓ shared host Nginx terminates TLS and selects the hostname
+http://127.0.0.1:3210
+        ↓
+GO Society application container
+```
+
+Keep the Compose `https` profile disabled on a host where another Nginx,
+Caddy, Traefik or gateway already owns ports 80/443. Do not stop or replace the
+shared gateway. Route only the dedicated hostname to `127.0.0.1:3210`, preserve
+`Host`, `X-Forwarded-Host`, `X-Forwarded-Proto` and `X-Forwarded-For`, and strip
+all client-supplied trusted identity headers. See the bounded
+[`nginx-shared.example.conf`](nginx-shared.example.conf).
+
+That example proxies every application path and method; it is not a path-level
+read-only ACL. The current stage remains public-read-only because application
+authentication fails closed and no trusted Web identity is injected. The
+shared Nginx must not add `GO_WEB_IDENTITY_SECRET` or synthesize a member
+identity. Authenticated Web traffic requires a reviewed OIDC login proxy and
+an internal trusted hop; MCP continues to validate bearer tokens directly at
+the application. Configure streaming and timeouts for `/mcp` only as transport
+support—it does not make OAuth ready.
+
+The current public site is healthy, but its OAuth metadata is not configured.
+Follow [Deployment Status](../../docs/DEPLOYMENT_STATUS.md) rather than treating
+the public URL or `/api/health` as an authenticated acceptance result.
+
+## 5. Alternative standalone Caddy/OIDC profile — not current production
 
 Do not enable this profile until all of the following are true:
 
@@ -187,7 +229,7 @@ Acceptance checks:
 - revoked, wrong-audience and insufficient-scope tokens fail closed;
 - `docker stats` stays below the declared 1.3 CPU / 704 MiB project envelope.
 
-## 5. Updates and rollback
+## 6. Updates and rollback
 
 Before an update, create a backup and record the current image ID:
 
@@ -208,7 +250,7 @@ Run the health and authenticated acceptance checks again. An application-image
 rollback and a database restore are separate decisions: do not restore data
 merely because an image rollback is needed.
 
-## 6. Stop without deleting data
+## 7. Stop without deleting data
 
 ```sh
 docker compose --env-file .env stop

@@ -326,10 +326,18 @@ GO Society 不是一个与协议脱节的展示站。它的计划是运行有边
 [Web README](web/README.md) 与发布说明中的状态为准。
 
 - **Reference Application：**[`/web`](web)
+- **当前公开实例：**[`https://go.pixmoving.net`](https://go.pixmoving.net)
+- **已观察部署状态：**
+  [`docs/DEPLOYMENT_STATUS.md`](docs/DEPLOYMENT_STATUS.md)
 - **当前生态与治理边界：**
   [`docs/ECOSYSTEM_AND_GOVERNANCE_BOUNDARY.md`](docs/ECOSYSTEM_AND_GOVERNANCE_BOUNDARY.md)
 - **历史创立 Charter：**
   [`docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md`](docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md)
+
+截至 2026-08-29，自托管公开 Web 界面已经上线，原 Sites 部署已经删除；
+生产 Web 登录、受 OAuth 保护的 MCP、钉钉身份联邦，以及全新对话中的
+Cognitive Bridge 完整闭环仍未通过验收。相关能力以部署状态记录为准，不能
+仅因网页可访问就视为已经打通。
 
 ---
 

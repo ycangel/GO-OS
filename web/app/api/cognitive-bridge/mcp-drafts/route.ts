@@ -24,7 +24,11 @@ export async function GET(request: Request) {
 
   try {
     const [link, drafts] = await Promise.all([
-      getWebMcpPrincipalLink(identity.member, identity.user.id, request.url),
+      getWebMcpPrincipalLink(
+        identity.member,
+        identity.user.principalKey,
+        request.url,
+      ),
       listMcpDraftsForMember(identity.member),
     ]);
     return Response.json(
@@ -34,7 +38,7 @@ export async function GET(request: Request) {
           linked: Boolean(link),
           linkedAt: link?.linkedAt ?? null,
           revocable: true,
-          identityBoundary: "sites_stable_user_id_hmac",
+          identityBoundary: "verified_stable_subject_hmac",
         },
         drafts: drafts.map((draft) => ({
           id: draft.id,

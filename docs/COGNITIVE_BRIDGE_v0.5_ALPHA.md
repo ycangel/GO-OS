@@ -7,6 +7,12 @@ conformance is reported separately
 
 **First reference case:** Cognitive Bridge #001
 
+**Current deployment:** the public Web surface is live at
+[`https://go.pixmoving.net`](https://go.pixmoving.net), but production OIDC,
+OAuth-protected MCP, principal linking, DingTalk federation and the
+fresh-conversation round trip are not yet accepted. See the dated
+[Deployment Status](DEPLOYMENT_STATUS.md).
+
 The Cognitive Bridge alpha connects two bounded halves: GO Society's durable,
 private cognitive runtime and a ChatGPT/Codex conversation adapter. It addresses
 a concrete self-application gap: members were changing shared understanding
@@ -46,7 +52,7 @@ Three states remain deliberately distinct:
 Narrative Anchor is not a ninth core object. It is private source material for
 the existing v0.5 cognitive objects and their provenance.
 
-## What is implemented
+## What is implemented in source
 
 The GO Society Web reference instance provides:
 
@@ -109,10 +115,12 @@ The conversation adapter exposes only these MCP tools:
 | `go_society_request_human_review` | Mark a staged draft for Web review and return its private review location | No approval or ratification |
 
 The MCP adapter does not call the member Web APIs by forging browser identity
-headers. The published Sites MCP/OAuth boundary authenticates the connector;
-server-side principal linkage, Mission membership and a bounded
-`mcp-runtime` authority path must all succeed before a private tool call may
-act. A denied request fails closed.
+headers. In a conforming deployment, the OAuth authorization server
+authenticates the connector; server-side principal linkage, Mission membership
+and a bounded `mcp-runtime` authority path must all succeed before a private
+tool call may act. A denied request fails closed. The former Sites deployment
+has been retired, and the active self-hosted instance has not yet completed
+this production identity flow.
 
 ## Cognitive Bridge #001
 
@@ -152,14 +160,18 @@ conversation first calls `go_society_get_context`; a write occurs only after
 the user sees the exact staging preview, selects the material and explicitly
 confirms internal-only processing.
 
-The public repository intentionally does not hard-code a production MCP URL,
-OAuth resource or member identity. Those are deployment outputs. For Sites,
-retrieve the published `mcp_url` and `oauth_resource`. For the isolated
-self-hosted adapter, verify the trusted HTTPS `/mcp` endpoint and its
-`/.well-known/oauth-protected-resource` metadata. Complete the target OAuth
-flow and verify the principal-to-member link before installing or sharing a
-connector. Never substitute copied Web cookies or user-supplied
-`oai-authenticated-*` headers.
+The Web origin may be public while the private bridge remains unavailable.
+For the isolated self-hosted adapter, verify the trusted HTTPS `/mcp` endpoint
+and its `/.well-known/oauth-protected-resource` metadata. Complete the target
+OAuth flow and verify the principal-to-member link before installing or
+sharing a connector. Never substitute copied Web cookies, a DingTalk token,
+an email address or user-supplied `oai-authenticated-*` headers.
+
+DingTalk is the intended upstream human identity for the active project. It is
+not itself assumed to satisfy the MCP authorization-server contract. A
+standards-compatible OAuth/OIDC layer must issue the audience- and
+scope-bound access token accepted by GO Society. No DingTalk identity adapter
+or authorization broker is deployed in the current instance.
 
 ## Acceptance test
 
@@ -194,8 +206,9 @@ HTTP pass verified Web staging → idempotent replay → ratification → compac
 stateless context reload. Concurrent cursor and candidate-decision races also
 produced exactly one winner.
 
-The canonical Skill can be structurally validated in the repository. This
-document does not itself claim a live ChatGPT/Codex round-trip. That claim
+The canonical Skill can be structurally validated in the repository. As of
+2026-08-29, production OAuth metadata is not configured and no live
+ChatGPT/Codex round trip has been accepted. That claim
 requires deployment evidence for the published MCP URL and OAuth resource, a
 real connector login, an authorized principal link, a new-conversation context
 read, consent-bound staging, Web-only ratification and a second fresh-context

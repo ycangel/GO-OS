@@ -24,6 +24,8 @@ security and field-validation gates remain open after this checklist passes.
 - [x] Release Notes state included scope and known limitations.
 - [x] Migration/Deprecation Notes preserve provenance.
 - [x] Evaluation/Red-Team entry point is ready.
+- [x] [Deployment Status](DEPLOYMENT_STATUS.md) separates observed live state
+  from repository capability and planned integration.
 
 ## Schemas, Skills and tests
 
@@ -43,7 +45,8 @@ security and field-validation gates remain open after this checklist passes.
 - [x] Every current mutation route authenticates, checks structured authority and fails closed.
 - [x] Forward migration creates required authority state without rewriting history.
 - [x] Public/private data boundaries and automation limitations are documented.
-- [x] Lint, build and 13 Web tests pass from installed dependencies.
+- [x] Lint, both deployment-adapter builds and the automated Web suite pass
+  from installed dependencies.
 
 ## Repository checks
 
@@ -69,6 +72,24 @@ security and field-validation gates remain open after this checklist passes.
   findings were corrected and the automated gates rerun. This is not a
   substitute for the open independent synthesis and field gates below.
 - Release content commit `d0ea501` was pushed to `main` on 2026-08-23.
+
+## Verification record — 2026-08-29
+
+- `ruby tests/validate_repository.rb` — PASS: 15 JSON, 37 YAML, 23 Markdown
+  entry documents and 10 Skills checked.
+- `python3 tests/validate_json_schemas.py` — PASS: 14 schemas, 27 invariant
+  probes and 7 reference objects.
+- `python3 scripts/check_release_consistency.py` — PASS: v0.5.0 baseline, 15
+  JSON files, 106 Markdown files and 264 local links.
+- Web verification — PASS: ESLint, TypeScript, the Cloudflare-compatible build,
+  the self-hosted Node/SQLite production build and all 41 automated tests.
+- Self-hosted script syntax and repository whitespace checks passed.
+- Operational observation records a healthy public read-only Web surface at
+  `https://go.pixmoving.net`, with OAuth metadata, authenticated Web login,
+  MCP acceptance, DingTalk identity federation and a fresh-conversation bridge
+  still open. These are explicit promotion gates, not implied capabilities.
+- No release tag was created: the independent red-team synthesis and bounded
+  field loop below remain open.
 
 ## Post-release gates
 

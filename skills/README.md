@@ -61,9 +61,11 @@ Human Gate.
 The canonical behavior contract is
 [`go-society-cognitive-bridge/SKILL.md`](go-society-cognitive-bridge/SKILL.md).
 An actual ChatGPT/Codex conversation also needs an authenticated MCP connection
-to the deployed GO Society instance. Its published endpoint and OAuth resource
-are deployment outputs and are intentionally not hard-coded in this public
-repository. See the
+to the deployed GO Society instance. The active public Web origin is
+[`https://go.pixmoving.net`](https://go.pixmoving.net), but its production
+OAuth/MCP connection has not yet passed acceptance. A connector endpoint is
+therefore not advertised as usable merely because the Web page is reachable.
+See the [Deployment Status](../docs/DEPLOYMENT_STATUS.md) and the
 [`Cognitive Bridge v0.5 Alpha`](../docs/COGNITIVE_BRIDGE_v0.5_ALPHA.md)
 for the connection and acceptance boundary.
 

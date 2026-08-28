@@ -214,6 +214,27 @@ governance, security or real-world evidence gates below.
 
 ## J. Cognitive Bridge self-hosting
 
+Current operational snapshot (2026-08-29): the isolated Compose project,
+loopback application listener, shared-Nginx HTTPS origin, public health and
+unauthenticated private-read denial were observed. OAuth protected-resource
+metadata returned HTTP 503 because the issuer contract is not configured.
+Therefore none of J2–J10 is recorded as passed, and Web reachability must not
+be used as evidence for them. The exact current boundary is in
+[Deployment Status](DEPLOYMENT_STATUS.md).
+
+The intended DingTalk identity path adds these explicit attacks:
+
+- [ ] **J-D1. Upstream/downstream separation:** a DingTalk token, DWS session
+  or login email cannot be used directly as an MCP bearer token or
+  organizational authority.
+- [ ] **J-D2. Stable identity:** owner bootstrap and member linking use the
+  exact issuer-qualified stable subject; missing email is supported without
+  inventing an address, and the same subject from another issuer fails.
+- [ ] **J-D3. Deprovisioning:** revoked DingTalk access, disabled broker user,
+  revoked GO membership and revoked principal link each fail closed.
+- [ ] **J-D4. Resource binding:** the authorization and token exchanges retain
+  the exact MCP `resource`, and the resulting access-token `aud` matches it.
+
 - [ ] **J1. Isolation:** the project owns a unique directory, Compose project,
   network, volumes and loopback port; starting, stopping and updating it does
   not mutate another server project.

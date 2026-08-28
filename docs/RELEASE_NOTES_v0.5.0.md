@@ -13,6 +13,20 @@ canonical documentation set and makes implementation maturity explicit.
 `Foundation Release` names a software milestone. It does not refer to, announce
 or imply a legally registered foundation.
 
+## Post-release operational note — 2026-08-29
+
+The active GO Society public Web surface moved to the isolated self-hosted
+instance at [`https://go.pixmoving.net`](https://go.pixmoving.net), and the
+former Sites deployment was permanently removed. Source compatibility with
+Sites/D1 is retained; it is not an active hosted instance.
+
+The public application and health endpoint were observed online, with private
+member access failing closed for unauthenticated requests. Production OIDC
+login, OAuth protected-resource metadata, Web/MCP principal linking, DingTalk
+identity federation and the fresh-conversation bridge round trip remain open
+gates. See the dated [Deployment Status](DEPLOYMENT_STATUS.md); this operational
+note does not rewrite the 2026-08-23 release record.
+
 ## Highlights
 
 - A canonical v0.5 documentation entry point and status vocabulary.

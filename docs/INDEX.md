@@ -4,7 +4,7 @@
 
 **Release name:** Foundation Release / 奠基版本
 
-**Last aligned:** 2026-08-24
+**Last aligned:** 2026-08-29
 
 This page is the canonical entry point for GO OS v0.5 documentation. Earlier
 versioned documents remain part of the project's design history; they are not
@@ -19,6 +19,7 @@ silently rewritten to look current.
 | If you want to… | Read |
 |---|---|
 | Understand the project | [English README](../README.md) or [中文 README](../README.zh-CN.md) |
+| Check what is actually live now | [GO Society Deployment Status](DEPLOYMENT_STATUS.md) |
 | Run the smallest useful loop | [Quick Start](QUICK_START.md) |
 | Deploy an isolated self-hosted GO Society instance | [Self-hosted runbook](../deploy/self-hosted/RUNBOOK.md) |
 | Connect a Human–AI conversation to GO Society cognition | [Cognitive Bridge v0.5 Alpha](COGNITIVE_BRIDGE_v0.5_ALPHA.md) |
@@ -48,6 +49,13 @@ The following documents define the current release baseline.
 | [`deploy/self-hosted/`](../deploy/self-hosted) | Isolated Node, SQLite, OAuth proxy and HTTPS deployment package | **Reference deployment; target-environment acceptance is required** |
 | [Release Notes](RELEASE_NOTES_v0.5.0.md) | Release scope, verification and known limitations | **Release record** |
 
+## Operational record
+
+[GO Society Deployment Status](DEPLOYMENT_STATUS.md) is the dated evidence
+source for what is actually reachable and accepted in the active instance. It
+does not define or amend the v0.5 release architecture, and a later observation
+may supersede it without rewriting the release baseline.
+
 ## Status vocabulary
 
 GO OS uses explicit status labels to keep aspiration separate from evidence.
@@ -60,6 +68,8 @@ GO OS uses explicit status labels to keep aspiration separate from evidence.
   is not proof of production readiness or business impact.
 - **Declared evaluation** — a machine-readable test vector or review case. Its
   presence does not mean it has been executed or passed.
+- **Operational record** — dated evidence from a named deployment; it does not
+  turn source capability or planned integration into an accepted live claim.
 - **Historical** — an earlier design record preserved for provenance.
 - **Proposal / target** — intended future work, not a current capability.
 
@@ -87,6 +97,10 @@ When current documents conflict, use this order:
 4. component specifications for behavior inside their stated scope;
 5. the Release Notes and Migration Notes for compatibility;
 6. historical documents for design rationale, not current status.
+
+For claims about the active instance, use the latest dated Deployment Status.
+It governs observed operation only and never overrides normative or release
+architecture contracts.
 
 If a conflict changes safety, authority, data handling or backward
 compatibility, do not resolve it silently. Open an issue or change proposal and

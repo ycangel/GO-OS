@@ -5,7 +5,7 @@ const publicOrigin = process.env.GO_PUBLIC_ORIGIN?.trim();
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    publicOrigin || "https://go-society.angelo-pix.chatgpt.site",
+    publicOrigin || "https://go.pixmoving.net",
   ),
   title: "GO Society — GO OS v0.5 alpha reference instance",
   description:

@@ -6,6 +6,11 @@
 
 **Status:** alpha self-application reference surface
 
+**Active public origin:**
+[`https://go.pixmoving.net`](https://go.pixmoving.net) — public Web is live;
+authenticated Web login and the production MCP/OAuth round trip are not yet
+accepted. See [Deployment Status](../docs/DEPLOYMENT_STATUS.md).
+
 GO Society Web is the first self-application reference instance for GO OS. It
 demonstrates selected organizational-runtime boundaries in a deployable Web
 application. The v0.5 Cognitive Bridge adds one private, durable
@@ -49,7 +54,8 @@ or other legal entity.
   an atomically claimed Mission head transition;
 - an authenticated cognitive context API for reloading ratified state, pending
   candidates and unresolved questions;
-- Cloudflare D1 persistence and forward migrations;
+- Cloudflare D1 persistence for the retained Sites adapter, SQLite persistence
+  for self-hosting and forward migrations for both;
 - explicit privacy and publication policy surfaces.
 
 The public evidence API is structurally separate from private field records.
@@ -101,11 +107,13 @@ security certification or organizational impact.
 - The source tree now contains both halves of the bounded bridge: the
   organization-side Web Human Gate and a Skill-backed, OAuth-protected MCP
   conversation adapter. This is not a deployment claim: a release is connected
-  only after the private Site reports both `mcp_url` and `oauth_resource` and
-  the fresh-conversation acceptance loop passes.
-- In the alpha lifecycle, `invited` means owner-authorized and email-matched;
-  an explicit invitation-acceptance transition and reliable `joinedAt` audit
-  record are not yet implemented.
+  only after the target deployment publishes valid protected-resource
+  metadata, completes OAuth and passes the fresh-conversation acceptance loop.
+  The active public instance has not yet met those conditions.
+- In the retained Sites lifecycle, `invited` means owner-authorized and
+  host-attested email-matched; an explicit invitation-acceptance transition
+  and reliable `joinedAt` audit record are not yet implemented. Self-hosted
+  non-owner membership by stable subject remains an open implementation gate.
 
 ## Privacy and data boundary
 
@@ -136,11 +144,11 @@ Database migrations live in `drizzle/`; the runtime schema is defined in
 
 ### Identity trust boundary
 
-For browser requests, the Sites host supplies trusted
-`oai-authenticated-*` identity headers. A different reverse proxy must strip
-any client-supplied headers with those names before injecting its own trusted
-identity. Directly exposing the application without that boundary would allow
-header spoofing.
+The retained Sites adapter accepts host-supplied `oai-authenticated-*` identity
+headers. Self-hosting uses a separate trusted-proxy contract. Every public
+gateway must strip any client-supplied headers with the configured identity
+names before an authenticated, internal hop injects the stable subject.
+Directly trusting public identity headers would allow spoofing.
 
 The conversation MCP path is a separate OAuth-protected resource boundary. It
 must not copy browser cookies, accept user-authored Sites identity headers or
@@ -156,23 +164,30 @@ authority revision and any canonical receipt remain. Web confirmation also
 recomputes the deterministic checkpoint request hash, and D1 requires the
 matching actor, Mission, thread, cursor, consent claim and response receipt.
 
-`GO_SOCIETY_OWNER_EMAIL` is a server-side secret/environment value. Never place
-it in source, browser code, logs, local storage or a committed environment file.
-For an isolated local preview, the Vite adapter accepts the command-scoped
-`GO_SOCIETY_LOCAL_OWNER_EMAIL` value and maps it to the Worker binding; it is
-not a production configuration source.
+`GO_SOCIETY_OWNER_SUBJECT` is the preferred owner selector for self-hosted
+OIDC. It is interpreted only under the exact configured issuer and compared to
+the issuer-qualified stable principal. `GO_SOCIETY_OWNER_EMAIL` remains only a
+legacy fallback for the retained native Sites adapter; OIDC and trusted-proxy
+identities cannot become owner by email. Both selectors are private server-side
+configuration, not browser state or cryptographic secrets. Never place either
+private identifier in source, browser code, logs, local storage or a committed
+environment file. The Vite/Sites local preview accepts only the command-scoped
+`GO_SOCIETY_LOCAL_OWNER_EMAIL` compatibility selector; self-hosted subject
+bootstrap is configured and tested through the self-hosted adapter, not
+silently projected into the Sites preview. Neither is a production
+configuration source.
 
 `GO_SOCIETY_THREAD_HMAC_SECRET` is a separate server-side secret used to bind
 source conversations without storing their raw external key. Local previews
 may map a command-scoped `GO_SOCIETY_LOCAL_THREAD_HMAC_SECRET`; use at least 32
 random characters and never commit it.
 
-`GO_SOCIETY_PRINCIPAL_HMAC_SECRET` is an independent, Site-scoped server secret
-used to bind the native Sites authenticated-user identifier to a revocable GO
-Society member link without storing the raw identifier. Local previews may map
-a command-scoped `GO_SOCIETY_LOCAL_PRINCIPAL_HMAC_SECRET`; do not reuse the
-thread-binding secret, expose either value to browser code or commit either
-value.
+`GO_SOCIETY_PRINCIPAL_HMAC_SECRET` is an independent, deployment-scoped server
+secret used to bind a verified principal key—an issuer-qualified subject for
+self-hosting or the retained native Sites identifier—to a revocable GO Society
+member link without storing the raw key. Local previews may map a command-scoped
+`GO_SOCIETY_LOCAL_PRINCIPAL_HMAC_SECRET`; do not reuse the thread-binding
+secret, expose either value to browser code or commit either value.
 
 ## Build and verification
 
@@ -193,7 +208,9 @@ The application supports two explicit deployment adapters:
 - an isolated Node runtime with SQLite, OAuth-protected MCP and an optional
   OIDC Web gateway through [`deploy/self-hosted`](../deploy/self-hosted).
 
-The self-hosted adapter does not replace or weaken the Sites adapter. Both use
+The former hosted Sites instance has been permanently removed; the Sites/D1
+adapter remains in source for compatibility and provenance. The active
+self-hosted instance uses Node/SQLite behind shared Nginx. Both source adapters use
 the same schema, migrations, AuthorityGrant checks, candidate-only MCP surface
 and Web-only Human Gate. Read-only runtime views may be public. Write actions
 must remain authenticated, same-origin and server-authorized.
@@ -204,10 +221,10 @@ environment before accepting real organizational data.
 
 ### ChatGPT/Codex MCP connection
 
-The repository intentionally does not commit one production connector URL. A
-Sites deployment must report both `mcp_url` and `oauth_resource`. A self-hosted
-deployment must expose a trusted HTTPS `/mcp` endpoint and a valid
-`/.well-known/oauth-protected-resource` document. If either deployment cannot
+The active Web origin is public, but a connector URL is useful only with a
+working authorization contract. A self-hosted deployment must expose a trusted
+HTTPS `/mcp` endpoint and a valid
+`/.well-known/oauth-protected-resource` document. If a deployment cannot
 prove its MCP URL and OAuth resource metadata, the conversation half is not
 deployed even if the Web page is reachable.
 

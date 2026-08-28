@@ -952,11 +952,11 @@ function McpHumanGate({
         title="Nothing from an agent enters organizational cognition without you"
       />
       <div className="ledger-notice">
-        The bridge binds the native Sites stable user identity—not an email—to
-        your GO Society membership. MCP may read ratified context and stage a
-        temporary <code>model_reported</code> draft. Only this same-origin Web
-        gate can confirm the exact payload hash and create candidates; ratification
-        remains a separate named-human decision below.
+        The bridge binds the verified identity provider&apos;s stable subject—not
+        an email—to your GO Society membership. MCP may read ratified context
+        and stage a temporary <code>model_reported</code> draft. Only this
+        same-origin Web gate can confirm the exact payload hash and create
+        candidates; ratification remains a separate named-human decision below.
       </div>
 
       {loading && !inbox ? <Skeleton rows={2} /> : (
@@ -1670,8 +1670,8 @@ function Composer({ kind, missions, saving, onClose, onSubmit }: { kind: Compose
             <label className="checkbox"><input type="checkbox" name="reversible" defaultChecked /><span>This change is reversible and has an exit path.</span></label>
           </>}
           {kind === "member" && <>
-            <div className="form-privacy-note"><strong>The email is private authorization data.</strong><span>It is stored only in the member layer and is never returned by the public API.</span></div>
-            <label>ChatGPT login email<input name="email" type="email" required autoComplete="off" placeholder="Exact email the partner uses to sign in" /></label>
+            <div className="form-privacy-note"><strong>The Sites login email is private authorization data.</strong><span>This legacy invitation path is available only through the retained Sites adapter; self-hosted subject membership remains an open gate.</span></div>
+            <label>Sites login email<input name="email" type="email" required autoComplete="off" placeholder="Exact host-attested Sites email" /></label>
             <label>Internal display name<input name="displayName" required maxLength={80} placeholder="思思" /></label>
             <label className="checkbox"><input type="checkbox" name="publicNameConsent" /><span>The member has explicitly consented to display this name publicly. Leave unchecked by default.</span></label>
             <div className="permission-preview"><span>Granted</span><strong>Record on selected mission</strong><span>Not granted</span><strong>Review · Publish · Other mission access</strong></div>

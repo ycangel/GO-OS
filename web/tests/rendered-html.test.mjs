@@ -136,10 +136,27 @@ test("member reads are membership-scoped and never expose another mission owner"
 });
 
 test("Web identity adapters and owner configuration stay server-side trust inputs", async () => {
-  const [authSource, oauthSource, memberAuthSource, readme] = await Promise.all([
+  const [
+    authSource,
+    oauthSource,
+    memberAuthSource,
+    inboxRoute,
+    sessionRoute,
+    membersRoute,
+    readme,
+  ] = await Promise.all([
     readFile(new URL("../app/chatgpt-auth.ts", import.meta.url), "utf8"),
     readFile(new URL("../runtime/oauth-resource-server.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/member-auth.ts", import.meta.url), "utf8"),
+    readFile(
+      new URL(
+        "../app/api/cognitive-bridge/mcp-drafts/route.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(new URL("../app/api/session/route.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/api/members/route.ts", import.meta.url), "utf8"),
     readFile(new URL("../README.md", import.meta.url), "utf8"),
   ]);
 
@@ -148,6 +165,19 @@ test("Web identity adapters and owner configuration stay server-side trust input
   assert.match(oauthSource, /GO_WEB_IDENTITY_SECRET/);
   assert.match(oauthSource, /authenticateBearerRequest/);
   assert.match(memberAuthSource, /GO_SOCIETY_OWNER_EMAIL/);
+  assert.match(memberAuthSource, /GO_SOCIETY_OWNER_SUBJECT/);
+  assert.match(memberAuthSource, /authenticationMethod\s*===\s*"sites"/);
+  assert.match(
+    inboxRoute,
+    /getWebMcpPrincipalLink\([\s\S]*?identity\.user\.principalKey/,
+  );
+  assert.doesNotMatch(
+    inboxRoute,
+    /getWebMcpPrincipalLink\([\s\S]*?identity\.user\.id/,
+  );
+  assert.match(sessionRoute, /authenticationMethod\s*===\s*"sites"/);
+  assert.match(membersRoute, /authenticationMethod\s*!==\s*"sites"/);
+  assert.match(membersRoute, /stable-subject membership is not implemented/);
   assert.match(readme, /strip\s+any client-supplied headers/);
-  assert.match(readme, /server-side secret\/environment value/);
+  assert.match(readme, /server-side\s+configuration/);
 });

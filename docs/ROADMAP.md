@@ -36,6 +36,18 @@ Exit conditions:
   stacks and document semantic loss.
 - [ ] Add per-record public/private visibility gates for every public API table.
 - [ ] Demonstrate authority expiry, revocation, replay denial and rollback.
+- [ ] Select and deploy one standards-compatible OAuth/OIDC authorization
+  server for the active self-hosted instance; verify discovery, PKCE `S256`,
+  resource/audience binding, scopes, JWKS rotation and revocation.
+- [ ] Federate the intended DingTalk human identity without treating a
+  DingTalk token or email as the durable GO Society principal.
+- [ ] Prove Web login and MCP access resolve the same issuer-qualified `sub`
+  and that an unlinked or deprovisioned principal fails closed.
+- [ ] Add explicit self-hosted non-owner membership binding by issuer-qualified
+  subject; do not reuse the retained Sites email-invitation path.
+- [ ] Complete the fresh-conversation Cognitive Bridge round trip through
+  explicit staging consent, Web review, named-human ratification and a second
+  context read.
 - [ ] Publish at least one negative or null result from a bounded GO OS probe.
 
 ## v0.6 — Runtime + SDK Beta target

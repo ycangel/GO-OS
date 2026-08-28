@@ -13,8 +13,9 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 RELEASE = "0.5.0"
-CANONICAL_DOCS = (
+REQUIRED_ENTRY_DOCS = (
     "docs/INDEX.md",
+    "docs/DEPLOYMENT_STATUS.md",
     "docs/QUICK_START.md",
     "docs/ARCHITECTURE_OVERVIEW.md",
     "docs/ECOSYSTEM_AND_GOVERNANCE_BOUNDARY.md",
@@ -105,7 +106,7 @@ def main() -> int:
         "CHANGELOG.md",
         "CONTRIBUTING.md",
         "AUTHORS.md",
-        *CANONICAL_DOCS,
+        *REQUIRED_ENTRY_DOCS,
         "schemas/README.md",
         "schemas/v0.5/manifest.json",
         "skills/README.md",
@@ -172,7 +173,7 @@ def main() -> int:
         failures.append("中文释放名不得使用“基金会版本”，应使用“奠基版本”")
 
     readmes = read("README.md") + read("README.zh-CN.md")
-    for required in CANONICAL_DOCS:
+    for required in REQUIRED_ENTRY_DOCS:
         if required not in readmes:
             failures.append(f"root READMEs do not navigate to {required}")
 

@@ -290,7 +290,7 @@ export async function resolveWebIdentity(
   );
   const id = usableHeader(headers.get(idHeader), 512);
   const email = usableHeader(headers.get(emailHeader), 320);
-  if (!id || !email) return null;
+  if (!id) return null;
   const encodedName = usableHeader(headers.get(nameHeader), 1_024);
   const fullName =
     encodedName &&
@@ -310,7 +310,7 @@ export async function resolveWebIdentity(
             id,
           )
         : id,
-    displayName: fullName ?? email,
+    displayName: fullName ?? email ?? id,
     email,
     fullName,
     authenticationMethod: mode,

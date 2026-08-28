@@ -2,6 +2,30 @@
 
 All notable changes to GO OS are documented here.
 
+## Unreleased
+
+### Deployment record
+
+- Recorded the active self-hosted GO Society public origin at
+  `https://go.pixmoving.net`, its shared-Nginx-to-loopback topology and the
+  observed public/private boundary.
+- Recorded the permanent retirement of the former Sites deployment while
+  preserving Sites/D1 source as a compatibility and historical adapter.
+- Made explicit that public Web health does not establish production Web
+  login, OAuth-protected MCP, DingTalk federation or a fresh-conversation
+  Cognitive Bridge round trip.
+
+### Identity compatibility
+
+- Added issuer-qualified OIDC `sub` owner bootstrap so an identity provider
+  that does not supply a durable email can still bind the intended owner.
+- Confined email owner matching to the retained native Sites compatibility
+  adapter; self-hosted OIDC and trusted-proxy identities require the configured
+  issuer-qualified owner subject and may omit email.
+- Replaced Sites-specific runtime identity labels and the retired Sites
+  metadata fallback with deployment-neutral wording and the active public
+  origin.
+
 ## v0.5.0 — 2026-08-23
 
 ### Release designation

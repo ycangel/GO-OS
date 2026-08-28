@@ -14,7 +14,10 @@ export async function GET() {
         displayName: identity.member?.displayName ?? identity.user.displayName,
         role: identity.member?.role ?? "reader",
         canWrite: Boolean(identity.member),
-        canInvite: Boolean(identity.member?.isOwner),
+        canInvite: Boolean(
+          identity.member?.isOwner &&
+            identity.user.authenticationMethod === "sites",
+        ),
       },
     },
     { headers: { "cache-control": "no-store" } },

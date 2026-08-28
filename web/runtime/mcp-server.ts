@@ -30,8 +30,8 @@ const mcpRateWindows = new Map<
 >();
 
 // Deployment invariant: this vendored UTF-8 file must byte-match the canonical
-// `skills/go-society-cognitive-bridge/SKILL.md`. It lives inside the Sites
-// project root so the production source bundle never depends on a parent path.
+// `skills/go-society-cognitive-bridge/SKILL.md`. It lives inside the Web
+// project root so every deployment bundle remains independent of a parent path.
 export const MCP_SKILL_CANONICAL_REPO_PATH =
   "skills/go-society-cognitive-bridge/SKILL.md";
 export const MCP_SKILL_VENDORED_WEB_PATH =

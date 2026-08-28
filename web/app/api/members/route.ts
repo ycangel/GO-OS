@@ -27,6 +27,15 @@ export async function POST(request: Request) {
       { status: 403 },
     );
   }
+  if (identity.user.authenticationMethod !== "sites") {
+    return Response.json(
+      {
+        error:
+          "Email invitations are limited to the retained Sites compatibility adapter; self-hosted stable-subject membership is not implemented.",
+      },
+      { status: 409 },
+    );
+  }
 
   try {
     const payload = (await request.json()) as Record<string, unknown>;
@@ -38,7 +47,7 @@ export async function POST(request: Request) {
 
     if (!isEmail(email) || !displayName || !Number.isInteger(missionId)) {
       return Response.json(
-        { error: "A valid ChatGPT login email, internal name and mission are required." },
+        { error: "A valid Sites login email, internal name and mission are required." },
         { status: 400 },
       );
     }

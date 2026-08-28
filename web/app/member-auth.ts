@@ -18,20 +18,56 @@ export type RuntimeIdentity = {
   member: RuntimeMember | null;
 };
 
+export type OwnerBootstrapConfiguration = {
+  issuer: string;
+  subject: string;
+  email: string;
+};
+
+export function getOwnerBootstrapConfiguration(): OwnerBootstrapConfiguration {
+  return {
+    issuer: getRuntimeVariable("GO_OAUTH_ISSUER")?.trim() ?? "",
+    subject: getRuntimeVariable("GO_SOCIETY_OWNER_SUBJECT")?.trim() ?? "",
+    email: normalizeEmail(
+      getRuntimeVariable("GO_SOCIETY_OWNER_EMAIL") ?? "",
+    ),
+  };
+}
+
+export function matchesOwnerBootstrapIdentity(
+  user: ChatGPTUser,
+  configuration: OwnerBootstrapConfiguration,
+): boolean {
+  const subject = configuration.subject.trim();
+  const issuer = configuration.issuer.trim();
+  if (subject) {
+    if (!issuer || user.authenticationMethod === "sites") return false;
+    return user.principalKey === `oidc:${issuer}\u0000${subject}`;
+  }
+
+  const configuredEmail = normalizeEmail(configuration.email);
+  return Boolean(
+    user.authenticationMethod === "sites" &&
+      configuredEmail &&
+      user.email &&
+      normalizeEmail(user.email) === configuredEmail,
+  );
+}
+
 export async function getRuntimeIdentity(): Promise<RuntimeIdentity> {
   const user = await getChatGPTUser();
   if (!user) return { user: null, member: null };
-  if (!user.email) return { user, member: null };
 
-  const email = normalizeEmail(user.email);
-  const ownerEmail = normalizeEmail(
-    getRuntimeVariable("GO_SOCIETY_OWNER_EMAIL") ?? "",
+  const email = user.email ? normalizeEmail(user.email) : null;
+  const isConfiguredOwner = matchesOwnerBootstrapIdentity(
+    user,
+    getOwnerBootstrapConfiguration(),
   );
 
   try {
     const db = getDb();
 
-    if (ownerEmail && email === ownerEmail) {
+    if (isConfiguredOwner) {
       const [owner] = await db
         .select()
         .from(members)
@@ -52,6 +88,13 @@ export async function getRuntimeIdentity(): Promise<RuntimeIdentity> {
           },
         };
       }
+    }
+
+    // Email lookup is retained only for the native Sites compatibility
+    // adapter, whose host attests the identity headers. Self-hosted OIDC and
+    // trusted-proxy identities must use stable-subject membership paths.
+    if (!email || user.authenticationMethod !== "sites") {
+      return { user, member: null };
     }
 
     const [record] = await db

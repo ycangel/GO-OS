@@ -318,10 +318,19 @@ the system that runs it. Which parts are implemented or validated are reported
 separately in the [Web README](web/README.md) and release notes.
 
 - **Reference application:** [`/web`](web)
+- **Current public instance:** [`https://go.pixmoving.net`](https://go.pixmoving.net)
+- **Observed deployment state:**
+  [`docs/DEPLOYMENT_STATUS.md`](docs/DEPLOYMENT_STATUS.md)
 - **Current ecosystem and governance boundary:**
   [`docs/ECOSYSTEM_AND_GOVERNANCE_BOUNDARY.md`](docs/ECOSYSTEM_AND_GOVERNANCE_BOUNDARY.md)
 - **Historical founding charter:**
   [`docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md`](docs/GO_SOCIETY_OPERATING_CHARTER_v0.1.md)
+
+As of 2026-08-29, the self-hosted public Web surface is live and the former
+Sites deployment has been removed. Production Web login, OAuth-protected MCP,
+DingTalk identity federation and the fresh-conversation Cognitive Bridge
+round trip have not yet passed acceptance. The live-status record, rather
+than Web reachability alone, governs those claims.
 
 ---
 
